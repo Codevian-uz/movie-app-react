@@ -22,7 +22,7 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 BACKEND_REF="${BACKEND_REF:-master}"
 BACKEND_URL="${BACKEND_URL:-http://localhost:8081}" # should be consistent with backends config
 BACKEND_DIR="$PROJECT_ROOT/tmp/backend"
-BACKEND_REPO="https://github.com/Jaxongir1006/movie-app-go.git"
+BACKEND_REPO="https://github.com/Codevian-uz/movie-app-go.git"
 HEALTH_TIMEOUT=30
 
 echo "=== React Enterprise Blueprint: Prepare E2E ==="
