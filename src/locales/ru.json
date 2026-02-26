@@ -1,0 +1,347 @@
+{
+  "common": {
+    "actions": {
+      "submit": "Отправить",
+      "cancel": "Отмена",
+      "save": "Сохранить",
+      "delete": "Удалить",
+      "edit": "Редактировать",
+      "back": "Назад",
+      "logOut": "Выйти",
+      "create": "Создать",
+      "confirm": "Подтвердить",
+      "close": "Закрыть",
+      "search": "Поиск",
+      "filter": "Фильтр",
+      "loadMore": "Загрузить ещё",
+      "refresh": "Обновить",
+      "copy": "Копировать",
+      "copied": "Скопировано",
+      "purge": "Очистить",
+      "requeue": "Повторить",
+      "trigger": "Запустить",
+      "cleanup": "Очистка",
+      "disable": "Отключить",
+      "enable": "Включить",
+      "manage": "Управление",
+      "next": "Далее",
+      "tryAgain": "Повторить"
+    },
+    "labels": {
+      "loading": "Загрузка...",
+      "error": "Ошибка",
+      "success": "Успешно",
+      "noResults": "Результатов не найдено",
+      "appName": "Movie App",
+      "all": "Все",
+      "active": "Активный",
+      "disabled": "Отключён",
+      "current": "Текущий",
+      "status": "Статус",
+      "createdAt": "Создан",
+      "updatedAt": "Обновлён",
+      "lastUpdated": "Последнее обновление",
+      "actions": "Действия",
+      "name": "Имя",
+      "id": "ID",
+      "yes": "Да",
+      "no": "Нет",
+      "totalCount": "{count} результатов"
+    },
+    "errors": {
+      "networkError": "Не удалось подключиться к серверу. Проверьте подключение к интернету и попробуйте снова.",
+      "unexpectedTitle": "Что-то пошло не так",
+      "unexpectedDescription": "При загрузке страницы произошла непредвиденная ошибка.",
+      "unknown": "Неизвестная ошибка"
+    },
+    "confirm": {
+      "title": "Вы уверены?",
+      "destructive": "Это действие нельзя отменить."
+    }
+  },
+  "welcome": {
+    "description": "Это публичная страница-заглушка. Производные проекты заменяют её своим пользовательским приложением.",
+    "goToAdmin": "Перейти в админ-панель",
+    "placeholder": "Эта страница должна быть заменена вашим приложением."
+  },
+  "auth": {
+    "login": {
+      "title": "Вход в админ-панель",
+      "description": "Введите учётные данные для доступа к админ-панели",
+      "username": "Имя пользователя",
+      "password": "Пароль",
+      "submit": "Войти",
+      "error": "Ошибка входа",
+      "bootstrapError": "Вход выполнен, но не удалось загрузить права пользователя. Попробуйте снова.",
+      "validation": {
+        "usernameRequired": "Имя пользователя обязательно",
+        "passwordRequired": "Пароль обязателен"
+      }
+    },
+    "users": {
+      "title": "Пользователи",
+      "createUser": "Создать пользователя",
+      "username": "Имя пользователя",
+      "password": "Пароль",
+      "newPassword": "Новый пароль",
+      "status": "Статус",
+      "lastActive": "Последняя активность",
+      "editUser": "Редактировать",
+      "disableUser": "Отключить",
+      "enableUser": "Включить",
+      "manageRoles": "Управление ролями",
+      "managePermissions": "Управление правами",
+      "viewRoles": "Просмотр ролей",
+      "viewPermissions": "Просмотр прав",
+      "viewSessions": "Просмотр сессий",
+      "disableConfirm": "Вы уверены, что хотите отключить этого пользователя?",
+      "enableConfirm": "Вы уверены, что хотите включить этого пользователя?",
+      "created": "Пользователь создан",
+      "updated": "Пользователь обновлён",
+      "statusChanged": "Статус пользователя изменён",
+      "roles": "Роли",
+      "directPermissions": "Прямые права",
+      "noUsers": "Пользователи не найдены",
+      "keepCurrentPassword": "Оставьте пустым, чтобы сохранить текущий"
+    },
+    "roles": {
+      "title": "Роли",
+      "createRole": "Создать роль",
+      "editRole": "Редактировать роль",
+      "deleteRole": "Удалить роль",
+      "roleName": "Название роли",
+      "managePermissions": "Управление правами",
+      "deleteConfirm": "Вы уверены, что хотите удалить эту роль?",
+      "created": "Роль создана",
+      "updated": "Роль обновлена",
+      "deleted": "Роль удалена",
+      "permissionsUpdated": "Права обновлены",
+      "noRoles": "Роли не найдены",
+      "roleHasUsers": "Эта роль назначена пользователям. Сначала удалите роль у всех пользователей."
+    },
+    "sessions": {
+      "title": "Сессии",
+      "mySessions": "Мои сессии",
+      "allSessions": "Все сессии",
+      "ipAddress": "IP адрес",
+      "browser": "Браузер",
+      "lastUsed": "Последнее использование",
+      "expires": "Истекает",
+      "revoke": "Отозвать",
+      "revokeAll": "Отозвать все",
+      "revokeConfirm": "Вы уверены, что хотите отозвать эту сессию?",
+      "revokeAllConfirm": "Вы уверены, что хотите отозвать все сессии этого пользователя?",
+      "revoked": "Сессия отозвана",
+      "allRevoked": "Все сессии отозваны",
+      "searchByUserId": "Поиск по ID пользователя",
+      "noSessions": "Сессии не найдены"
+    },
+    "permissions": {
+      "title": "Права",
+      "updated": "Права обновлены",
+      "rolesUpdated": "Роли обновлены"
+    },
+    "profile": {
+      "title": "Мой профиль",
+      "changePassword": "Изменить пароль",
+      "changePasswordDescription": "Обновите пароль вашего аккаунта",
+      "currentPassword": "Текущий пароль",
+      "newPassword": "Новый пароль",
+      "confirmPassword": "Подтвердите пароль",
+      "passwordChanged": "Пароль успешно изменен"
+    }
+  },
+  "audit": {
+    "actionLogs": {
+      "title": "Журнал действий",
+      "timestamp": "Время",
+      "userId": "ID пользователя",
+      "module": "Модуль",
+      "operationId": "Операция",
+      "tags": "Теги",
+      "ipAddress": "IP адрес",
+      "traceId": "Trace ID",
+      "requestPayload": "Данные запроса",
+      "groupKey": "Ключ группы",
+      "invalidDateRange": "Укажите корректный диапазон дат для загрузки логов.",
+      "noLogs": "Журнал действий пуст",
+      "dateRange": "Период",
+      "from": "От",
+      "to": "До"
+    },
+    "statusChanges": {
+      "title": "Изменения статусов",
+      "timestamp": "Время",
+      "entityType": "Тип объекта",
+      "entityId": "ID объекта",
+      "status": "Статус",
+      "actionLogId": "ID действия",
+      "traceId": "Trace ID",
+      "noLogs": "Изменения статусов не найдены"
+    }
+  },
+  "platform": {
+    "queues": {
+      "title": "Обзор очередей",
+      "available": "Доступно",
+      "inFlight": "В обработке",
+      "scheduled": "Запланировано",
+      "inDlq": "В DLQ",
+      "avgAttempts": "Средние попытки",
+      "p95Attempts": "P95 попытки",
+      "oldestTask": "Старейшая задача",
+      "purgeQueue": "Очистить очередь",
+      "purgeDlq": "Очистить DLQ",
+      "purgeConfirm": "Все задачи из очереди будут удалены. Продолжить?",
+      "purgeDlqConfirm": "Все задачи из DLQ будут удалены. Продолжить?",
+      "noQueues": "Очереди не найдены"
+    },
+    "dlq": {
+      "title": "Dead Letter Queue",
+      "queueName": "Очередь",
+      "operationId": "Операция",
+      "error": "Ошибка",
+      "attempts": "Попытки",
+      "dlqAt": "Время DLQ",
+      "payload": "Данные",
+      "requeueConfirm": "Повторить обработку этой задачи?",
+      "requeued": "Задача добавлена в очередь",
+      "noTasks": "Задачи DLQ не найдены"
+    },
+    "taskResults": {
+      "title": "Результаты задач",
+      "queueName": "Очередь",
+      "operationId": "Операция",
+      "taskGroupId": "ID группы задач",
+      "scheduledAt": "Запланировано",
+      "attempts": "Попытки",
+      "completedAt": "Завершено",
+      "payload": "Данные",
+      "result": "Результат",
+      "cleanupResults": "Очистка результатов",
+      "cleanupBefore": "Удалить результаты завершённые до",
+      "deletedCount": "Удалено {count} результатов",
+      "noResults": "Результаты задач не найдены"
+    },
+    "schedules": {
+      "title": "Расписания",
+      "operationId": "Операция",
+      "queueName": "Очередь",
+      "cronExpression": "Cron",
+      "nextRun": "Следующий запуск",
+      "lastRun": "Последний запуск",
+      "isActive": "Активно",
+      "triggerNow": "Запустить сейчас",
+      "triggerConfirm": "Запустить это расписание сейчас?",
+      "triggered": "Расписание запущено",
+      "noSchedules": "Расписания не найдены"
+    },
+    "errors": {
+      "title": "Ошибки",
+      "code": "Код",
+      "message": "Сообщение",
+      "service": "Сервис",
+      "operation": "Операция",
+      "alerted": "Оповещено",
+      "createdAt": "Создано",
+      "cleanupErrors": "Очистка ошибок",
+      "cleanupBefore": "Удалить ошибки созданные до",
+      "deletedCount": "Удалено {count} ошибок",
+      "noErrors": "Ошибки не найдены"
+    },
+    "errorDetail": {
+      "title": "Детали ошибки",
+      "details": "Детали",
+      "traceId": "Trace ID",
+      "backToList": "К списку ошибок",
+      "key": "Ключ",
+      "value": "Значение"
+    },
+    "errorStats": {
+      "title": "Статистика ошибок",
+      "totalErrors": "Всего ошибок",
+      "byService": "По сервисам",
+      "byOperation": "По операциям (Топ 10)",
+      "byCode": "По кодам (Топ 10)",
+      "noStats": "Статистика ошибок недоступна"
+    }
+  },
+  "dashboard": {
+    "title": "Панель управления",
+    "welcome": "Добро пожаловать в Movie App",
+    "authStats": "Авторизация",
+    "totalUsers": "Всего пользователей",
+    "activeSessions": "Активные сессии",
+    "tasks": "Задачи",
+    "taskSchedules": "Расписания задач",
+    "queuesHealth": "Состояние очередей",
+    "errors": "Ошибки",
+    "totalErrors": "Всего ошибок",
+    "byOperation": "По операциям",
+    "byCode": "По кодам"
+  },
+  "nav": {
+    "dashboard": "Панель управления",
+    "users": "Пользователи",
+    "roles": "Роли",
+    "sessions": "Сессии",
+    "actionLogs": "Журнал действий",
+    "statusChanges": "Изменения статусов",
+    "queues": "Очереди задач",
+    "dlq": "DLQ задач",
+    "taskResults": "Результаты задач",
+    "schedules": "Расписания задач",
+    "errors": "Ошибки",
+    "profile": "Профиль",
+    "groups": {
+      "auth": "Авторизация",
+      "audit": "Аудит",
+      "platform": "Платформа",
+      "catalog": "Каталог"
+    },
+    "movies": "Фильмы"
+  },
+  "catalog": {
+    "movies": {
+      "title": "Фильмы",
+      "createMovie": "Добавить фильм",
+      "editMovie": "Редактировать фильм",
+      "movieTitle": "Название",
+      "slug": "Слаг",
+      "releaseDate": "Дата выхода",
+      "duration": "Длительность (мин)",
+      "rating": "Рейтинг",
+      "votes": "Голоса",
+      "description": "Описание",
+      "poster": "Постер",
+      "backdrop": "Фон",
+      "trailer": "Трейлер",
+      "genres": "Жанры",
+      "cast": "Актеры и съемочная группа",
+      "noMovies": "Фильмы не найдены",
+      "created": "Фильм успешно добавлен",
+      "updated": "Фильм успешно обновлен",
+      "deleted": "Фильм успешно удален",
+      "uploadPoster": "Загрузить постер",
+      "uploadBackdrop": "Загрузить фон",
+      "uploadTrailer": "Загрузить трейлер"
+    }
+  },
+  "notFound": {
+    "title": "Страница не найдена",
+    "description": "Страница, которую вы ищете, не существует.",
+    "backHome": "На главную"
+  },
+  "theme": {
+    "light": "Светлая",
+    "dark": "Тёмная",
+    "system": "Системная",
+    "toggle": "Переключить тему"
+  },
+  "language": {
+    "en": "English",
+    "ru": "Русский",
+    "uz": "O'zbekcha",
+    "switch": "Сменить язык"
+  }
+}

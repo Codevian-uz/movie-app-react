@@ -1,0 +1,347 @@
+{
+  "common": {
+    "actions": {
+      "submit": "Yuborish",
+      "cancel": "Bekor qilish",
+      "save": "Saqlash",
+      "delete": "O'chirish",
+      "edit": "Tahrirlash",
+      "back": "Orqaga",
+      "logOut": "Chiqish",
+      "create": "Yaratish",
+      "confirm": "Tasdiqlash",
+      "close": "Yopish",
+      "search": "Qidirish",
+      "filter": "Filtr",
+      "loadMore": "Ko'proq yuklash",
+      "refresh": "Yangilash",
+      "copy": "Nusxalash",
+      "copied": "Nusxalandi",
+      "purge": "Tozalash",
+      "requeue": "Qayta qo'shish",
+      "trigger": "Ishga tushirish",
+      "cleanup": "Tozalash",
+      "disable": "O'chirish",
+      "enable": "Yoqish",
+      "manage": "Boshqarish",
+      "next": "Keyingi",
+      "tryAgain": "Qayta urinish"
+    },
+    "labels": {
+      "loading": "Yuklanmoqda...",
+      "error": "Xatolik",
+      "success": "Muvaffaqiyat",
+      "noResults": "Natijalar topilmadi",
+      "appName": "Movie App",
+      "all": "Barchasi",
+      "active": "Faol",
+      "disabled": "O'chirilgan",
+      "current": "Joriy",
+      "status": "Holat",
+      "createdAt": "Yaratilgan",
+      "updatedAt": "Yangilangan",
+      "lastUpdated": "Oxirgi yangilanish",
+      "actions": "Amallar",
+      "name": "Nomi",
+      "id": "ID",
+      "yes": "Ha",
+      "no": "Yo'q",
+      "totalCount": "{count} natija"
+    },
+    "errors": {
+      "networkError": "Serverga ulanib bo'lmadi. Internet aloqangizni tekshiring va qayta urinib ko'ring.",
+      "unexpectedTitle": "Kutilmagan xatolik yuz berdi",
+      "unexpectedDescription": "Sahifa yuklanayotganda kutilmagan xatolik yuz berdi.",
+      "unknown": "Noma'lum xatolik"
+    },
+    "confirm": {
+      "title": "Ishonchingiz komilmi?",
+      "destructive": "Bu amalni qaytarib bo'lmaydi."
+    }
+  },
+  "welcome": {
+    "description": "Bu ommaviy sahifa o'rnini egallaydi. Hosil qilingan loyihalar bu sahifani o'z ilovasi bilan almashtiradi.",
+    "goToAdmin": "Admin panelga o'tish",
+    "placeholder": "Bu sahifa sizning ilovangiz bilan almashtirilishi kerak."
+  },
+  "auth": {
+    "login": {
+      "title": "Admin kirish",
+      "description": "Admin panelga kirish uchun ma'lumotlaringizni kiriting",
+      "username": "Foydalanuvchi nomi",
+      "password": "Parol",
+      "submit": "Kirish",
+      "error": "Kirish amalga oshmadi",
+      "bootstrapError": "Kirish muvaffaqiyatli, lekin foydalanuvchi ruxsatlarini yuklab bo'lmadi. Qayta urinib ko'ring.",
+      "validation": {
+        "usernameRequired": "Foydalanuvchi nomi majburiy",
+        "passwordRequired": "Parol majburiy"
+      }
+    },
+    "users": {
+      "title": "Foydalanuvchilar",
+      "createUser": "Foydalanuvchi yaratish",
+      "username": "Foydalanuvchi nomi",
+      "password": "Parol",
+      "newPassword": "Yangi parol",
+      "status": "Holat",
+      "lastActive": "Oxirgi faollik",
+      "editUser": "Tahrirlash",
+      "disableUser": "O'chirish",
+      "enableUser": "Yoqish",
+      "manageRoles": "Rollarni boshqarish",
+      "managePermissions": "Ruxsatlarni boshqarish",
+      "viewRoles": "Rollarni ko'rish",
+      "viewPermissions": "Ruxsatlarni ko'rish",
+      "viewSessions": "Sessiyalarni ko'rish",
+      "disableConfirm": "Bu foydalanuvchini o'chirishga ishonchingiz komilmi?",
+      "enableConfirm": "Bu foydalanuvchini yoqishga ishonchingiz komilmi?",
+      "created": "Foydalanuvchi yaratildi",
+      "updated": "Foydalanuvchi yangilandi",
+      "statusChanged": "Foydalanuvchi holati o'zgartirildi",
+      "roles": "Rollar",
+      "directPermissions": "To'g'ridan-to'g'ri ruxsatlar",
+      "noUsers": "Foydalanuvchilar topilmadi",
+      "keepCurrentPassword": "Joriyini saqlash uchun bo'sh qoldiring"
+    },
+    "roles": {
+      "title": "Rollar",
+      "createRole": "Rol yaratish",
+      "editRole": "Rolni tahrirlash",
+      "deleteRole": "Rolni o'chirish",
+      "roleName": "Rol nomi",
+      "managePermissions": "Ruxsatlarni boshqarish",
+      "deleteConfirm": "Bu rolni o'chirishga ishonchingiz komilmi?",
+      "created": "Rol yaratildi",
+      "updated": "Rol yangilandi",
+      "deleted": "Rol o'chirildi",
+      "permissionsUpdated": "Ruxsatlar yangilandi",
+      "noRoles": "Rollar topilmadi",
+      "roleHasUsers": "Bu rol foydalanuvchilarga tayinlangan. Avval barcha foydalanuvchilardan rolni olib tashlang."
+    },
+    "sessions": {
+      "title": "Sessiyalar",
+      "mySessions": "Mening sessiyalarim",
+      "allSessions": "Barcha sessiyalar",
+      "ipAddress": "IP manzil",
+      "browser": "Brauzer",
+      "lastUsed": "Oxirgi foydalanish",
+      "expires": "Tugash vaqti",
+      "revoke": "Bekor qilish",
+      "revokeAll": "Hammasini bekor qilish",
+      "revokeConfirm": "Bu sessiyani bekor qilishga ishonchingiz komilmi?",
+      "revokeAllConfirm": "Bu foydalanuvchining barcha sessiyalarini bekor qilishga ishonchingiz komilmi?",
+      "revoked": "Sessiya bekor qilindi",
+      "allRevoked": "Barcha sessiyalar bekor qilindi",
+      "searchByUserId": "Foydalanuvchi ID bo'yicha qidirish",
+      "noSessions": "Sessiyalar topilmadi"
+    },
+    "permissions": {
+      "title": "Ruxsatlar",
+      "updated": "Ruxsatlar yangilandi",
+      "rolesUpdated": "Rollar yangilandi"
+    },
+    "profile": {
+      "title": "Mening profilim",
+      "changePassword": "Parolni o'zgartirish",
+      "changePasswordDescription": "Hisob parolingizni yangilang",
+      "currentPassword": "Joriy parol",
+      "newPassword": "Yangi parol",
+      "confirmPassword": "Parolni tasdiqlang",
+      "passwordChanged": "Parol muvaffaqiyatli o'zgartirildi"
+    }
+  },
+  "audit": {
+    "actionLogs": {
+      "title": "Amallar jurnali",
+      "timestamp": "Vaqt",
+      "userId": "Foydalanuvchi ID",
+      "module": "Modul",
+      "operationId": "Operatsiya",
+      "tags": "Teglar",
+      "ipAddress": "IP manzil",
+      "traceId": "Trace ID",
+      "requestPayload": "So'rov ma'lumotlari",
+      "groupKey": "Guruh kaliti",
+      "invalidDateRange": "Loglarni yuklash uchun to'g'ri sana oralig'ini kiriting.",
+      "noLogs": "Amallar jurnali topilmadi",
+      "dateRange": "Sana oralig'i",
+      "from": "Dan",
+      "to": "Gacha"
+    },
+    "statusChanges": {
+      "title": "Holat o'zgarishlari",
+      "timestamp": "Vaqt",
+      "entityType": "Ob'ekt turi",
+      "entityId": "Ob'ekt ID",
+      "status": "Holat",
+      "actionLogId": "Amal jurnali ID",
+      "traceId": "Trace ID",
+      "noLogs": "Holat o'zgarishlari topilmadi"
+    }
+  },
+  "platform": {
+    "queues": {
+      "title": "Navbatlar",
+      "available": "Mavjud",
+      "inFlight": "Jarayonda",
+      "scheduled": "Rejalashtirilgan",
+      "inDlq": "DLQ da",
+      "avgAttempts": "O'rtacha urinishlar",
+      "p95Attempts": "P95 urinishlar",
+      "oldestTask": "Eng eski vazifa",
+      "purgeQueue": "Navbatni tozalash",
+      "purgeDlq": "DLQ ni tozalash",
+      "purgeConfirm": "Bu navbatdagi barcha vazifalar o'chiriladi. Davom etasizmi?",
+      "purgeDlqConfirm": "DLQ dagi barcha vazifalar o'chiriladi. Davom etasizmi?",
+      "noQueues": "Navbatlar topilmadi"
+    },
+    "dlq": {
+      "title": "Dead Letter Queue",
+      "queueName": "Navbat",
+      "operationId": "Operatsiya",
+      "error": "Xatolik",
+      "attempts": "Urinishlar",
+      "dlqAt": "DLQ vaqti",
+      "payload": "Ma'lumotlar",
+      "requeueConfirm": "Bu vazifani qayta urinish uchun qaytarasizmi?",
+      "requeued": "Vazifa qayta qo'shildi",
+      "noTasks": "DLQ vazifalari topilmadi"
+    },
+    "taskResults": {
+      "title": "Vazifa natijalari",
+      "queueName": "Navbat",
+      "operationId": "Operatsiya",
+      "taskGroupId": "Vazifa guruhi ID",
+      "scheduledAt": "Rejalashtirilgan",
+      "attempts": "Urinishlar",
+      "completedAt": "Bajarilgan vaqt",
+      "payload": "Ma'lumotlar",
+      "result": "Natija",
+      "cleanupResults": "Natijalarni tozalash",
+      "cleanupBefore": "Shu sanadan oldingi natijalarni o'chirish",
+      "deletedCount": "{count} ta natija o'chirildi",
+      "noResults": "Vazifa natijalari topilmadi"
+    },
+    "schedules": {
+      "title": "Jadvallar",
+      "operationId": "Operatsiya",
+      "queueName": "Navbat",
+      "cronExpression": "Cron",
+      "nextRun": "Keyingi ishga tushirish",
+      "lastRun": "Oxirgi ishga tushirish",
+      "isActive": "Faol",
+      "triggerNow": "Hozir ishga tushirish",
+      "triggerConfirm": "Bu jadvalni hozir ishga tushirasizmi?",
+      "triggered": "Jadval ishga tushirildi",
+      "noSchedules": "Jadvallar topilmadi"
+    },
+    "errors": {
+      "title": "Xatoliklar",
+      "code": "Kod",
+      "message": "Xabar",
+      "service": "Xizmat",
+      "operation": "Operatsiya",
+      "alerted": "Xabardor qilingan",
+      "createdAt": "Yaratilgan",
+      "cleanupErrors": "Xatoliklarni tozalash",
+      "cleanupBefore": "Shu sanadan oldingi xatoliklarni o'chirish",
+      "deletedCount": "{count} ta xatolik o'chirildi",
+      "noErrors": "Xatoliklar topilmadi"
+    },
+    "errorDetail": {
+      "title": "Xatolik tafsilotlari",
+      "details": "Tafsilotlar",
+      "traceId": "Trace ID",
+      "backToList": "Xatoliklar ro'yxatiga qaytish",
+      "key": "Kalit",
+      "value": "Qiymat"
+    },
+    "errorStats": {
+      "title": "Xatoliklar statistikasi",
+      "totalErrors": "Jami xatoliklar",
+      "byService": "Xizmat bo'yicha",
+      "byOperation": "Operatsiya bo'yicha (Top 10)",
+      "byCode": "Kod bo'yicha (Top 10)",
+      "noStats": "Xatoliklar statistikasi mavjud emas"
+    }
+  },
+  "dashboard": {
+    "title": "Boshqaruv paneli",
+    "welcome": "Movie App ga xush kelibsiz",
+    "authStats": "Autentifikatsiya",
+    "totalUsers": "Jami foydalanuvchilar",
+    "activeSessions": "Faol sessiyalar",
+    "tasks": "Vazifalar",
+    "taskSchedules": "Vazifa jadvallari",
+    "queuesHealth": "Navbatlar holati",
+    "errors": "Xatoliklar",
+    "totalErrors": "Jami xatoliklar",
+    "byOperation": "Operatsiya bo'yicha",
+    "byCode": "Kod bo'yicha"
+  },
+  "nav": {
+    "dashboard": "Boshqaruv paneli",
+    "users": "Foydalanuvchilar",
+    "roles": "Rollar",
+    "sessions": "Sessiyalar",
+    "actionLogs": "Amallar jurnali",
+    "statusChanges": "Holat o'zgarishlari",
+    "queues": "Vazifa navbatlari",
+    "dlq": "Vazifa DLQ",
+    "taskResults": "Vazifa natijalari",
+    "schedules": "Vazifa jadvallari",
+    "errors": "Xatoliklar",
+    "profile": "Profil",
+    "groups": {
+      "auth": "Autentifikatsiya",
+      "audit": "Audit",
+      "platform": "Platforma",
+      "catalog": "Katalog"
+    },
+    "movies": "Filmlar"
+  },
+  "catalog": {
+    "movies": {
+      "title": "Filmlar",
+      "createMovie": "Film qo'shish",
+      "editMovie": "Filmni tahrirlash",
+      "movieTitle": "Nomi",
+      "slug": "Slag",
+      "releaseDate": "Chiqish sanasi",
+      "duration": "Davomiyligi (daq)",
+      "rating": "Reyting",
+      "votes": "Ovozlar",
+      "description": "Tavsif",
+      "poster": "Poster",
+      "backdrop": "Fon",
+      "trailer": "Treyler",
+      "genres": "Janrlar",
+      "cast": "Aktyorlar va jamoa",
+      "noMovies": "Filmlar topilmadi",
+      "created": "Film muvaffaqiyatli qo'shildi",
+      "updated": "Film muvaffaqiyatli yangilandi",
+      "deleted": "Film muvaffaqiyatli o'chirildi",
+      "uploadPoster": "Posterni yuklash",
+      "uploadBackdrop": "Fonni yuklash",
+      "uploadTrailer": "Treylerni yuklash"
+    }
+  },
+  "notFound": {
+    "title": "Sahifa topilmadi",
+    "description": "Siz qidirayotgan sahifa mavjud emas.",
+    "backHome": "Bosh sahifaga qaytish"
+  },
+  "theme": {
+    "light": "Yorug'",
+    "dark": "Qorong'u",
+    "system": "Tizim",
+    "toggle": "Mavzuni almashtirish"
+  },
+  "language": {
+    "en": "English",
+    "ru": "Русский",
+    "uz": "O'zbekcha",
+    "switch": "Tilni almashtirish"
+  }
+}

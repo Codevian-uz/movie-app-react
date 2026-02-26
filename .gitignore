@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+
+# Build
+dist/
+build/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+coverage/
+test-results/
+playwright-report/
+blob-report/
+tests/e2e/.auth/
+
+# E2E backend clone
+*tmp/
+
+# Misc
+*.log
+npm-debug.log*
+
+# TanStack Router generated route tree
+src/routeTree.gen.ts
+
+# Workfiles
+workfile.*

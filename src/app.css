@@ -1,0 +1,352 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar-background);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-glass-bg: var(--glass-bg);
+  --color-glass-border: var(--glass-border);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  :root {
+    --background: hsl(0 0% 100%);
+    --foreground: hsl(0 0% 9%);
+    --card: hsl(0 0% 100%);
+    --card-foreground: hsl(0 0% 9%);
+    --popover: hsl(0 0% 100%);
+    --popover-foreground: hsl(0 0% 9%);
+    --primary: hsl(174.7 83.9% 31.6%);
+    --primary-foreground: hsl(0 0% 100%);
+    --secondary: hsl(0 0% 96.1%);
+    --secondary-foreground: hsl(0 0% 9%);
+    --muted: hsl(0 0% 96.1%);
+    --muted-foreground: hsl(0 0% 45.1%);
+    --accent: hsl(166.2 76.5% 96.7%);
+    --accent-foreground: hsl(175.3 77.4% 26.1%);
+    --destructive: hsl(0 84.2% 60.2%);
+    --destructive-foreground: hsl(0 0% 98%);
+    --border: hsl(0 0% 89.8%);
+    --input: hsl(0 0% 89.8%);
+    --ring: hsl(174.7 83.9% 31.6%);
+    --radius: 0.5rem;
+    --chart-1: hsl(174.7 83.9% 31.6%);
+    --chart-2: hsl(173.4 80.4% 40%);
+    --chart-3: hsl(197 37% 24%);
+    --chart-4: hsl(43 74% 66%);
+    --chart-5: hsl(27 87% 67%);
+
+    --sidebar-background: hsl(0 0% 98%);
+    --sidebar-foreground: hsl(0 0% 9%);
+    --sidebar-primary: hsl(174.7 83.9% 31.6%);
+    --sidebar-primary-foreground: hsl(0 0% 100%);
+    --sidebar-accent: hsl(166.2 76.5% 96.7%);
+    --sidebar-accent-foreground: hsl(175.3 77.4% 26.1%);
+    --sidebar-border: hsl(0 0% 89.8%);
+    --sidebar-ring: hsl(174.7 83.9% 31.6%);
+  }
+
+  .dark {
+    --background: hsl(0 0% 11%);
+    --foreground: hsl(0 0% 93%);
+    --card: hsl(0 0% 11%);
+    --card-foreground: hsl(0 0% 93%);
+    --popover: hsl(0 0% 11%);
+    --popover-foreground: hsl(0 0% 93%);
+    --primary: hsl(173.4 80.4% 40%);
+    --primary-foreground: hsl(176.5 75.6% 9.8%);
+    --secondary: hsl(0 0% 17%);
+    --secondary-foreground: hsl(0 0% 93%);
+    --muted: hsl(0 0% 17%);
+    --muted-foreground: hsl(0 0% 63.9%);
+    --accent: hsl(0 0% 17%);
+    --accent-foreground: hsl(0 0% 93%);
+    --destructive: hsl(0 62.8% 30.6%);
+    --destructive-foreground: hsl(0 0% 93%);
+    --border: hsl(0 0% 17%);
+    --input: hsl(0 0% 17%);
+    --ring: hsl(173.4 80.4% 40%);
+
+    --sidebar-background: hsl(0 0% 9%);
+    --sidebar-foreground: hsl(0 0% 93%);
+    --sidebar-primary: hsl(173.4 80.4% 40%);
+    --sidebar-primary-foreground: hsl(176.5 75.6% 9.8%);
+    --sidebar-accent: hsl(0 0% 17%);
+    --sidebar-accent-foreground: hsl(0 0% 93%);
+    --sidebar-border: hsl(0 0% 17%);
+    --sidebar-ring: hsl(173.4 80.4% 40%);
+  }
+
+  /* ── Liquid Glass: Admin Scope ── */
+  [data-admin] {
+    /* Glass material */
+    --glass-blur: 16px;
+    --glass-blur-heavy: 28px;
+    --glass-bg: rgba(255, 255, 255, 0.55);
+    --glass-bg-subtle: rgba(255, 255, 255, 0.35);
+    --glass-border: rgba(0, 0, 0, 0.07);
+    --glass-highlight: rgba(255, 255, 255, 0.5);
+    --glass-inner-glow: rgba(255, 255, 255, 0.6);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.03);
+    --glass-radius: 1rem;
+
+    /* Ambient background */
+    --admin-bg-from: hsl(200 25% 91%);
+    --admin-bg-via: hsl(174 28% 88%);
+    --admin-bg-to: hsl(225 22% 91%);
+    --admin-bg-blob-1: hsl(174.7 83.9% 31.6% / 0.15);
+    --admin-bg-blob-2: hsl(220 60% 60% / 0.1);
+    --admin-bg-blob-3: hsl(280 50% 65% / 0.08);
+
+    /* Override shadcn tokens for glass context */
+    --background: transparent;
+    --card: var(--glass-bg);
+    --card-foreground: hsl(0 0% 15%);
+    --popover: rgba(255, 255, 255, 0.82);
+    --popover-foreground: hsl(0 0% 9%);
+    --sidebar-background: var(--glass-bg-subtle);
+    --sidebar-border: var(--glass-border);
+    --border: rgba(0, 0, 0, 0.07);
+    --input: rgba(0, 0, 0, 0.04);
+
+    /* Typography */
+    font-family: 'Outfit', sans-serif;
+  }
+
+  .dark [data-admin],
+  [data-admin]:is(.dark *) {
+    --glass-bg: rgba(255, 255, 255, 0.08);
+    --glass-bg-subtle: rgba(255, 255, 255, 0.04);
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --glass-highlight: rgba(255, 255, 255, 0.12);
+    --glass-inner-glow: rgba(255, 255, 255, 0.2);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.15);
+
+    --admin-bg-from: hsl(220 15% 8%);
+    --admin-bg-via: hsl(200 12% 10%);
+    --admin-bg-to: hsl(240 10% 9%);
+    --admin-bg-blob-1: hsl(174.7 83.9% 31.6% / 0.08);
+    --admin-bg-blob-2: hsl(220 60% 50% / 0.06);
+    --admin-bg-blob-3: hsl(280 40% 50% / 0.04);
+
+    --card: var(--glass-bg);
+    --card-foreground: hsl(0 0% 93%);
+    --popover: rgba(30, 30, 30, 0.8);
+    --popover-foreground: hsl(0 0% 93%);
+    --sidebar-background: var(--glass-bg);
+    --sidebar-border: var(--glass-border);
+    --border: rgba(255, 255, 255, 0.1);
+    --input: rgba(255, 255, 255, 0.08);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  /* Tailwind v4 preflight does not set cursor:pointer on buttons.
+     Restore it globally for all interactive button elements. */
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+/* ── Liquid Glass: Utility Classes ── */
+@layer components {
+  /* Base glass panel */
+  .glass-panel {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
+    border-radius: var(--glass-radius);
+    box-shadow:
+      var(--glass-shadow),
+      inset 0 1px 0 var(--glass-highlight);
+    transition:
+      box-shadow 0.3s ease,
+      background 0.3s ease;
+  }
+
+  /* Specular highlight overlay */
+  .glass-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent 60%);
+    pointer-events: none;
+  }
+
+  /* Glass panel hover state */
+  .glass-panel-hover:hover {
+    background: rgba(255, 255, 255, 0.65);
+    box-shadow:
+      var(--glass-shadow),
+      inset 0 1px 0 var(--glass-highlight),
+      0 0 0 1px rgba(0, 0, 0, 0.04);
+  }
+  .dark .glass-panel-hover:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  /* Admin ambient background */
+  .admin-ambient-bg {
+    background: linear-gradient(
+      135deg,
+      var(--admin-bg-from),
+      var(--admin-bg-via),
+      var(--admin-bg-to)
+    );
+    position: relative;
+  }
+  .admin-ambient-bg::before,
+  .admin-ambient-bg::after {
+    content: '';
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .admin-ambient-bg::before {
+    width: 500px;
+    height: 500px;
+    top: -100px;
+    right: -100px;
+    background: var(--admin-bg-blob-1);
+  }
+  .admin-ambient-bg::after {
+    width: 400px;
+    height: 400px;
+    bottom: -80px;
+    left: 10%;
+    background: var(--admin-bg-blob-2);
+  }
+
+  /* Glass sidebar specific */
+  .glass-sidebar {
+    background: var(--glass-bg-subtle);
+    backdrop-filter: blur(var(--glass-blur-heavy));
+    -webkit-backdrop-filter: blur(var(--glass-blur-heavy));
+    border-right: 1px solid var(--glass-border);
+  }
+
+  /* Glass header bar */
+  .glass-header {
+    background: var(--glass-bg-subtle);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border-bottom: 1px solid var(--glass-border);
+  }
+}
+
+/* ── Liquid Glass: shadcn/ui Component Overrides ── */
+
+/* Sidebar glass treatment */
+[data-admin] [data-sidebar='sidebar'] {
+  background: var(--glass-bg-subtle);
+  backdrop-filter: blur(var(--glass-blur-heavy));
+  -webkit-backdrop-filter: blur(var(--glass-blur-heavy));
+  border-right-color: var(--glass-border);
+}
+
+/* Cards become glass panels */
+[data-admin] .rounded-xl.border.bg-card {
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-color: var(--glass-border);
+  box-shadow:
+    var(--glass-shadow),
+    inset 0 1px 0 var(--glass-highlight);
+}
+
+/* Dialogs / sheet overlays */
+[data-admin] [data-state='open'][role='dialog'] {
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+}
+
+/* Table header row — subtle glass */
+[data-admin] thead tr {
+  background: var(--glass-bg-subtle);
+}
+
+/* Input fields — glass inset look */
+[data-admin] input,
+[data-admin] select,
+[data-admin] textarea {
+  background: var(--input);
+  backdrop-filter: blur(8px);
+  border-color: var(--glass-border);
+}
+
+/* Dropdown menus / popover content */
+[data-admin] [data-radix-popper-content-wrapper] [role='menu'],
+[data-admin] [data-radix-popper-content-wrapper] [data-radix-collection-item] {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Accessibility: reduced transparency fallback */
+@media (prefers-reduced-transparency: reduce) {
+  [data-admin] {
+    --glass-bg: rgba(255, 255, 255, 0.92);
+    --glass-bg-subtle: rgba(255, 255, 255, 0.88);
+    --glass-border: rgba(0, 0, 0, 0.1);
+    --glass-blur: 0px;
+    --glass-blur-heavy: 0px;
+  }
+  .dark [data-admin] {
+    --glass-bg: rgba(30, 30, 30, 0.92);
+    --glass-bg-subtle: rgba(25, 25, 25, 0.88);
+    --glass-border: rgba(255, 255, 255, 0.12);
+  }
+}
