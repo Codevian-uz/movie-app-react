@@ -16,7 +16,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { getFileUrl, getStreamUrl, uploadFile } from '@/features/filevault'
+import { getFileUrl, getStreamUrl, uploadFile, useAuthenticatedFile } from '@/features/filevault'
 import { useTranslation } from '@/lib/i18n'
 
 const movieFormSchema = z.object({
@@ -25,6 +25,7 @@ const movieFormSchema = z.object({
   poster_url: z.string().optional(),
   backdrop_url: z.string().optional(),
   trailer_url: z.string().optional(),
+  video_url: z.string().optional(),
   release_date: z.string().optional(),
   duration_minutes: z.coerce.number().min(0).optional(),
   genre_ids: z.array(z.string()).default([]),
@@ -48,6 +49,7 @@ export function MovieForm({ defaultValues, onSubmit, isSubmitting }: MovieFormPr
       poster_url: '',
       backdrop_url: '',
       trailer_url: '',
+      video_url: '',
       release_date: '',
       duration_minutes: 0,
       genre_ids: [],
@@ -142,10 +144,11 @@ export function MovieForm({ defaultValues, onSubmit, isSubmitting }: MovieFormPr
           )}
         />
 
-        <div className="grid gap-6 sm:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           <FileUploadField name="poster_url" label={t('catalog.movies.poster')} form={form} />
           <FileUploadField name="backdrop_url" label={t('catalog.movies.backdrop')} form={form} />
           <FileUploadField name="trailer_url" label={t('catalog.movies.trailer')} form={form} />
+          <FileUploadField name="video_url" label={t('catalog.movies.video')} form={form} />
         </div>
 
         <div className="flex justify-end gap-3">
@@ -164,13 +167,22 @@ function FileUploadField({
   label,
   form,
 }: {
-  name: 'poster_url' | 'backdrop_url' | 'trailer_url'
+  name: 'poster_url' | 'backdrop_url' | 'trailer_url' | 'video_url'
   label: string
   form: UseFormReturn<MovieFormValues>
 }) {
   const [isUploading, setIsUploading] = useState(false)
+  const [localPreview, setLocalPreview] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const value = form.watch(name)
+  
+  // Only fetch from backend if we don't have a local preview
+  // and the value looks like a backend path (not a blob/data URL)
+  const shouldFetch = value !== '' && value !== undefined && localPreview === null && !value.startsWith('blob:')
+  const { objectUrl, isLoading: isFetching } = useAuthenticatedFile(shouldFetch ? value : null)
+
+  // Use local preview if available, otherwise use the authenticated object URL
+  const displayUrl = localPreview ?? objectUrl
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
@@ -178,14 +190,21 @@ function FileUploadField({
       return
     }
 
+    // Create local preview immediately
+    const localUrl = URL.createObjectURL(file)
+    setLocalPreview(localUrl)
+
     setIsUploading(true)
     try {
       const res = await uploadFile(file)
-      const url = name === 'trailer_url' ? getStreamUrl(res.id) : getFileUrl(res.id)
+      const url =
+        name === 'trailer_url' || name === 'video_url' ? getStreamUrl(res.id) : getFileUrl(res.id)
       form.setValue(name, url)
       toast.success('File uploaded')
     } catch {
       toast.error('Upload failed')
+      setLocalPreview(null)
+      URL.revokeObjectURL(localUrl)
     } finally {
       setIsUploading(false)
     }
@@ -197,12 +216,16 @@ function FileUploadField({
       <div className="flex flex-col gap-2">
         {value !== undefined && value !== '' ? (
           <div className="bg-muted relative aspect-video w-full overflow-hidden rounded-md border">
-            {name === 'trailer_url' ? (
+            {isFetching ? (
+              <div className="flex h-full items-center justify-center">
+                <Loader2 className="size-4 animate-spin" />
+              </div>
+            ) : name === 'trailer_url' || name === 'video_url' ? (
               <div className="flex h-full items-center justify-center text-xs text-center px-2">
-                Trailer attached (streaming enabled)
+                {name === 'trailer_url' ? 'Trailer' : 'Movie'} attached (streaming enabled)
               </div>
             ) : (
-              <img src={value} alt={label} className="h-full w-full object-cover" />
+              <img src={displayUrl ?? ''} alt={label} className="h-full w-full object-cover" />
             )}
             <Button
               type="button"
@@ -211,6 +234,10 @@ function FileUploadField({
               className="absolute top-1 right-1 size-6"
               onClick={() => {
                 form.setValue(name, '')
+                if (localPreview !== null) {
+                  URL.revokeObjectURL(localPreview)
+                  setLocalPreview(null)
+                }
               }}
             >
               <X className="size-4" />
@@ -243,7 +270,7 @@ function FileUploadField({
           onChange={(e) => {
             void handleFileChange(e)
           }}
-          accept={name === 'trailer_url' ? 'video/*' : 'image/*'}
+          accept={name === 'trailer_url' || name === 'video_url' ? 'video/*' : 'image/*'}
         />
       </div>
     </div>

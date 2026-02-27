@@ -324,7 +324,9 @@
       "deleted": "Film muvaffaqiyatli o'chirildi",
       "uploadPoster": "Posterni yuklash",
       "uploadBackdrop": "Fonni yuklash",
-      "uploadTrailer": "Treylerni yuklash"
+      "uploadTrailer": "Treylerni yuklash",
+      "video": "Film fayli",
+      "uploadVideo": "Filmni yuklash"
     }
   },
   "notFound": {

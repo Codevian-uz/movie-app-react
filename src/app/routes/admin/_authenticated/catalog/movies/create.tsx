@@ -33,7 +33,10 @@ function CreateMoviePage() {
             : undefined,
         poster_url: values.poster_url !== '' ? values.poster_url : undefined,
         backdrop_url: values.backdrop_url !== '' ? values.backdrop_url : undefined,
-        trailer_url: values.trailer_url !== '' ? values.trailer_url : undefined,
+        // Map video_url to trailer_url for the backend if video_url is provided,
+        // otherwise use the trailer_url. This is because the backend currently
+        // only has a trailer_url field for video content.
+        trailer_url: (values.video_url !== '' ? values.video_url : values.trailer_url) || undefined,
         description: values.description !== '' ? values.description : undefined,
       })
       toast.success(t('catalog.movies.created'))

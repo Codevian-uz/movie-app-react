@@ -324,7 +324,9 @@
       "deleted": "Movie deleted successfully",
       "uploadPoster": "Upload Poster",
       "uploadBackdrop": "Upload Backdrop",
-      "uploadTrailer": "Upload Trailer"
+      "uploadTrailer": "Upload Trailer",
+      "video": "Movie File",
+      "uploadVideo": "Upload Movie"
     }
   },
   "notFound": {

@@ -89,7 +89,7 @@ function ChangePasswordCard() {
   async function onSubmit(values: z.infer<typeof changePasswordSchema>) {
     traceIdRef.current = ''
     try {
-      await apiClient.post('/v1/auth/change-my-password', {
+      await apiClient.post('v1/auth/change-my-password', {
         current_password: values.current_password,
         new_password: values.new_password,
       })
