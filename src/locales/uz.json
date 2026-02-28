@@ -304,10 +304,10 @@
   "catalog": {
     "movies": {
       "title": "Filmlar",
-      "createMovie": "Film qo'shish",
+      "createMovie": "Film yaratish",
       "editMovie": "Filmni tahrirlash",
       "movieTitle": "Nomi",
-      "slug": "Slag",
+      "slug": "Slug",
       "releaseDate": "Chiqish sanasi",
       "duration": "Davomiyligi (daq)",
       "rating": "Reyting",
@@ -319,7 +319,7 @@
       "genres": "Janrlar",
       "cast": "Aktyorlar va jamoa",
       "noMovies": "Filmlar topilmadi",
-      "created": "Film muvaffaqiyatli qo'shildi",
+      "created": "Film muvaffaqiyatli yaratildi",
       "updated": "Film muvaffaqiyatli yangilandi",
       "deleted": "Film muvaffaqiyatli o'chirildi",
       "uploadPoster": "Posterni yuklash",
@@ -327,6 +327,39 @@
       "uploadTrailer": "Treylerni yuklash",
       "video": "Film fayli",
       "uploadVideo": "Filmni yuklash"
+    },
+    "genres": {
+      "title": "Janrlar",
+      "createGenre": "Janr yaratish",
+      "editGenre": "Janrni tahrirlash",
+      "genreName": "Nomi",
+      "slug": "Slug",
+      "created": "Janr muvaffaqiyatli yaratildi",
+      "updated": "Janr muvaffaqiyatli yangilandi",
+      "deleted": "Janr muvaffaqiyatli o'chirildi",
+      "noGenres": "Janrlar topilmadi",
+      "deleteConfirm": "Ushbu janrni o'chirishga aminmisiz?"
+    },
+    "people": {
+      "title": "Odamlar",
+      "createPerson": "Shaxs yaratish",
+      "editPerson": "Shaxsni tahrirlash",
+      "fullName": "To'liq ism",
+      "bio": "Biografiya",
+      "photo": "Rasm",
+      "created": "Shaxs muvaffaqiyatli yaratildi",
+      "updated": "Shaxs muvaffaqiyatli yangilandi",
+      "deleted": "Shaxs muvaffaqiyatli o'chirildi",
+      "noPeople": "Odamlar topilmadi",
+      "deleteConfirm": "Ushbu shaxsni o'chirishga aminmisiz?"
+    },
+    "credits": {
+      "title": "Kreditlar",
+      "addCredit": "Kredit qo'shish",
+      "role": "Rol",
+      "characterName": "Personaj ismi",
+      "displayOrder": "Ko'rsatish tartibi",
+      "person": "Shaxs"
     }
   },
   "notFound": {

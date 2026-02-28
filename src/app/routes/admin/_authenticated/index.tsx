@@ -49,7 +49,7 @@ function DashboardPage() {
   }, 0)
 
   const queuesHealthText =
-    queues !== undefined && queues !== null
+    queues !== undefined
       ? totalDlqItems > 0
         ? `${String(queues.length)} queues / ${String(totalDlqItems)} in DLQ`
         : `${String(queues.length)} queues`
@@ -116,7 +116,9 @@ function DashboardPage() {
                 <Calendar className="text-muted-foreground size-4" />
               </CardHeader>
               <CardContent>
-                <p className="text-3xl font-bold">{schedules && schedules.length ? schedules.length : '-'}</p>
+                <p className="text-3xl font-bold">
+                  {(schedules?.length ?? 0) > 0 ? String(schedules?.length) : '-'}
+                </p>
               </CardContent>
             </Card>
 

@@ -327,6 +327,39 @@
       "uploadTrailer": "Upload Trailer",
       "video": "Movie File",
       "uploadVideo": "Upload Movie"
+    },
+    "genres": {
+      "title": "Genres",
+      "createGenre": "Create Genre",
+      "editGenre": "Edit Genre",
+      "genreName": "Name",
+      "slug": "Slug",
+      "created": "Genre created successfully",
+      "updated": "Genre updated successfully",
+      "deleted": "Genre deleted successfully",
+      "noGenres": "No genres found",
+      "deleteConfirm": "Are you sure you want to delete this genre?"
+    },
+    "people": {
+      "title": "People",
+      "createPerson": "Create Person",
+      "editPerson": "Edit Person",
+      "fullName": "Full Name",
+      "bio": "Bio",
+      "photo": "Photo",
+      "created": "Person created successfully",
+      "updated": "Person updated successfully",
+      "deleted": "Person deleted successfully",
+      "noPeople": "No people found",
+      "deleteConfirm": "Are you sure you want to delete this person?"
+    },
+    "credits": {
+      "title": "Credits",
+      "addCredit": "Add Credit",
+      "role": "Role",
+      "characterName": "Character Name",
+      "displayOrder": "Display Order",
+      "person": "Person"
     }
   },
   "notFound": {

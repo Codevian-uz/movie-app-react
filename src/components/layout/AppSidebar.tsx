@@ -72,6 +72,18 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
           icon: Film,
           permission: PERMISSIONS.CATALOG_MOVIE_READ,
         },
+        {
+          title: t('catalog.genres.title'),
+          url: '/admin/catalog/genres',
+          icon: ListChecks,
+          permission: PERMISSIONS.CATALOG_GENRE_READ,
+        },
+        {
+          title: t('catalog.people.title'),
+          url: '/admin/catalog/people',
+          icon: Users,
+          permission: PERMISSIONS.CATALOG_PERSON_READ,
+        },
       ],
     },
     {

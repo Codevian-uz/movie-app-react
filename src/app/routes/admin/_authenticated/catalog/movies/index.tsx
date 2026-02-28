@@ -1,14 +1,16 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Plus } from 'lucide-react'
+import { toast } from 'sonner'
 import { RouteErrorBoundary } from '@/components/errors/RouteErrorBoundary'
 import { TablePagination } from '@/components/TablePagination'
 import { Button } from '@/components/ui/button'
 import { DEFAULT_PAGE_SIZE } from '@/config/constants'
-import { moviesQueryOptions } from '@/features/catalog'
+import { moviesQueryOptions, useDeleteMovie } from '@/features/catalog'
 import { MoviesTable } from '@/features/catalog/components/Movies/MoviesTable'
 import { useTranslation } from '@/lib/i18n'
 import { useAuthStore } from '@/stores/auth.store'
+import { ApiException } from '@/types/api.types'
 import { PERMISSIONS } from '@/types/permissions'
 import { requirePermission } from '../../-route-guards'
 
@@ -44,7 +46,23 @@ function MoviesPage() {
     placeholderData: keepPreviousData,
   })
 
+  const deleteMovie = useDeleteMovie()
+
   const canManage = hasPermission(PERMISSIONS.CATALOG_MOVIE_MANAGE)
+
+  async function handleDelete(id: string) {
+    // eslint-disable-next-line no-alert
+    if (!confirm(t('common.confirm.destructive'))) {
+      return
+    }
+    try {
+      await deleteMovie.mutateAsync(id)
+      toast.success(t('catalog.movies.deleted'))
+    } catch (error: unknown) {
+      const message = error instanceof ApiException ? error.message : 'Failed to delete movie'
+      toast.error(message)
+    }
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -66,7 +84,12 @@ function MoviesPage() {
       </div>
 
       <div className={isFetching ? 'opacity-50' : ''}>
-        <MoviesTable movies={moviesResponse?.items ?? []} />
+        <MoviesTable
+          movies={moviesResponse?.items ?? []}
+          onDelete={(id) => {
+            void handleDelete(id)
+          }}
+        />
       </div>
 
       <TablePagination

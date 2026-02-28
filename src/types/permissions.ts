@@ -15,6 +15,10 @@ export const PERMISSIONS = {
   ALERT_MANAGE: 'alert:manage',
   CATALOG_MOVIE_READ: 'catalog:movie:read',
   CATALOG_MOVIE_MANAGE: 'catalog:movie:manage',
+  CATALOG_GENRE_READ: 'catalog:genre:read',
+  CATALOG_GENRE_MANAGE: 'catalog:genre:manage',
+  CATALOG_PERSON_READ: 'catalog:person:read',
+  CATALOG_PERSON_MANAGE: 'catalog:person:manage',
 } as const
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS]
@@ -39,5 +43,12 @@ export const PERMISSION_GROUPS: Record<string, Permission[]> = {
     PERMISSIONS.ALERT_VIEW,
     PERMISSIONS.ALERT_MANAGE,
   ],
-  catalog: [PERMISSIONS.CATALOG_MOVIE_READ, PERMISSIONS.CATALOG_MOVIE_MANAGE],
+  catalog: [
+    PERMISSIONS.CATALOG_MOVIE_READ,
+    PERMISSIONS.CATALOG_MOVIE_MANAGE,
+    PERMISSIONS.CATALOG_GENRE_READ,
+    PERMISSIONS.CATALOG_GENRE_MANAGE,
+    PERMISSIONS.CATALOG_PERSON_READ,
+    PERMISSIONS.CATALOG_PERSON_MANAGE,
+  ],
 }

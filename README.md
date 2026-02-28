@@ -5,13 +5,15 @@ A professional, enterprise-grade platform for the Movie industry. This project i
 ## 🚀 Key Modules & Features
 
 ### 🛠 Admin Dashboard (Current)
+
 - **Movie Catalog**: Full CRUD operations for movies with support for descriptions, release dates, and durations.
-- **Media System**: 
-    - **Posters & Backdrops**: Easy image upload and preview.
-    - **Streaming trailers**: Integrated with backend streaming for high-performance video playback and seeking.
+- **Media System**:
+  - **Posters & Backdrops**: Easy image upload and preview.
+  - **Streaming trailers**: Integrated with backend streaming for high-performance video playback and seeking.
 - **Categorization**: Manage genres and credits (cast & crew) associations.
 
 ### 🔐 Platform Core
+
 - **Advanced Auth**: Secure authentication with role-based access control (RBAC).
 - **Audit Logging**: Tracking of system actions for security and transparency.
 - **Filevault**: Centralized file management and media delivery service.
@@ -40,12 +42,14 @@ A professional, enterprise-grade platform for the Movie industry. This project i
 ### Installation
 
 1. Clone the repository:
+
    ```bash
    git clone <repository-url>
    cd movie-app-react
    ```
 
 2. Install dependencies:
+
    ```bash
    pnpm install
    ```

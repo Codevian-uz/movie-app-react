@@ -16,26 +16,29 @@ export async function uploadFile(file: File): Promise<UploadResponse> {
 
   const response = await apiClient.post<UploadResponse>('v1/filevault/upload', formData, {
     headers: {
-      'Content-Type': undefined,
+      'Content-Type': 'multipart/form-data',
     },
   })
   return response.data
 }
 
+function getBaseApiUrl(): string {
+  if (env.apiBaseUrl.startsWith('http')) {
+    return env.apiBaseUrl
+  }
+  const origin = typeof window !== 'undefined' ? window.location.origin : ''
+  const prefix = env.apiBaseUrl.startsWith('/') ? '' : '/'
+  return `${origin}${prefix}${env.apiBaseUrl}`
+}
+
 export function getFileUrl(id: string): string {
-  // Return relative path without /api prefix, as apiClient will add it
-  return `v1/filevault/download?id=${id}`
+  return `${getBaseApiUrl()}/v1/filevault/download?id=${id}`
 }
 
 export function getStreamUrl(id: string): string {
-  // Return relative path without /api prefix, as apiClient will add it
-  return `v1/filevault/stream?id=${id}`
+  return `${getBaseApiUrl()}/v1/filevault/stream?id=${id}`
 }
 
-/**
- * Hook to fetch a protected file URL using the stored access token
- * and return a local object URL that can be used in <img> or <video> tags.
- */
 export function useAuthenticatedFile(protectedUrl: string | null | undefined) {
   const [objectUrl, setObjectUrl] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -47,7 +50,6 @@ export function useAuthenticatedFile(protectedUrl: string | null | undefined) {
       return
     }
 
-    // If it's already a blob or data URL, use it directly
     if (protectedUrl.startsWith('blob:') || protectedUrl.startsWith('data:')) {
       setObjectUrl(protectedUrl)
       return
@@ -58,18 +60,21 @@ export function useAuthenticatedFile(protectedUrl: string | null | undefined) {
 
     const fetchFile = async () => {
       try {
-        const response = await apiClient.get(protectedUrl, {
+        const response = await apiClient.get<Blob>(protectedUrl, {
           responseType: 'blob',
         })
         if (isMounted) {
           const url = URL.createObjectURL(response.data)
           setObjectUrl(url)
         }
-      } catch (error) {
-        console.error('Failed to fetch authenticated file:', error)
-        if (isMounted) setObjectUrl(null)
+      } catch {
+        if (isMounted) {
+          setObjectUrl(null)
+        }
       } finally {
-        if (isMounted) setIsLoading(false)
+        if (isMounted) {
+          setIsLoading(false)
+        }
       }
     }
 
@@ -77,9 +82,6 @@ export function useAuthenticatedFile(protectedUrl: string | null | undefined) {
 
     return () => {
       isMounted = false
-      if (objectUrl !== null && objectUrl.startsWith('blob:')) {
-        URL.revokeObjectURL(objectUrl)
-      }
     }
   }, [protectedUrl, accessToken])
 

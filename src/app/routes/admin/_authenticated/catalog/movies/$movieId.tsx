@@ -1,31 +1,36 @@
-import { createFileRoute, useNavigate, Link } from '@tanstack/react-router'
-import { ChevronLeft } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { ChevronLeft, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { RouteErrorBoundary } from '@/components/errors/RouteErrorBoundary'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { useCreateMovie } from '@/features/catalog'
+import { movieQueryOptions, useUpdateMovie } from '@/features/catalog'
 import { MovieForm, type MovieFormValues } from '@/features/catalog/components/Movies/MovieForm'
 import { useTranslation } from '@/lib/i18n'
 import { PERMISSIONS } from '@/types/permissions'
 import { requirePermission } from '../../-route-guards'
 
-export const Route = createFileRoute('/admin/_authenticated/catalog/movies/create')({
+export const Route = createFileRoute('/admin/_authenticated/catalog/movies/$movieId')({
   beforeLoad: () => {
     requirePermission(PERMISSIONS.CATALOG_MOVIE_MANAGE)
   },
   errorComponent: (props) => <RouteErrorBoundary {...props} backTo="/admin/catalog/movies" />,
-  component: CreateMoviePage,
+  component: EditMoviePage,
 })
 
-function CreateMoviePage() {
+function EditMoviePage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const createMovie = useCreateMovie()
+  const { movieId } = Route.useParams()
+  const updateMovie = useUpdateMovie()
+
+  const { data: movie, isLoading } = useQuery(movieQueryOptions(movieId))
 
   async function onSubmit(values: MovieFormValues) {
     try {
-      await createMovie.mutateAsync({
+      await updateMovie.mutateAsync({
+        id: movieId,
         ...values,
         release_date:
           values.release_date !== undefined && values.release_date !== ''
@@ -37,14 +42,26 @@ function CreateMoviePage() {
         video_url: values.video_url !== '' ? values.video_url : undefined,
         description: values.description !== '' ? values.description : undefined,
       })
-      toast.success(t('catalog.movies.created'))
+      toast.success(t('catalog.movies.updated'))
       void navigate({
         to: '/admin/catalog/movies',
         search: { page: undefined, pageSize: undefined },
       })
     } catch {
-      toast.error('Failed to create movie')
+      toast.error('Failed to update movie')
     }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <Loader2 className="size-8 animate-spin" />
+      </div>
+    )
+  }
+
+  if (movie === undefined) {
+    return <div>Movie not found</div>
   }
 
   return (
@@ -56,7 +73,7 @@ function CreateMoviePage() {
           </Link>
         </Button>
         <h1 className="text-xl font-semibold tracking-tight md:text-2xl">
-          {t('catalog.movies.createMovie')}
+          {t('catalog.movies.editMovie')}
         </h1>
       </div>
 
@@ -65,7 +82,27 @@ function CreateMoviePage() {
           <CardTitle>{t('catalog.movies.movieTitle')}</CardTitle>
         </CardHeader>
         <CardContent>
-          <MovieForm onSubmit={onSubmit} isSubmitting={createMovie.isPending} />
+          <MovieForm
+            defaultValues={{
+              title: movie.title,
+              description: movie.description ?? '',
+              release_date: movie.release_date?.split('T')[0] ?? '',
+              duration_minutes: movie.duration_minutes ?? 0,
+              poster_url: movie.poster_url ?? '',
+              backdrop_url: movie.backdrop_url ?? '',
+              trailer_url: movie.trailer_url ?? '',
+              video_url: movie.video_url ?? '',
+              genre_ids: movie.genres.map((g) => g.id),
+              credits: movie.credits.map((c) => ({
+                person_id: c.person_id,
+                role: c.role,
+                character_name: c.character_name ?? '',
+                display_order: c.display_order,
+              })),
+            }}
+            onSubmit={onSubmit}
+            isSubmitting={updateMovie.isPending}
+          />
         </CardContent>
       </Card>
     </div>

@@ -24,7 +24,7 @@ describe('permissions', () => {
   it('ALL_PERMISSIONS contains all defined permissions', () => {
     const values = Object.values(PERMISSIONS)
     expect(ALL_PERMISSIONS).toEqual(values)
-    expect(ALL_PERMISSIONS).toHaveLength(16)
+    expect(ALL_PERMISSIONS).toHaveLength(20)
   })
 
   it('PERMISSION_GROUPS covers all permissions', () => {

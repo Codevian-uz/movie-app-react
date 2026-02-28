@@ -1,5 +1,14 @@
+import { Link } from '@tanstack/react-router'
 import { format } from 'date-fns'
+import { Edit, MoreHorizontal, Trash2 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import {
   Table,
   TableBody,
@@ -13,9 +22,10 @@ import type { Movie } from '../../types/catalog.types'
 
 interface MoviesTableProps {
   movies: Movie[]
+  onDelete?: ((id: string) => void) | undefined
 }
 
-export function MoviesTable({ movies }: MoviesTableProps) {
+export function MoviesTable({ movies, onDelete }: MoviesTableProps) {
   const { t } = useTranslation()
 
   return (
@@ -58,7 +68,35 @@ export function MoviesTable({ movies }: MoviesTableProps) {
                     <span className="text-muted-foreground text-xs">({movie.vote_count})</span>
                   </div>
                 </TableCell>
-                <TableCell className="text-right">{/* Actions will go here */}—</TableCell>
+                <TableCell className="text-right">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon">
+                        <MoreHorizontal className="size-4" />
+                        <span className="sr-only">Open menu</span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem asChild>
+                        <Link
+                          to="/admin/catalog/movies/$movieId"
+                          params={{ movieId: movie.id }}
+                          className="cursor-pointer"
+                        >
+                          <Edit className="mr-2 size-4" />
+                          {t('common.actions.edit')}
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => onDelete?.(movie.id)}
+                        className="text-destructive cursor-pointer"
+                      >
+                        <Trash2 className="mr-2 size-4" />
+                        {t('common.actions.delete')}
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
               </TableRow>
             ))
           )}
