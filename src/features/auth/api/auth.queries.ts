@@ -10,6 +10,7 @@ import type {
 import { bootstrapPermissions } from '../utils/bootstrap-permissions'
 import {
   adminLogin,
+  userLogin,
   createRole,
   createUser,
   deleteMySession,
@@ -128,6 +129,19 @@ export function useAdminLogin() {
 
       useAuthStore.getState().setUser(bootstrapped.userId, variables.username)
       useAuthStore.getState().setPermissions(bootstrapped.permissions)
+      return data
+    },
+  })
+}
+
+export function useUserLogin() {
+  return useMutation<LoginResponse, unknown, LoginRequest>({
+    mutationFn: async (variables: LoginRequest) => {
+      const data = await userLogin(variables)
+      useAuthStore.getState().setAuth(data)
+      // Users don't need permission bootstrapping like admins do in this system
+      // We'll just set the basic user info
+      useAuthStore.getState().setUser(variables.username, variables.username)
       return data
     },
   })

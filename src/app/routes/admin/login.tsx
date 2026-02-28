@@ -27,7 +27,7 @@ function LoginPage() {
           <CardDescription>{t('auth.login.description')}</CardDescription>
         </CardHeader>
         <CardContent>
-          <LoginForm />
+          <LoginForm isAdmin={true} />
         </CardContent>
       </Card>
     </div>

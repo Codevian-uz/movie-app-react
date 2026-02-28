@@ -28,6 +28,11 @@ export async function adminLogin(req: LoginRequest): Promise<LoginResponse> {
   return response.data
 }
 
+export async function userLogin(req: LoginRequest): Promise<LoginResponse> {
+  const response = await apiClient.post<LoginResponse>('v1/auth/login', req)
+  return response.data
+}
+
 export async function refreshToken(token: string): Promise<LoginResponse> {
   const response = await apiClient.post<LoginResponse>('v1/auth/refresh-token', {
     refresh_token: token,

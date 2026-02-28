@@ -16,17 +16,24 @@ import {
 import { Input } from '@/components/ui/input'
 import { useTranslation } from '@/lib/i18n'
 import { ApiException } from '@/types/api.types'
-import { AuthBootstrapError, useAdminLogin } from '../api/auth.queries'
+import { AuthBootstrapError, useAdminLogin, useUserLogin } from '../api/auth.queries'
 
 interface LoginFormValues {
   username: string
   password: string
 }
 
-export function LoginForm() {
+interface LoginFormProps {
+  isAdmin?: boolean
+}
+
+export function LoginForm({ isAdmin = false }: LoginFormProps) {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const loginMutation = useAdminLogin()
+  const adminLoginMutation = useAdminLogin()
+  const userLoginMutation = useUserLogin()
+
+  const loginMutation = isAdmin ? adminLoginMutation : userLoginMutation
 
   const traceIdRef = useRef('')
   const loginSchema = z.object({
@@ -46,7 +53,11 @@ export function LoginForm() {
     traceIdRef.current = ''
     try {
       await loginMutation.mutateAsync(values)
-      await navigate({ to: '/admin' })
+      if (isAdmin) {
+        await navigate({ to: '/admin' })
+      } else {
+        await navigate({ to: '/' })
+      }
     } catch (error) {
       if (error instanceof AuthBootstrapError) {
         form.setError('root', { message: t('auth.login.bootstrapError') })
