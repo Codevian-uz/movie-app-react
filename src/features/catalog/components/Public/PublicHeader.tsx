@@ -1,8 +1,8 @@
+import { useEffect, useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { Search, Bell, User } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import { useAuthStore } from '@/stores/auth.store'
 import { cn } from '@/lib/utils'
+import { useAuthStore } from '@/stores/auth.store'
 
 export function PublicHeader() {
   const { isAuthenticated } = useAuthStore()
@@ -18,14 +18,16 @@ export function PublicHeader() {
     }
 
     window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
   }, [])
 
   return (
     <header
       className={cn(
         'fixed top-0 z-50 flex w-full items-center justify-between px-4 py-4 transition-all duration-500 md:px-12',
-        isScrolled && 'bg-black/90 shadow-md'
+        isScrolled && 'bg-black/90 shadow-md',
       )}
     >
       <div className="flex items-center space-x-2 md:space-x-10">
@@ -33,19 +35,34 @@ export function PublicHeader() {
           ANIME
         </Link>
         <nav className="hidden space-x-4 md:flex">
-          <Link to="/" className="text-sm font-light text-white transition-colors hover:text-gray-300">
+          <Link
+            to="/"
+            className="text-sm font-light text-white transition-colors hover:text-gray-300"
+          >
             Home
           </Link>
-          <Link to="/" className="text-sm font-light text-white transition-colors hover:text-gray-300">
+          <Link
+            to="/"
+            className="text-sm font-light text-white transition-colors hover:text-gray-300"
+          >
             TV Shows
           </Link>
-          <Link to="/" className="text-sm font-light text-white transition-colors hover:text-gray-300">
+          <Link
+            to="/"
+            className="text-sm font-light text-white transition-colors hover:text-gray-300"
+          >
             Movies
           </Link>
-          <Link to="/" className="text-sm font-light text-white transition-colors hover:text-gray-300">
+          <Link
+            to="/"
+            className="text-sm font-light text-white transition-colors hover:text-gray-300"
+          >
             New & Popular
           </Link>
-          <Link to="/" className="text-sm font-light text-white transition-colors hover:text-gray-300">
+          <Link
+            to="/"
+            className="text-sm font-light text-white transition-colors hover:text-gray-300"
+          >
             My List
           </Link>
         </nav>

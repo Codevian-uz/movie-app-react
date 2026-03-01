@@ -83,6 +83,7 @@ function EditMoviePage() {
         </CardHeader>
         <CardContent>
           <MovieForm
+            movieId={movieId}
             defaultValues={{
               title: movie.title,
               description: movie.description ?? '',

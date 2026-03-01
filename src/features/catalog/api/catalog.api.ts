@@ -3,7 +3,12 @@ import type {
   CreateGenreRequest,
   CreateMovieRequest,
   CreatePersonRequest,
+  Episode,
   Genre,
+  GetRelatedAnimesParams,
+  ListContinueWatchingResponse,
+  ListEpisodesParams,
+  ListEpisodesResponse,
   ListGenresParams,
   ListGenresResponse,
   ListMoviesParams,
@@ -13,9 +18,12 @@ import type {
   Movie,
   MovieWithDetails,
   Person,
+  ToggleFavoriteRequest,
   UpdateGenreRequest,
   UpdateMovieRequest,
   UpdatePersonRequest,
+  UpdateProgressRequest,
+  UpsertEpisodeRequest,
 } from '../types/catalog.types'
 
 // Movies
@@ -42,6 +50,52 @@ export async function updateMovie(data: UpdateMovieRequest): Promise<Movie> {
 export async function deleteMovie(id: string): Promise<{ id: string }> {
   const response = await apiClient.post<{ id: string }>('v1/catalog/movies/delete', { id })
   return response.data
+}
+
+export async function getRelatedAnimes(params: GetRelatedAnimesParams): Promise<Movie[]> {
+  const response = await apiClient.get<{ content: Movie[] }>('v1/catalog/get-related-animes', {
+    params,
+  })
+  return response.data.content
+}
+
+// User Progress
+export async function updateProgress(data: UpdateProgressRequest): Promise<void> {
+  await apiClient.post('v1/catalog/update-progress', data)
+}
+
+export async function listContinueWatching(): Promise<ListContinueWatchingResponse> {
+  const response = await apiClient.get<ListContinueWatchingResponse>(
+    'v1/catalog/list-continue-watching',
+  )
+  return response.data
+}
+
+// Favorites
+export async function toggleFavorite(data: ToggleFavoriteRequest): Promise<void> {
+  await apiClient.post('v1/catalog/toggle-favorite', data)
+}
+
+export async function listMyList(): Promise<ListMoviesResponse> {
+  const response = await apiClient.get<ListMoviesResponse>('v1/catalog/list-my-list')
+  return response.data
+}
+
+// Episodes
+export async function listEpisodes(params: ListEpisodesParams): Promise<Episode[]> {
+  const response = await apiClient.get<ListEpisodesResponse>('v1/catalog/list-episodes', {
+    params,
+  })
+  return response.data.content
+}
+
+export async function upsertEpisode(data: UpsertEpisodeRequest): Promise<Episode> {
+  const response = await apiClient.post<Episode>('v1/catalog/upsert-episode', data)
+  return response.data
+}
+
+export async function deleteEpisode(id: string): Promise<void> {
+  await apiClient.post('v1/catalog/delete-episode', { id })
 }
 
 // Genres

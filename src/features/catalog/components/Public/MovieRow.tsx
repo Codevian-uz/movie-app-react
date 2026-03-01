@@ -1,5 +1,5 @@
-import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useRef, useState } from 'react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import type { Movie } from '../../types/catalog.types'
@@ -7,7 +7,7 @@ import { MovieCard } from './MovieCard'
 
 interface MovieRowProps {
   title: string
-  movies: Movie[]
+  movies: (Movie & { progress?: number })[]
   className?: string
 }
 
@@ -24,10 +24,12 @@ export function MovieRow({ title, movies, className }: MovieRowProps) {
     }
   }
 
-  if (movies.length === 0) return null
+  if (movies.length === 0) {
+    return null
+  }
 
   return (
-    <div className={cn('space-y-2 md:space-y-4 px-6 lg:px-12', className)}>
+    <div className={cn('space-y-2 px-6 md:space-y-4 lg:px-12', className)}>
       <h2 className="text-lg font-semibold text-white/90 transition-colors hover:text-white md:text-2xl">
         {title}
       </h2>
@@ -36,28 +38,37 @@ export function MovieRow({ title, movies, className }: MovieRowProps) {
           variant="ghost"
           size="icon"
           className={cn(
-            'absolute top-0 bottom-0 left-0 z-40 m-auto h-full w-12 cursor-pointer bg-black/50 opacity-0 transition-opacity hover:bg-black/80 group-hover:opacity-100',
-            !isMoved && 'hidden'
+            'absolute top-0 bottom-0 left-0 z-40 m-auto h-full w-12 cursor-pointer bg-black/50 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-black/80',
+            !isMoved && 'hidden',
           )}
-          onClick={() => handleClick('left')}
+          onClick={() => {
+            handleClick('left')
+          }}
         >
           <ChevronLeft className="h-8 w-8 text-white" />
         </Button>
 
         <div
           ref={rowRef}
-          className="flex items-center gap-2 overflow-x-scroll scrollbar-hide md:gap-4"
+          className="scrollbar-hide flex items-center gap-2 overflow-x-scroll md:gap-4"
         >
           {movies.map((movie) => (
-            <MovieCard key={movie.id} movie={movie} className="min-w-[140px] md:min-w-[200px]" />
+            <MovieCard
+              key={movie.id}
+              movie={movie}
+              progress={movie.progress}
+              className="min-w-[140px] md:min-w-[200px]"
+            />
           ))}
         </div>
 
         <Button
           variant="ghost"
           size="icon"
-          className="absolute top-0 bottom-0 right-0 z-40 m-auto h-full w-12 cursor-pointer bg-black/50 opacity-0 transition-opacity hover:bg-black/80 group-hover:opacity-100"
-          onClick={() => handleClick('right')}
+          className="absolute top-0 right-0 bottom-0 z-40 m-auto h-full w-12 cursor-pointer bg-black/50 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-black/80"
+          onClick={() => {
+            handleClick('right')
+          }}
         >
           <ChevronRight className="h-8 w-8 text-white" />
         </Button>

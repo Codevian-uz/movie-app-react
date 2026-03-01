@@ -1,20 +1,33 @@
 import { queryOptions, useMutation, useQueryClient } from '@tanstack/react-query'
-import type { ListGenresParams, ListMoviesParams, ListPeopleParams } from '../types/catalog.types'
+import type {
+  ListEpisodesParams,
+  ListGenresParams,
+  ListMoviesParams,
+  ListPeopleParams,
+} from '../types/catalog.types'
 import {
   createGenre,
   createMovie,
   createPerson,
+  deleteEpisode,
   deleteGenre,
   deleteMovie,
   deletePerson,
   getMovie,
   getPerson,
+  getRelatedAnimes,
+  listContinueWatching,
+  listEpisodes,
   listGenres,
   listMovies,
+  listMyList,
   listPeople,
+  toggleFavorite,
   updateGenre,
   updateMovie,
   updatePerson,
+  updateProgress,
+  upsertEpisode,
 } from './catalog.api'
 
 export const catalogKeys = {
@@ -25,6 +38,10 @@ export const catalogKeys = {
   genre: (id: string) => [...catalogKeys.all, 'genre', id] as const,
   people: (params?: ListPeopleParams) => [...catalogKeys.all, 'people', params] as const,
   person: (id: string) => [...catalogKeys.all, 'person', id] as const,
+  episodes: (params: ListEpisodesParams) => [...catalogKeys.all, 'episodes', params] as const,
+  continueWatching: () => [...catalogKeys.all, 'continue-watching'] as const,
+  myList: () => [...catalogKeys.all, 'my-list'] as const,
+  relatedAnimes: (movieId: string) => [...catalogKeys.all, 'related', movieId] as const,
 }
 
 // Movies
@@ -69,6 +86,81 @@ export function useDeleteMovie() {
     mutationFn: deleteMovie,
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: catalogKeys.movies() })
+    },
+  })
+}
+
+export function relatedAnimesQueryOptions(movieId: string) {
+  return queryOptions({
+    queryKey: catalogKeys.relatedAnimes(movieId),
+    queryFn: () => getRelatedAnimes({ movie_id: movieId }),
+  })
+}
+
+// User Progress
+export function useUpdateProgress() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: updateProgress,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: catalogKeys.continueWatching() })
+    },
+  })
+}
+
+export function continueWatchingQueryOptions() {
+  return queryOptions({
+    queryKey: catalogKeys.continueWatching(),
+    queryFn: listContinueWatching,
+  })
+}
+
+// Favorites
+export function useToggleFavorite() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: toggleFavorite,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: catalogKeys.myList() })
+    },
+  })
+}
+
+export function myListQueryOptions() {
+  return queryOptions({
+    queryKey: catalogKeys.myList(),
+    queryFn: listMyList,
+  })
+}
+
+// Episodes
+export function episodesQueryOptions(params: ListEpisodesParams) {
+  return queryOptions({
+    queryKey: catalogKeys.episodes(params),
+    queryFn: () => listEpisodes(params),
+  })
+}
+
+export function useUpsertEpisode() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: upsertEpisode,
+    onSuccess: async (_, variables) => {
+      await queryClient.invalidateQueries({
+        queryKey: catalogKeys.episodes({ movie_id: variables.movie_id }),
+      })
+    },
+  })
+}
+
+export function useDeleteEpisode(movieId: string) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: deleteEpisode,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: catalogKeys.episodes({ movie_id: movieId }),
+      })
     },
   })
 }

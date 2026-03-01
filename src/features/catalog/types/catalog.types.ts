@@ -81,6 +81,67 @@ export interface ListMoviesParams {
   sort_order?: string | undefined
 }
 
+export interface Episode {
+  id: string
+  movie_id: string
+  season_number: number
+  episode_number: number
+  title: string
+  video_url: string | null
+  duration_minutes: number | null
+}
+
+export interface ListEpisodesParams {
+  movie_id: string
+  season_number?: number | undefined
+}
+
+export interface ListEpisodesResponse {
+  content: Episode[]
+}
+
+export interface UpsertEpisodeRequest {
+  id?: string | undefined
+  movie_id: string
+  season_number: number
+  episode_number: number
+  title: string
+  video_url?: string | undefined
+  duration_minutes?: number | undefined
+}
+
+export interface DeleteEpisodeRequest {
+  id: string
+}
+
+export interface UpdateProgressRequest {
+  movie_id: string
+  episode_id?: string | undefined
+  progress_seconds: number
+  is_finished?: boolean | undefined
+}
+
+export interface UserProgress {
+  movie: Movie
+  progress_seconds: number
+}
+
+export interface ListContinueWatchingResponse {
+  content: UserProgress[]
+}
+
+export interface ToggleFavoriteRequest {
+  movie_id: string
+}
+
+export interface GetRelatedAnimesParams {
+  movie_id: string
+}
+
+export interface ListRelatedAnimesResponse {
+  content: Movie[]
+}
+
 export interface ListMoviesResponse {
   items: Movie[]
   total: number

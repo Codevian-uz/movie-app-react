@@ -1,163 +1,178 @@
-import { useSuspenseQuery } from '@tanstack/react-query'
-import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
-import { moviesQueryOptions } from '@/features/catalog'
+import { useQuery } from '@tanstack/react-query'
+import { createFileRoute, Link } from '@tanstack/react-router'
+import { Plus } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import {
+  continueWatchingQueryOptions,
+  genresQueryOptions,
+  moviesQueryOptions,
+  myListQueryOptions,
+} from '@/features/catalog'
 import { MovieHero } from '@/features/catalog/components/Public/MovieHero'
 import { MovieRow } from '@/features/catalog/components/Public/MovieRow'
 import { PublicHeader } from '@/features/catalog/components/Public/PublicHeader'
-import type { Movie } from '@/features/catalog/types/catalog.types'
+import { useAuthStore } from '@/stores/auth.store'
 
 export const Route = createFileRoute('/')({
   component: HomePage,
 })
 
-// Mock anime data for featured/empty states
-const MOCK_ANIMES: Movie[] = [
-  {
-    id: '1',
-    title: 'Demon Slayer: Kimetsu no Yaiba',
-    slug: 'demon-slayer',
-    description: 'It is the Taisho Period in Japan. Tanjiro, a kindhearted boy who sells charcoal for a living, finds his family slaughtered by a demon. To make matters worse, his younger sister Nezuko, the sole survivor, has been transformed into a demon herself. Though devastated by this grim reality, Tanjiro resolves to become a “demon slayer” so that he can turn his sister back into a human, and kill the demon that massacred his family.',
-    backdrop_url: 'https://images.alphacoders.com/102/thumb-1920-1025557.jpg',
-    poster_url: 'https://image.tmdb.org/t/p/original/h8Rb9gBr48ODIwYv9Z8P2vEU6JF.jpg',
-    trailer_url: '',
-    video_url: '',
-    release_date: '2019-04-06',
-    duration_minutes: 24,
-    rating_average: 8.7,
-    vote_count: 1000,
-    created_at: '',
-    updated_at: '',
-  },
-  {
-    id: '2',
-    title: 'Your Name',
-    slug: 'your-name',
-    description: 'High schoolers Mitsuha and Taki are complete strangers living separate lives. But one night, they suddenly switch places. Mitsuha wakes up in Taki’s body, and he in hers. This bizarre occurrence continues to happen randomly, and the two must adjust their lives around each other.',
-    backdrop_url: 'https://images.alphacoders.com/740/thumb-1920-740708.png',
-    poster_url: 'https://image.tmdb.org/t/p/original/q719jsmZcyq07O36mY3OLuHGmsn.jpg',
-    trailer_url: '',
-    video_url: '',
-    release_date: '2016-08-26',
-    duration_minutes: 106,
-    rating_average: 8.9,
-    vote_count: 2000,
-    created_at: '',
-    updated_at: '',
-  },
-  {
-    id: '3',
-    title: 'Jujutsu Kaisen',
-    slug: 'jujutsu-kaisen',
-    description: 'Yuji Itadori is a boy with tremendous physical strength, though he lives a completely ordinary high school life. One day, to save a classmate who has been attacked by curses, he eats the finger of Ryomen Sukuna, taking the curse into his own soul. From then on, he shares one body with Ryomen Sukuna. Guided by the most powerful of sorcerers, Satoru Gojo, Itadori is admitted to Tokyo Jujutsu High School, an organization that fights the curses... and thus begins the heroic tale of a boy who became a curse to exorcise a curse, a life from which he could never turn back.',
-    backdrop_url: 'https://images.alphacoders.com/112/thumb-1920-1128362.jpg',
-    poster_url: 'https://image.tmdb.org/t/p/original/gS99fXpAti0A7i7699Wj5vU699m.jpg',
-    trailer_url: '',
-    video_url: '',
-    release_date: '2020-10-03',
-    duration_minutes: 24,
-    rating_average: 8.8,
-    vote_count: 1500,
-    created_at: '',
-    updated_at: '',
-  },
-  {
-    id: '4',
-    title: 'Attack on Titan',
-    slug: 'attack-on-titan',
-    description: 'Several hundred years ago, humans were nearly exterminated by titans. Titans are typically several stories tall, seem to have no intelligence, devour human beings and, worst of all, seem to do it for the pleasure rather than as a food source. A small percentage of humanity survived by walling themselves in a city protected by extremely high walls, even taller than the biggest of titans.',
-    backdrop_url: 'https://images.alphacoders.com/832/thumb-1920-832101.jpg',
-    poster_url: 'https://image.tmdb.org/t/p/original/ai40goD6B9vXVkSG9Xp16Oo4S7S.jpg',
-    trailer_url: '',
-    video_url: '',
-    release_date: '2013-04-07',
-    duration_minutes: 24,
-    rating_average: 9.1,
-    vote_count: 3000,
-    created_at: '',
-    updated_at: '',
-  },
-  {
-    id: '5',
-    title: 'Naruto Shippuden',
-    slug: 'naruto-shippuden',
-    description: 'Naruto Uzumaki, is a loud, hyperactive, adolescent ninja who constantly searches for approval and recognition, as well as to become Hokage, who is acknowledged as the leader and strongest of all ninja in the village.',
-    backdrop_url: 'https://images.alphacoders.com/131/thumb-1920-1311543.png',
-    poster_url: 'https://image.tmdb.org/t/p/original/kV8YlY4nK3MAsO31SgG2O8E6QoM.jpg',
-    trailer_url: '',
-    video_url: '',
-    release_date: '2007-02-15',
-    duration_minutes: 24,
-    rating_average: 8.6,
-    vote_count: 2500,
-    created_at: '',
-    updated_at: '',
-  }
-]
-
 function HomePage() {
-  const { data: moviesResponse } = useSuspenseQuery(moviesQueryOptions({ limit: 20 }))
-  
-  const movies = moviesResponse.items.length > 0 ? moviesResponse.items : MOCK_ANIMES
+  const { isAuthenticated } = useAuthStore()
+
+  // 1. Fetch Featured/Latest Movies
+  const { data: moviesResponse, isLoading: isMoviesLoading } = useQuery(
+    moviesQueryOptions({ limit: 20 }),
+  )
+
+  // 2. Fetch User State (If authenticated)
+  const { data: continueWatchingData } = useQuery({
+    ...continueWatchingQueryOptions(),
+    enabled: isAuthenticated,
+  })
+  const { data: myListData } = useQuery({
+    ...myListQueryOptions(),
+    enabled: isAuthenticated,
+  })
+
+  // 3. Fetch Genres to create dynamic rows
+  const { data: genresResponse } = useQuery(genresQueryOptions({ page_size: 10 }))
+
+  const movies = moviesResponse?.items ?? []
+  const genres = genresResponse?.content ?? []
+  const continueWatching = continueWatchingData?.content ?? []
+  const myList = myListData?.items ?? []
+
   const [featuredIndex, setFeaturedIndex] = useState(0)
   const featuredMovie = movies[featuredIndex]
 
-  // Auto-cycle featured anime every 10 seconds
+  // Auto-cycle featured anime
   useEffect(() => {
+    if (movies.length === 0) {
+      return
+    }
     const interval = setInterval(() => {
       setFeaturedIndex((prev) => (prev + 1) % Math.min(movies.length, 5))
     }, 10000)
-    return () => clearInterval(interval)
+    return () => {
+      clearInterval(interval)
+    }
   }, [movies.length])
-  
-  // Group movies by category for demonstration
-  const trending = movies.slice(0, 5)
-  const popular = movies.slice(2, 7)
-  const action = movies.filter(m => m.title.toLowerCase().includes('slayer') || m.title.toLowerCase().includes('titan') || m.title.toLowerCase().includes('jujutsu'))
-  const romance = movies.filter(m => m.title.toLowerCase().includes('your name'))
+
+  if (isMoviesLoading) {
+    return (
+      <div className="flex h-svh w-full items-center justify-center bg-[#141414]">
+        <div className="h-12 w-12 animate-spin rounded-full border-t-2 border-red-600" />
+      </div>
+    )
+  }
+
+  // Empty State: If no movies in database
+  if (movies.length === 0) {
+    return (
+      <div className="relative min-h-svh bg-[#141414] text-white">
+        <PublicHeader />
+        <div className="flex h-[80vh] flex-col items-center justify-center px-6 text-center">
+          <div className="max-w-md rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl">
+            <h2 className="mb-4 text-3xl font-bold">Your Catalog is Empty</h2>
+            <p className="mb-8 text-gray-400">
+              Start building your anime empire by adding movies and series via the admin panel.
+            </p>
+            <Button asChild size="lg" className="bg-red-600 hover:bg-red-700">
+              <Link to="/admin/catalog/movies" search={{ page: undefined, pageSize: undefined }}>
+                <Plus className="mr-2 h-5 w-5" />
+                Add Your First Anime
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <div className="relative min-h-svh bg-[#141414] text-white overflow-x-hidden">
+    <div className="relative min-h-svh overflow-x-hidden bg-[#141414] text-white">
       <PublicHeader />
-      
+
       <main className="relative pb-24">
-        {featuredMovie && <MovieHero movie={featuredMovie} />}
-        
+        {featuredMovie !== undefined && <MovieHero movie={featuredMovie} />}
+
         <div className="relative z-20 -mt-32 space-y-8 md:space-y-16">
-          <MovieRow title="Trending Now" movies={trending} />
-          <MovieRow title="Popular on AnimeApp" movies={popular} />
-          {action.length > 0 && <MovieRow title="Action Anime" movies={action} />}
-          {romance.length > 0 && <MovieRow title="Romance & Drama" movies={romance} />}
-          <MovieRow title="Watch Again" movies={movies.reverse()} />
+          {/* 1. Continue Watching (Authenticated) */}
+          {continueWatching.length > 0 && (
+            <MovieRow
+              title="Continue Watching"
+              movies={continueWatching.map((cw) => ({
+                ...cw.movie,
+                progress:
+                  cw.movie.duration_minutes !== null && cw.movie.duration_minutes > 0
+                    ? (cw.progress_seconds / (cw.movie.duration_minutes * 60)) * 100
+                    : 0,
+              }))}
+            />
+          )}
+
+          {/* 2. My List (Authenticated) */}
+          {myList.length > 0 && <MovieRow title="My List" movies={myList} />}
+
+          {/* 3. Trending (Latest Added) */}
+          <MovieRow title="Trending Now" movies={movies.slice(0, 10)} />
+
+          {/* 4. Dynamic Genre Rows */}
+          {genres.map((genre) => (
+            <GenreRow key={genre.id} genreId={genre.id} title={genre.name} />
+          ))}
+
+          {/* 5. Watch Again (Randomized/Reverse order) */}
+          <MovieRow title="Watch Again" movies={[...movies].reverse().slice(0, 10)} />
         </div>
       </main>
-      
+
       {/* Footer */}
-      <footer className="mt-10 px-6 py-10 text-gray-500 lg:px-12 border-t border-white/10">
+      <footer className="mt-10 border-t border-white/10 px-6 py-10 text-gray-500 lg:px-12">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4 lg:max-w-4xl">
           <div className="flex flex-col gap-2">
-            <span className="cursor-pointer hover:underline">Audio Description</span>
-            <span className="cursor-pointer hover:underline">Help Center</span>
-            <span className="cursor-pointer hover:underline">Gift Cards</span>
-            <span className="cursor-pointer hover:underline">Media Center</span>
+            <span className="cursor-pointer text-xs hover:underline md:text-sm">
+              Audio Description
+            </span>
+            <span className="cursor-pointer text-xs hover:underline md:text-sm">Help Center</span>
+            <span className="cursor-pointer text-xs hover:underline md:text-sm">Gift Cards</span>
+            <span className="cursor-pointer text-xs hover:underline md:text-sm">Media Center</span>
           </div>
           <div className="flex flex-col gap-2">
-            <span className="cursor-pointer hover:underline">Investor Relations</span>
-            <span className="cursor-pointer hover:underline">Jobs</span>
-            <span className="cursor-pointer hover:underline">Terms of Use</span>
-            <span className="cursor-pointer hover:underline">Privacy</span>
+            <span className="cursor-pointer text-xs hover:underline md:text-sm">
+              Investor Relations
+            </span>
+            <span className="cursor-pointer text-xs hover:underline md:text-sm">Jobs</span>
+            <span className="cursor-pointer text-xs hover:underline md:text-sm">Terms of Use</span>
+            <span className="cursor-pointer text-xs hover:underline md:text-sm">Privacy</span>
           </div>
           <div className="flex flex-col gap-2">
-            <span className="cursor-pointer hover:underline">Legal Notices</span>
-            <span className="cursor-pointer hover:underline">Cookie Preferences</span>
-            <span className="cursor-pointer hover:underline">Corporate Information</span>
-            <span className="cursor-pointer hover:underline">Contact Us</span>
+            <span className="cursor-pointer text-xs hover:underline md:text-sm">Legal Notices</span>
+            <span className="cursor-pointer text-xs hover:underline md:text-sm">
+              Cookie Preferences
+            </span>
+            <span className="cursor-pointer text-xs hover:underline md:text-sm">
+              Corporate Information
+            </span>
+            <span className="cursor-pointer text-xs hover:underline md:text-sm">Contact Us</span>
           </div>
         </div>
-        <div className="mt-8 text-xs">
-          © 1997-2026 AnimeApp, Inc.
-        </div>
+        <div className="mt-8 text-[10px]">© 1997-{new Date().getFullYear()} AnimeApp, Inc.</div>
       </footer>
     </div>
   )
+}
+
+// Helper component to fetch movies for a specific genre
+function GenreRow({ genreId, title }: { genreId: string; title: string }) {
+  const { data } = useQuery(moviesQueryOptions({ genre_id: genreId, limit: 10 }))
+  const movies = data?.items ?? []
+
+  if (movies.length === 0) {
+    return null
+  }
+
+  return <MovieRow title={title} movies={movies} />
 }
