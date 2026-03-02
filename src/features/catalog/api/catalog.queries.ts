@@ -1,21 +1,26 @@
 import { queryOptions, useMutation, useQueryClient } from '@tanstack/react-query'
 import type {
+  ListCollectionsParams,
   ListEpisodesParams,
   ListGenresParams,
   ListMoviesParams,
   ListPeopleParams,
 } from '../types/catalog.types'
 import {
+  createCollection,
   createGenre,
   createMovie,
   createPerson,
+  deleteCollection,
   deleteEpisode,
   deleteGenre,
   deleteMovie,
   deletePerson,
+  getCollection,
   getMovie,
   getPerson,
   getRelatedAnimes,
+  listCollections,
   listContinueWatching,
   listEpisodes,
   listGenres,
@@ -23,6 +28,7 @@ import {
   listMyList,
   listPeople,
   toggleFavorite,
+  updateCollection,
   updateGenre,
   updateMovie,
   updatePerson,
@@ -38,6 +44,9 @@ export const catalogKeys = {
   genre: (id: string) => [...catalogKeys.all, 'genre', id] as const,
   people: (params?: ListPeopleParams) => [...catalogKeys.all, 'people', params] as const,
   person: (id: string) => [...catalogKeys.all, 'person', id] as const,
+  collections: (params?: ListCollectionsParams) =>
+    [...catalogKeys.all, 'collections', params] as const,
+  collection: (id: string) => [...catalogKeys.all, 'collection', id] as const,
   episodes: (params: ListEpisodesParams) => [...catalogKeys.all, 'episodes', params] as const,
   continueWatching: () => [...catalogKeys.all, 'continue-watching'] as const,
   myList: () => [...catalogKeys.all, 'my-list'] as const,
@@ -94,6 +103,52 @@ export function relatedAnimesQueryOptions(movieId: string) {
   return queryOptions({
     queryKey: catalogKeys.relatedAnimes(movieId),
     queryFn: () => getRelatedAnimes({ movie_id: movieId }),
+  })
+}
+
+// Collections
+export function collectionsQueryOptions(params?: ListCollectionsParams) {
+  return queryOptions({
+    queryKey: catalogKeys.collections(params),
+    queryFn: () => listCollections(params),
+  })
+}
+
+export function collectionQueryOptions(id: string) {
+  return queryOptions({
+    queryKey: catalogKeys.collection(id),
+    queryFn: () => getCollection(id),
+  })
+}
+
+export function useCreateCollection() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: createCollection,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: catalogKeys.collections() })
+    },
+  })
+}
+
+export function useUpdateCollection() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: updateCollection,
+    onSuccess: async (_, variables) => {
+      await queryClient.invalidateQueries({ queryKey: catalogKeys.collections() })
+      await queryClient.invalidateQueries({ queryKey: catalogKeys.collection(variables.id) })
+    },
+  })
+}
+
+export function useDeleteCollection() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: deleteCollection,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: catalogKeys.collections() })
+    },
   })
 }
 

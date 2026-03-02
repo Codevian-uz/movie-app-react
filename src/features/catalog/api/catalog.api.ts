@@ -1,11 +1,16 @@
 import { apiClient } from '@/lib/api-client'
 import type {
+  Collection,
+  CollectionWithMovies,
+  CreateCollectionRequest,
   CreateGenreRequest,
   CreateMovieRequest,
   CreatePersonRequest,
   Episode,
   Genre,
   GetRelatedAnimesParams,
+  ListCollectionsParams,
+  ListCollectionsResponse,
   ListContinueWatchingResponse,
   ListEpisodesParams,
   ListEpisodesResponse,
@@ -13,12 +18,14 @@ import type {
   ListGenresResponse,
   ListMoviesParams,
   ListMoviesResponse,
+  ListMyListResponse,
   ListPeopleParams,
   ListPeopleResponse,
   Movie,
   MovieWithDetails,
   Person,
   ToggleFavoriteRequest,
+  UpdateCollectionRequest,
   UpdateGenreRequest,
   UpdateMovieRequest,
   UpdatePersonRequest,
@@ -59,6 +66,38 @@ export async function getRelatedAnimes(params: GetRelatedAnimesParams): Promise<
   return response.data.content
 }
 
+// Collections
+export async function listCollections(
+  params?: ListCollectionsParams,
+): Promise<ListCollectionsResponse> {
+  const response = await apiClient.get<ListCollectionsResponse>('v1/catalog/collections', {
+    params,
+  })
+  return response.data
+}
+
+export async function getCollection(id: string): Promise<CollectionWithMovies> {
+  const response = await apiClient.get<CollectionWithMovies>('v1/catalog/collections/get', {
+    params: { id },
+  })
+  return response.data
+}
+
+export async function createCollection(data: CreateCollectionRequest): Promise<Collection> {
+  const response = await apiClient.post<Collection>('v1/catalog/collections', data)
+  return response.data
+}
+
+export async function updateCollection(data: UpdateCollectionRequest): Promise<Collection> {
+  const response = await apiClient.post<Collection>('v1/catalog/collections/update', data)
+  return response.data
+}
+
+export async function deleteCollection(id: string): Promise<{ id: string }> {
+  const response = await apiClient.post<{ id: string }>('v1/catalog/collections/delete', { id })
+  return response.data
+}
+
 // User Progress
 export async function updateProgress(data: UpdateProgressRequest): Promise<void> {
   await apiClient.post('v1/catalog/update-progress', data)
@@ -76,8 +115,8 @@ export async function toggleFavorite(data: ToggleFavoriteRequest): Promise<void>
   await apiClient.post('v1/catalog/toggle-favorite', data)
 }
 
-export async function listMyList(): Promise<ListMoviesResponse> {
-  const response = await apiClient.get<ListMoviesResponse>('v1/catalog/list-my-list')
+export async function listMyList(): Promise<ListMyListResponse> {
+  const response = await apiClient.get<ListMyListResponse>('v1/catalog/list-my-list')
   return response.data
 }
 

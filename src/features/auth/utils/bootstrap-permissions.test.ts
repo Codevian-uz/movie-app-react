@@ -21,6 +21,7 @@ describe('bootstrapPermissions', () => {
       roles: [],
       direct_permissions: [],
       last_active_at: null,
+      deleted_at: null,
       created_at: '2024-01-01T00:00:00Z',
       updated_at: '2024-01-01T00:00:00Z',
     }
@@ -78,6 +79,7 @@ describe('bootstrapPermissions', () => {
       roles: [],
       direct_permissions: [],
       last_active_at: null,
+      deleted_at: null,
       created_at: '2024-01-01T00:00:00Z',
       updated_at: '2024-01-01T00:00:00Z',
     }
@@ -176,6 +178,7 @@ describe('bootstrapPermissions', () => {
       roles: [],
       direct_permissions: [],
       last_active_at: null,
+      deleted_at: null,
       created_at: '2024-01-01T00:00:00Z',
       updated_at: '2024-01-01T00:00:00Z',
     }

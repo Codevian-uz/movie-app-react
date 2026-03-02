@@ -6,6 +6,7 @@ import {
   Film,
   Inbox,
   LayoutDashboard,
+  Library,
   ListChecks,
   LogOut,
   Monitor,
@@ -70,6 +71,12 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
           title: t('nav.movies'),
           url: '/admin/catalog/movies',
           icon: Film,
+          permission: PERMISSIONS.CATALOG_MOVIE_READ,
+        },
+        {
+          title: t('catalog.collections.title'),
+          url: '/admin/catalog/collections',
+          icon: Library,
           permission: PERMISSIONS.CATALOG_MOVIE_READ,
         },
         {

@@ -57,7 +57,7 @@ export function MovieRow({ title, movies, className }: MovieRowProps) {
               key={movie.id}
               movie={movie}
               progress={movie.progress}
-              className="min-w-[140px] md:min-w-[200px]"
+              className="min-w-[120px] md:min-w-[180px]"
             />
           ))}
         </div>

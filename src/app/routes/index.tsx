@@ -42,7 +42,7 @@ function HomePage() {
   const movies = moviesResponse?.items ?? []
   const genres = genresResponse?.content ?? []
   const continueWatching = continueWatchingData?.content ?? []
-  const myList = myListData?.items ?? []
+  const myList = myListData?.content ?? []
 
   const [featuredIndex, setFeaturedIndex] = useState(0)
   const featuredMovie = movies[featuredIndex]

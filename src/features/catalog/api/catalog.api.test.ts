@@ -39,8 +39,8 @@ describe('catalog api', () => {
 
   it('createMovie calls correct endpoint', async () => {
     const spy = vi.spyOn(apiClient, 'post').mockResolvedValueOnce({ data: { id: '1' } })
-    await createMovie({ title: 'Test' })
-    expect(spy).toHaveBeenCalledWith('v1/catalog/movies', { title: 'Test' })
+    await createMovie({ title: 'Test', kind: 'movie' })
+    expect(spy).toHaveBeenCalledWith('v1/catalog/movies', { title: 'Test', kind: 'movie' })
   })
 
   it('updateMovie calls correct endpoint', async () => {

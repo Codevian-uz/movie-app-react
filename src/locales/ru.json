@@ -269,8 +269,9 @@
   "dashboard": {
     "title": "Панель управления",
     "welcome": "Добро пожаловать в Movie App",
-    "authStats": "Авторизация",
+    "authStats": "Аутентификация",
     "totalUsers": "Всего пользователей",
+    "totalRoles": "Всего ролей",
     "activeSessions": "Активные сессии",
     "tasks": "Задачи",
     "taskSchedules": "Расписания задач",
@@ -299,7 +300,8 @@
       "platform": "Платформа",
       "catalog": "Каталог"
     },
-    "movies": "Фильмы"
+    "movies": "Фильмы",
+    "collections": "Коллекции"
   },
   "catalog": {
     "movies": {
@@ -360,6 +362,23 @@
       "characterName": "Имя персонажа",
       "displayOrder": "Порядок отображения",
       "person": "Человек"
+    },
+    "collections": {
+      "title": "Коллекции",
+      "createCollection": "Создать коллекцию",
+      "editCollection": "Редактировать коллекцию",
+      "collectionTitle": "Название",
+      "slug": "Slug",
+      "description": "Описание",
+      "poster": "Постер",
+      "backdrop": "Фон",
+      "created": "Коллекция успешно создана",
+      "updated": "Коллекция успешно обновлена",
+      "deleted": "Коллекция успешно удалена",
+      "noCollections": "Коллекции не найдены",
+      "deleteConfirm": "Вы уверены, что хотите удалить эту коллекцию?",
+      "uploadPoster": "Загрузить постер",
+      "uploadBackdrop": "Загрузить фон"
     }
   },
   "notFound": {

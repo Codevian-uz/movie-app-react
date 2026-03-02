@@ -1,9 +1,5 @@
 {
-  "env": {
-    "GEMINI_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
-  },
-  "enabledPlugins": {
-    "frontend-design@gemini-plugins-official": true
-  },
-  "plansDirectory": "./plans"
+  "experimental": {
+    "enableAgents": true
+  }
 }

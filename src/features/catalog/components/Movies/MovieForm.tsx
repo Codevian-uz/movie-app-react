@@ -1,9 +1,8 @@
-import { useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQuery } from '@tanstack/react-query'
-import { Loader2, Plus, Trash2, Upload, X } from 'lucide-react'
-import { useFieldArray, useForm, type UseFormReturn, type Path } from 'react-hook-form'
-import { toast } from 'sonner'
+import { Loader2, Plus, Trash2 } from 'lucide-react'
+import { useFieldArray, useForm, type Path } from 'react-hook-form'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -16,7 +15,6 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import {
@@ -28,13 +26,20 @@ import {
 } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
-import { getFileUrl, getStreamUrl, uploadFile, useAuthenticatedFile } from '@/features/filevault'
+import { FileUploadField } from '@/features/filevault'
 import { useTranslation } from '@/lib/i18n'
-import { genresQueryOptions, peopleQueryOptions } from '../../api/catalog.queries'
+import {
+  collectionsQueryOptions,
+  genresQueryOptions,
+  peopleQueryOptions,
+} from '../../api/catalog.queries'
 import { EpisodeManager } from '../Episodes/EpisodeManager'
 
 const movieFormSchema = z.object({
   title: z.string().min(1, 'Title is required').max(255),
+  kind: z.enum(['movie', 'series']),
+  collection_id: z.string().optional().or(z.literal('')),
+  collection_order: z.coerce.number().optional(),
   description: z.string().optional(),
   poster_url: z.string().optional(),
   backdrop_url: z.string().optional(),
@@ -70,6 +75,9 @@ export function MovieForm({ movieId, defaultValues, onSubmit, isSubmitting }: Mo
     resolver: zodResolver(movieFormSchema),
     defaultValues: {
       title: '',
+      kind: 'movie',
+      collection_id: '',
+      collection_order: 0,
       description: '',
       poster_url: '',
       backdrop_url: '',
@@ -83,17 +91,42 @@ export function MovieForm({ movieId, defaultValues, onSubmit, isSubmitting }: Mo
     },
   })
 
+  useEffect(() => {
+    if (defaultValues !== undefined) {
+      form.reset({
+        title: '',
+        kind: 'movie',
+        collection_id: '',
+        collection_order: 0,
+        description: '',
+        poster_url: '',
+        backdrop_url: '',
+        trailer_url: '',
+        video_url: '',
+        release_date: '',
+        duration_minutes: 0,
+        genre_ids: [],
+        credits: [],
+        ...defaultValues,
+      })
+    }
+  }, [defaultValues, form])
+
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: 'credits',
   })
+
+  const kind = form.watch('kind')
 
   return (
     <Tabs defaultValue="general" className="w-full">
       <TabsList className="mb-4">
         <TabsTrigger value="general">General Info</TabsTrigger>
         <TabsTrigger value="cast">Cast & Crew</TabsTrigger>
-        {movieId !== undefined && <TabsTrigger value="episodes">Seasons & Episodes</TabsTrigger>}
+        {movieId !== undefined && kind === 'series' && (
+          <TabsTrigger value="episodes">Seasons & Episodes</TabsTrigger>
+        )}
       </TabsList>
 
       <Form {...form}>
@@ -106,19 +139,43 @@ export function MovieForm({ movieId, defaultValues, onSubmit, isSubmitting }: Mo
           <TabsContent value="general" className="space-y-8 outline-hidden">
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-6">
-                <FormField
-                  control={form.control}
-                  name="title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('catalog.movies.movieTitle')}</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <FormField
+                    control={form.control}
+                    name="title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t('catalog.movies.movieTitle')}</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="kind"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Type</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select type" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="movie">Standalone Movie</SelectItem>
+                            <SelectItem value="series">TV Series / Anime</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
                 <FormField
                   control={form.control}
@@ -164,6 +221,39 @@ export function MovieForm({ movieId, defaultValues, onSubmit, isSubmitting }: Mo
                   />
                 </div>
 
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <FormField
+                    control={form.control}
+                    name="collection_id"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t('catalog.collections.title')}</FormLabel>
+                        <CollectionSelect
+                          value={field.value ?? ''}
+                          onChange={(val) => {
+                            field.onChange(val)
+                          }}
+                        />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="collection_order"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Order in Collection</FormLabel>
+                        <FormControl>
+                          <Input type="number" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
                 <FormField
                   control={form.control}
                   name="genre_ids"
@@ -188,6 +278,7 @@ export function MovieForm({ movieId, defaultValues, onSubmit, isSubmitting }: Mo
                     name="poster_url"
                     label={t('catalog.movies.poster')}
                     form={form}
+                    aspect="poster"
                   />
                   <FileUploadField
                     name="backdrop_url"
@@ -200,8 +291,14 @@ export function MovieForm({ movieId, defaultValues, onSubmit, isSubmitting }: Mo
                     name="trailer_url"
                     label={t('catalog.movies.trailer')}
                     form={form}
+                    type="video"
                   />
-                  <FileUploadField name="video_url" label={t('catalog.movies.video')} form={form} />
+                  <FileUploadField
+                    name="video_url"
+                    label={t('catalog.movies.video')}
+                    form={form}
+                    type="video"
+                  />
                 </div>
               </div>
             </div>
@@ -359,6 +456,64 @@ export function MovieForm({ movieId, defaultValues, onSubmit, isSubmitting }: Mo
   )
 }
 
+function CollectionSelect({ value, onChange }: { value: string; onChange: (val: string) => void }) {
+  const [search, setSearch] = useState('')
+  const { data: collectionsResponse, isLoading } = useQuery(
+    collectionsQueryOptions({ search, limit: 50 }),
+  )
+  const collections = collectionsResponse?.items ?? []
+
+  return (
+    <Select
+      onValueChange={(val) => {
+        onChange(val === 'none' ? '' : val)
+      }}
+      value={value === '' ? 'none' : value}
+    >
+      <FormControl>
+        <SelectTrigger>
+          <SelectValue placeholder="Select collection" />
+        </SelectTrigger>
+      </FormControl>
+      <SelectContent>
+        <div className="p-2">
+          <Input
+            placeholder="Search..."
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value)
+            }}
+            onKeyDown={(e) => {
+              e.stopPropagation()
+            }}
+          />
+        </div>
+        <ScrollArea className="h-60">
+          {isLoading ? (
+            <div className="flex items-center justify-center p-4">
+              <Loader2 className="size-4 animate-spin" />
+            </div>
+          ) : (
+            <>
+              <SelectItem value="none">None</SelectItem>
+              {collections.map((collection) => (
+                <SelectItem key={collection.id} value={collection.id}>
+                  {collection.title}
+                </SelectItem>
+              ))}
+              {collections.length === 0 && search !== '' && (
+                <div className="text-muted-foreground p-4 text-center text-xs">
+                  No collections found
+                </div>
+              )}
+            </>
+          )}
+        </ScrollArea>
+      </SelectContent>
+    </Select>
+  )
+}
+
 function GenreSelect({ value, onChange }: { value: string[]; onChange: (val: string[]) => void }) {
   const { data: genresResponse, isLoading } = useQuery(genresQueryOptions({ page_size: 100 }))
   const genres = genresResponse?.content ?? []
@@ -459,122 +614,5 @@ function PersonSelect({ value, onChange }: { value: string; onChange: (val: stri
         </ScrollArea>
       </SelectContent>
     </Select>
-  )
-}
-
-function FileUploadField({
-  name,
-  label,
-  form,
-}: {
-  name: 'poster_url' | 'backdrop_url' | 'trailer_url' | 'video_url'
-  label: string
-  form: UseFormReturn<MovieFormValues>
-}) {
-  const [isUploading, setIsUploading] = useState(false)
-  const [localPreview, setLocalPreview] = useState<string | null>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
-  const value = form.watch(name)
-
-  const shouldFetch =
-    value !== '' && value !== undefined && localPreview === null && !value.startsWith('blob:')
-  const { objectUrl, isLoading: isFetching } = useAuthenticatedFile(shouldFetch ? value : null)
-
-  const displayUrl = localPreview ?? objectUrl
-
-  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (file === undefined) {
-      return
-    }
-
-    const localUrl = URL.createObjectURL(file)
-    setLocalPreview(localUrl)
-
-    setIsUploading(true)
-    try {
-      const res = await uploadFile(file)
-      const url =
-        name === 'trailer_url' || name === 'video_url' ? getStreamUrl(res.id) : getFileUrl(res.id)
-      form.setValue(name, url)
-      toast.success('File uploaded')
-    } catch {
-      toast.error('Upload failed')
-      setLocalPreview(null)
-      URL.revokeObjectURL(localUrl)
-    } finally {
-      setIsUploading(false)
-    }
-  }
-
-  return (
-    <div className="space-y-2">
-      <Label>{label}</Label>
-      <div className="flex flex-col gap-2">
-        {value !== undefined && value !== '' ? (
-          <div className="bg-muted relative aspect-video w-full overflow-hidden rounded-md border">
-            {isFetching ? (
-              <div className="flex h-full items-center justify-center">
-                <Loader2 className="size-4 animate-spin" />
-              </div>
-            ) : name === 'trailer_url' || name === 'video_url' ? (
-              displayUrl !== null && displayUrl !== '' ? (
-                <video
-                  src={displayUrl}
-                  className="h-full w-full object-cover"
-                  controls
-                  playsInline
-                />
-              ) : null
-            ) : displayUrl !== null && displayUrl !== '' ? (
-              <img src={displayUrl} alt={label} className="h-full w-full object-cover" />
-            ) : null}
-            <Button
-              type="button"
-              variant="destructive"
-              size="icon"
-              className="absolute top-1 right-1 z-10 size-6"
-              onClick={() => {
-                form.setValue(name, '')
-                if (localPreview !== null) {
-                  URL.revokeObjectURL(localPreview)
-                  setLocalPreview(null)
-                }
-              }}
-            >
-              <X className="size-4" />
-            </Button>
-          </div>
-        ) : (
-          <Button
-            type="button"
-            variant="outline"
-            className="h-24 w-full border-dashed"
-            disabled={isUploading}
-            onClick={() => {
-              inputRef.current?.click()
-            }}
-          >
-            {isUploading ? (
-              <Loader2 className="size-6 animate-spin" />
-            ) : (
-              <div className="flex flex-col items-center gap-1">
-                <Upload className="size-6" />
-                <span className="text-xs">Upload</span>
-              </div>
-            )}
-          </Button>
-        )}
-        <input
-          type="file"
-          ref={inputRef}
-          className="hidden"
-          onChange={(e) => {
-            void handleFileChange(e)
-          }}
-          accept={name === 'trailer_url' || name === 'video_url' ? 'video/*' : 'image/*'}
-        />
-      </div>
-    </div>
   )
 }

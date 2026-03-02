@@ -271,6 +271,7 @@
     "welcome": "Movie App ga xush kelibsiz",
     "authStats": "Autentifikatsiya",
     "totalUsers": "Jami foydalanuvchilar",
+    "totalRoles": "Jami rollar",
     "activeSessions": "Faol sessiyalar",
     "tasks": "Vazifalar",
     "taskSchedules": "Vazifa jadvallari",
@@ -299,7 +300,8 @@
       "platform": "Platforma",
       "catalog": "Katalog"
     },
-    "movies": "Filmlar"
+    "movies": "Filmlar",
+    "collections": "To'plamlar"
   },
   "catalog": {
     "movies": {
@@ -360,6 +362,23 @@
       "characterName": "Personaj ismi",
       "displayOrder": "Ko'rsatish tartibi",
       "person": "Shaxs"
+    },
+    "collections": {
+      "title": "To'plamlar",
+      "createCollection": "To'plam yaratish",
+      "editCollection": "To'plamni tahrirlash",
+      "collectionTitle": "Nomi",
+      "slug": "Slug",
+      "description": "Tavsif",
+      "poster": "Poster",
+      "backdrop": "Fon",
+      "created": "To'plam muvaffaqiyatli yaratildi",
+      "updated": "To'plam muvaffaqiyatli yangilandi",
+      "deleted": "To'plam muvaffaqiyatli o'chirildi",
+      "noCollections": "To'plamlar topilmadi",
+      "deleteConfirm": "Ushbu to'plamni o'chirishga aminmisiz?",
+      "uploadPoster": "Posterni yuklash",
+      "uploadBackdrop": "Fonni yuklash"
     }
   },
   "notFound": {

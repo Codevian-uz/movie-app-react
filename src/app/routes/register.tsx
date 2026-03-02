@@ -1,12 +1,12 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { LoginForm } from '@/features/auth'
+import { RegisterForm } from '@/features/auth'
 import { useTranslation } from '@/lib/i18n'
 
-export const Route = createFileRoute('/login')({
-  component: UserLoginPage,
+export const Route = createFileRoute('/register')({
+  component: UserRegisterPage,
 })
 
-function UserLoginPage() {
+function UserRegisterPage() {
   const { t } = useTranslation()
 
   return (
@@ -16,14 +16,14 @@ function UserLoginPage() {
           <Link to="/" className="text-3xl font-bold tracking-tighter text-red-600">
             ANIME
           </Link>
-          <h1 className="text-2xl font-bold">{t('auth.login.title')}</h1>
-          <p className="text-sm text-gray-400">Welcome back! Please enter your details.</p>
+          <h1 className="text-2xl font-bold">{t('auth.register.title')}</h1>
+          <p className="text-sm text-gray-400">{t('auth.register.description')}</p>
         </div>
-        <LoginForm isAdmin={false} />
+        <RegisterForm />
         <div className="text-center text-sm text-gray-400">
-          New to AnimeApp?{' '}
-          <Link to="/register" className="text-white hover:underline">
-            Sign up now.
+          Already have an account?{' '}
+          <Link to="/login" className="text-white hover:underline">
+            Log in now.
           </Link>
         </div>
       </div>

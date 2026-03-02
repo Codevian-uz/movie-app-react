@@ -28,15 +28,23 @@ function getNestedValue(obj: NestedRecord, path: string): string | undefined {
   return typeof current === 'string' ? current : undefined
 }
 
-function resolve(locale: Locale, key: string): string {
-  return getNestedValue(messages[locale], key) ?? getNestedValue(messages.uz, key) ?? key
+function resolve(locale: Locale, key: string, params?: Record<string, string | number>): string {
+  let message = getNestedValue(messages[locale], key) ?? getNestedValue(messages.uz, key) ?? key
+
+  if (params !== undefined) {
+    Object.entries(params).forEach(([k, v]) => {
+      message = message.replace(`{${k}}`, String(v))
+    })
+  }
+
+  return message
 }
 
-export function t(key: string): string {
-  return resolve(useLocaleStore.getState().locale, key)
+export function t(key: string, params?: Record<string, string | number>): string {
+  return resolve(useLocaleStore.getState().locale, key, params)
 }
 
 export function useTranslation() {
   const locale = useLocaleStore((s) => s.locale)
-  return { t: (key: string) => resolve(locale, key) } as const
+  return { t: (key: string, params?: Record<string, string | number>) => resolve(locale, key, params) } as const
 }

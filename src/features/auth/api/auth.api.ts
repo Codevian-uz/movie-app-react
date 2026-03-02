@@ -33,6 +33,10 @@ export async function userLogin(req: LoginRequest): Promise<LoginResponse> {
   return response.data
 }
 
+export async function register(req: CreateUserRequest): Promise<void> {
+  await apiClient.post('v1/auth/register', req)
+}
+
 export async function refreshToken(token: string): Promise<LoginResponse> {
   const response = await apiClient.post<LoginResponse>('v1/auth/refresh-token', {
     refresh_token: token,

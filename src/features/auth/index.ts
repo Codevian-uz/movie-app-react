@@ -21,6 +21,8 @@ export type {
 
 export {
   useAdminLogin,
+  useUserLogin,
+  useRegister,
   useLogout,
   useCreateUser,
   useUpdateUser,
@@ -49,3 +51,4 @@ export {
 export { getUsers, getUserPermissions, getUserRoles, getRolePermissions } from './api/auth.api'
 
 export { LoginForm } from './components/LoginForm'
+export { RegisterForm } from './components/RegisterForm'

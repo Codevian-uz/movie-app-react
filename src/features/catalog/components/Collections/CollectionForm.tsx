@@ -16,28 +16,30 @@ import { Textarea } from '@/components/ui/textarea'
 import { FileUploadField } from '@/features/filevault'
 import { useTranslation } from '@/lib/i18n'
 
-const personFormSchema = z.object({
-  full_name: z.string().min(1, 'Full name is required').max(255),
-  bio: z.string().optional(),
-  photo_url: z.string().optional(),
+const collectionFormSchema = z.object({
+  title: z.string().min(1, 'Title is required').max(255),
+  description: z.string().optional(),
+  poster_url: z.string().optional(),
+  backdrop_url: z.string().optional(),
 })
 
-export type PersonFormValues = z.infer<typeof personFormSchema>
+export type CollectionFormValues = z.infer<typeof collectionFormSchema>
 
-interface PersonFormProps {
-  defaultValues?: Partial<PersonFormValues>
-  onSubmit: (values: PersonFormValues) => Promise<void>
+interface CollectionFormProps {
+  defaultValues?: Partial<CollectionFormValues>
+  onSubmit: (values: CollectionFormValues) => Promise<void>
   isSubmitting?: boolean
 }
 
-export function PersonForm({ defaultValues, onSubmit, isSubmitting }: PersonFormProps) {
+export function CollectionForm({ defaultValues, onSubmit, isSubmitting }: CollectionFormProps) {
   const { t } = useTranslation()
-  const form = useForm<PersonFormValues>({
-    resolver: zodResolver(personFormSchema),
+  const form = useForm<CollectionFormValues>({
+    resolver: zodResolver(collectionFormSchema),
     defaultValues: {
-      full_name: '',
-      bio: '',
-      photo_url: '',
+      title: '',
+      description: '',
+      poster_url: '',
+      backdrop_url: '',
       ...defaultValues,
     },
   })
@@ -52,10 +54,10 @@ export function PersonForm({ defaultValues, onSubmit, isSubmitting }: PersonForm
       >
         <FormField
           control={form.control}
-          name="full_name"
+          name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('catalog.people.fullName')}</FormLabel>
+              <FormLabel>{t('catalog.collections.collectionTitle')}</FormLabel>
               <FormControl>
                 <Input {...field} />
               </FormControl>
@@ -66,10 +68,10 @@ export function PersonForm({ defaultValues, onSubmit, isSubmitting }: PersonForm
 
         <FormField
           control={form.control}
-          name="bio"
+          name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('catalog.people.bio')}</FormLabel>
+              <FormLabel>{t('catalog.collections.description')}</FormLabel>
               <FormControl>
                 <Textarea {...field} />
               </FormControl>
@@ -78,12 +80,19 @@ export function PersonForm({ defaultValues, onSubmit, isSubmitting }: PersonForm
           )}
         />
 
-        <FileUploadField
-          name="photo_url"
-          label={t('catalog.people.photo')}
-          form={form}
-          aspect="square"
-        />
+        <div className="grid gap-4 sm:grid-cols-2">
+          <FileUploadField
+            name="poster_url"
+            label={t('catalog.collections.poster')}
+            form={form}
+            aspect="poster"
+          />
+          <FileUploadField
+            name="backdrop_url"
+            label={t('catalog.collections.backdrop')}
+            form={form}
+          />
+        </div>
 
         <div className="flex justify-end gap-3">
           <Button type="submit" disabled={isSubmitting === true}>

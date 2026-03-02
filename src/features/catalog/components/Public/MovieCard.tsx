@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import { Check, Play, Plus } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/stores/auth.store'
@@ -22,7 +23,7 @@ export function MovieCard({ movie, progress, className }: MovieCardProps) {
     enabled: isAuthenticated,
   })
 
-  const isFavorite = (myListData?.items ?? []).some((m) => m.id === movie.id)
+  const isFavorite = (myListData?.content ?? []).some((m) => m.id === movie.id)
 
   const handleToggleFavorite = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -38,7 +39,7 @@ export function MovieCard({ movie, progress, className }: MovieCardProps) {
       to="/watch/$movieId"
       params={{ movieId: movie.id }}
       className={cn(
-        'group bg-muted relative aspect-[2/3] w-full cursor-pointer overflow-hidden rounded-md transition-all duration-300 hover:z-50 hover:scale-110 hover:shadow-2xl',
+        'group bg-muted relative aspect-[2/3] w-full cursor-pointer overflow-hidden rounded-md transition-all duration-300 hover:z-50 hover:scale-105 hover:shadow-2xl',
         className,
       )}
     >
@@ -61,7 +62,14 @@ export function MovieCard({ movie, progress, className }: MovieCardProps) {
 
       {/* Hover Overlay */}
       <div className="absolute inset-0 z-10 flex flex-col justify-end bg-linear-to-t from-black/90 via-black/40 to-transparent p-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-        <h3 className="text-sm font-bold text-white md:text-base">{movie.title}</h3>
+        <div className="mb-1 flex items-center gap-2">
+          <h3 className="line-clamp-1 text-sm font-bold text-white md:text-base">{movie.title}</h3>
+          {movie.kind === 'series' && (
+            <Badge className="h-3.5 border-none bg-red-600 px-1 text-[8px] font-black tracking-tighter text-white uppercase">
+              Series
+            </Badge>
+          )}
+        </div>
         <div className="mt-2 flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-black transition-colors hover:bg-white/80">
             <Play className="ml-0.5 h-4 w-4 fill-current" />
@@ -70,7 +78,7 @@ export function MovieCard({ movie, progress, className }: MovieCardProps) {
             <Button
               variant="ghost"
               size="icon"
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-white/40 bg-black/40 text-white transition-colors hover:bg-white/20"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-white/40 bg-black/40 text-white transition-colors hover:bg-white/20 cursor-pointer"
               onClick={handleToggleFavorite}
               disabled={toggleFavorite.isPending}
             >
@@ -85,7 +93,7 @@ export function MovieCard({ movie, progress, className }: MovieCardProps) {
             </span>
           )}
           <span>
-            {typeof movie.duration_minutes === 'number'
+            {movie.kind === 'movie' && typeof movie.duration_minutes === 'number'
               ? `${movie.duration_minutes.toString()}m`
               : ''}
           </span>

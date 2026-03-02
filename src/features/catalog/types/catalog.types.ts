@@ -1,18 +1,24 @@
+export type MovieKind = 'movie' | 'series'
+
 export interface Movie {
   id: string
+  collection_id: string | null
+  collection_order: number | null
   title: string
   slug: string
+  kind: MovieKind
   description: string | null
   poster_url: string | null
   backdrop_url: string | null
   trailer_url: string | null
-  video_url: string | null // Added this
+  video_url: string | null
   release_date: string | null
   duration_minutes: number | null
   rating_average: number
   vote_count: number
   created_at: string
   updated_at: string
+  deleted_at: string | null
 }
 
 export interface Genre {
@@ -33,6 +39,7 @@ export interface Person {
 }
 
 export interface Credit {
+  id: string
   person_id: string
   person_name: string
   role: string
@@ -44,15 +51,31 @@ export interface Credit {
 export interface MovieWithDetails extends Movie {
   genres: Genre[]
   credits: Credit[]
+  collection: {
+    id: string
+    title: string
+    slug: string
+  } | null
+  related_movies: {
+    id: string
+    title: string
+    slug: string
+    kind: MovieKind
+    collection_order: number
+    poster_url: string | null
+  }[]
 }
 
 export interface CreateMovieRequest {
   title: string
+  kind: MovieKind
+  collection_id?: string | undefined
+  collection_order?: number | undefined
   description?: string | undefined
   poster_url?: string | undefined
   backdrop_url?: string | undefined
   trailer_url?: string | undefined
-  video_url?: string | undefined // Added this
+  video_url?: string | undefined
   release_date?: string | undefined
   duration_minutes?: number | undefined
   genre_ids?: string[] | undefined
@@ -123,6 +146,7 @@ export interface UpdateProgressRequest {
 
 export interface UserProgress {
   movie: Movie
+  episode_id?: string | undefined
   progress_seconds: number
 }
 
@@ -142,9 +166,16 @@ export interface ListRelatedAnimesResponse {
   content: Movie[]
 }
 
+export interface ListMyListResponse {
+  page_number: number
+  page_size: number
+  count: number
+  content: Movie[]
+}
+
 export interface ListMoviesResponse {
   items: Movie[]
-  total: number
+  total?: number
 }
 
 export interface CreateGenreRequest {
@@ -195,4 +226,55 @@ export interface ListPeopleResponse {
   page_size: number
   count: number
   content: Person[]
+}
+
+// Collections
+export interface Collection {
+  id: string
+  title: string
+  slug: string
+  description: string | null
+  poster_url: string | null
+  backdrop_url: string | null
+  created_at: string
+  updated_at: string
+  deleted_at: string | null
+}
+
+export interface CollectionWithMovies extends Collection {
+  movies: {
+    id: string
+    title: string
+    slug: string
+    kind: MovieKind
+    collection_order: number
+    poster_url: string | null
+  }[]
+}
+
+export interface CreateCollectionRequest {
+  title: string
+  description?: string | undefined
+  poster_url?: string | undefined
+  backdrop_url?: string | undefined
+}
+
+export interface UpdateCollectionRequest {
+  id: string
+  title?: string | undefined
+  description?: string | undefined
+  poster_url?: string | undefined
+  backdrop_url?: string | undefined
+}
+
+export interface ListCollectionsParams {
+  search?: string | undefined
+  limit?: number | undefined
+  offset?: number | undefined
+  sort?: string | undefined
+}
+
+export interface ListCollectionsResponse {
+  items: Collection[]
+  total: number
 }

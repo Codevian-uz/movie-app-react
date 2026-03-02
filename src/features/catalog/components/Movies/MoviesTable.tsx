@@ -51,8 +51,16 @@ export function MoviesTable({ movies, onDelete }: MoviesTableProps) {
             movies.map((movie) => (
               <TableRow key={movie.id}>
                 <TableCell className="font-medium">
-                  <div className="flex flex-col">
-                    <span>{movie.title}</span>
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-2">
+                      <span>{movie.title}</span>
+                      <Badge
+                        variant={movie.kind === 'series' ? 'default' : 'outline'}
+                        className="h-4 px-1 text-[10px] uppercase"
+                      >
+                        {movie.kind}
+                      </Badge>
+                    </div>
                     <span className="text-muted-foreground text-xs">{movie.slug}</span>
                   </div>
                 </TableCell>
@@ -61,7 +69,9 @@ export function MoviesTable({ movies, onDelete }: MoviesTableProps) {
                     ? format(new Date(movie.release_date), 'PP')
                     : '-'}
                 </TableCell>
-                <TableCell>{movie.duration_minutes ?? '-'}</TableCell>
+                <TableCell>
+                  {movie.kind === 'movie' ? (movie.duration_minutes ?? '-') : '-'}
+                </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <Badge variant="secondary">{movie.rating_average.toFixed(1)}</Badge>

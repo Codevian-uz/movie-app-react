@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { createFileRoute, useNavigate, useParams } from '@tanstack/react-router'
+import { Link, createFileRoute, useNavigate, useParams } from '@tanstack/react-router'
 import {
   ArrowLeft,
   Play,
@@ -41,6 +41,7 @@ function WatchPage() {
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
   const [showEpisodes, setShowEpisodes] = useState(false)
+  const [showDetails, setShowDetails] = useState(false)
   const [activeEpisode, setActiveEpisode] = useState<Episode | null>(null)
 
   const { data: movie, isLoading: isMovieLoading } = useQuery(movieQueryOptions(movieId))
@@ -59,17 +60,22 @@ function WatchPage() {
 
   const updateProgress = useUpdateProgress()
 
-  // Find saved progress for this movie/episode
-  const savedProgress = continueWatchingData?.content.find(
-    (cw) => cw.movie.id === movieId,
-  )?.progress_seconds
+  // Find saved progress for this movie/series
+  const savedProgressRecord = continueWatchingData?.content.find((cw) => cw.movie.id === movieId)
 
   // Resume playback from saved progress
   useEffect(() => {
-    if (videoRef.current !== null && savedProgress !== undefined && !isMovieLoading) {
-      videoRef.current.currentTime = savedProgress
+    if (videoRef.current !== null && savedProgressRecord !== undefined && !isMovieLoading) {
+      // If it's a series and we have a specific episode progress, find that episode
+      if (movie?.kind === 'series' && savedProgressRecord.episode_id !== undefined) {
+        const targetEp = episodes?.find((ep) => ep.id === savedProgressRecord.episode_id)
+        if (targetEp !== undefined) {
+          setActiveEpisode(targetEp)
+        }
+      }
+      videoRef.current.currentTime = savedProgressRecord.progress_seconds
     }
-  }, [savedProgress, isMovieLoading])
+  }, [savedProgressRecord, isMovieLoading, movie?.kind, episodes])
 
   // Periodic progress update
   useEffect(() => {
@@ -194,6 +200,23 @@ function WatchPage() {
     activeEpisode !== null &&
     episodes.findIndex((ep) => ep.id === activeEpisode.id) < episodes.length - 1
 
+  const relatedMovies =
+    movie !== undefined && movie.related_movies.length > 0
+      ? movie.related_movies.map((m) => ({
+          ...m,
+          rating_average: 0,
+          release_date: null,
+          description: null,
+          created_at: '',
+          updated_at: '',
+          deleted_at: null,
+          collection_id: movie.collection?.id ?? null,
+          trailer_url: null,
+          video_url: null,
+          backdrop_url: null,
+        }))
+      : related ?? []
+
   return (
     <div className="relative h-svh w-full overflow-hidden bg-black text-white">
       {/* Background/Video */}
@@ -201,7 +224,7 @@ function WatchPage() {
         key={activeEpisode?.id ?? 'movie'}
         ref={videoRef}
         src={videoSrc}
-        className="h-full w-full object-contain"
+        className="h-full w-full object-contain cursor-pointer"
         autoPlay
         onClick={() => {
           togglePlay()
@@ -227,7 +250,7 @@ function WatchPage() {
       <div
         className={cn(
           'absolute inset-0 z-10 flex flex-col justify-between transition-opacity duration-500',
-          showControls || !isPlaying ? 'opacity-100' : 'pointer-events-none opacity-0',
+          showControls || !isPlaying || showDetails ? 'opacity-100' : 'pointer-events-none opacity-0',
         )}
       >
         {/* Top Bar */}
@@ -236,7 +259,7 @@ function WatchPage() {
             <Button
               variant="ghost"
               size="icon"
-              className="h-10 w-10 text-white hover:bg-white/10"
+              className="h-10 w-10 text-white hover:bg-white/10 cursor-pointer"
               onClick={() => {
                 void navigate({ to: '/' })
               }}
@@ -247,7 +270,9 @@ function WatchPage() {
               <span className="text-sm font-light text-gray-400">
                 {activeEpisode !== null
                   ? `Watching S${activeEpisode.season_number.toString()} E${activeEpisode.episode_number.toString()}`
-                  : 'Watching'}
+                  : movie?.collection !== null
+                    ? `Watching from ${movie?.collection?.title ?? ''}`
+                    : 'Watching'}
               </span>
               <h1 className="text-xl font-bold">
                 {activeEpisode?.title ?? movie?.title ?? 'Unknown Anime'}
@@ -256,12 +281,41 @@ function WatchPage() {
           </div>
 
           <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              className="flex items-center gap-2 text-white hover:bg-white/10 cursor-pointer"
+              onClick={() => {
+                setShowDetails(!showDetails)
+                if (!showDetails) {
+                  setIsPlaying(false)
+                  videoRef.current?.pause()
+                }
+              }}
+            >
+              <Info className="h-5 w-5" />
+              <span>{showDetails ? 'Close Details' : 'More Info'}</span>
+            </Button>
+            {movie?.collection !== null && (
+              <Button
+                variant="outline"
+                className="hidden border-white/20 bg-white/10 text-white hover:bg-white/20 md:flex cursor-pointer"
+                asChild
+              >
+                <Link
+                  to="/collections/$collectionId"
+                  params={{ collectionId: movie?.collection?.id ?? '' }}
+                >
+                  View Franchise
+                </Link>
+              </Button>
+            )}
             {episodes !== undefined && episodes.length > 0 && (
               <Button
                 variant="ghost"
-                className="flex items-center gap-2 text-white hover:bg-white/10"
+                className="flex items-center gap-2 text-white hover:bg-white/10 cursor-pointer"
                 onClick={() => {
                   setShowEpisodes(!showEpisodes)
+                  setShowDetails(false)
                 }}
               >
                 <List className="h-5 w-5" />
@@ -273,7 +327,7 @@ function WatchPage() {
 
         {/* Center Controls (Quick Play/Pause) */}
         <div className="flex flex-1 items-center justify-center">
-          {!isPlaying && (
+          {!isPlaying && !showDetails && !showEpisodes && (
             <div
               className="flex h-20 w-20 cursor-pointer items-center justify-center rounded-full bg-white/10 backdrop-blur-sm"
               onClick={() => {
@@ -284,6 +338,71 @@ function WatchPage() {
             </div>
           )}
         </div>
+
+        {/* Details Overlay */}
+        {showDetails && movie !== undefined && (
+          <div className="absolute inset-0 z-40 bg-black/90 backdrop-blur-md overflow-y-auto p-8 md:p-16">
+            <div className="max-w-4xl mx-auto space-y-12">
+              <div className="flex flex-col md:flex-row gap-8">
+                <div className="w-full md:w-1/4 shrink-0 mx-auto md:mx-0">
+                  <img
+                    src={movie.poster_url ?? '/placeholder-poster.jpg'}
+                    alt={movie.title}
+                    className="w-full aspect-[2/3] object-cover rounded-lg shadow-2xl border border-white/10"
+                  />
+                </div>
+                <div className="flex-1 space-y-6">
+                  <div className="space-y-2">
+                    <h2 className="text-4xl md:text-5xl font-black tracking-tight">{movie.title}</h2>
+                    <div className="flex items-center gap-4 text-sm font-medium text-gray-400">
+                      <span className="text-green-500 font-bold">{movie.rating_average.toFixed(1)} Rating</span>
+                      <span>{movie.release_date?.split('-')[0]}</span>
+                      {movie.kind === 'movie' && <span>{movie.duration_minutes}m</span>}
+                    </div>
+                  </div>
+                  <p className="text-lg text-gray-200 leading-relaxed">
+                    {movie.description || 'No description available.'}
+                  </p>
+                  <div className="flex flex-wrap gap-2 pt-4">
+                    {movie.genres.map((genre) => (
+                      <span
+                        key={genre.id}
+                        className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold"
+                      >
+                        {genre.name}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {movie.credits.length > 0 && (
+                <div className="space-y-6">
+                  <h3 className="border-b border-white/10 pb-2 text-2xl font-bold">Cast & Crew</h3>
+                  <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4">
+                    {movie.credits.map((credit) => (
+                      <div key={credit.id} className="space-y-2">
+                        <div className="aspect-square overflow-hidden rounded-full border border-white/10 bg-white/5">
+                          {credit.photo_url !== null && (
+                            <img
+                              src={credit.photo_url}
+                              alt={credit.person_name}
+                              className="h-full w-full object-cover"
+                            />
+                          )}
+                        </div>
+                        <div className="text-center">
+                          <p className="line-clamp-1 text-sm font-bold">{credit.person_name}</p>
+                          <p className="text-xs text-gray-400">{credit.role}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Episodes Sidebar */}
         {showEpisodes && episodes !== undefined && (
@@ -370,7 +489,7 @@ function WatchPage() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-10 w-10 text-white hover:bg-white/10"
+                className="h-10 w-10 text-white hover:bg-white/10 cursor-pointer"
                 onClick={() => {
                   togglePlay()
                 }}
@@ -388,7 +507,7 @@ function WatchPage() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-10 w-10 text-white hover:bg-white/10"
+                className="h-10 w-10 text-white hover:bg-white/10 cursor-pointer"
                 onClick={() => {
                   skip(-10)
                 }}
@@ -399,7 +518,7 @@ function WatchPage() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-10 w-10 text-white hover:bg-white/10"
+                className="h-10 w-10 text-white hover:bg-white/10 cursor-pointer"
                 onClick={() => {
                   skip(10)
                 }}
@@ -407,8 +526,8 @@ function WatchPage() {
                 <RotateCw className="h-7 w-7" />
               </Button>
 
-              <div className="flex items-center gap-2">
-                <Volume2 className="h-6 w-6 text-gray-400" />
+              <div className="flex items-center gap-2 cursor-pointer group/volume">
+                <Volume2 className="h-6 w-6 text-gray-400 group-hover/volume:text-white transition-colors" />
                 <div className="h-1 w-24 bg-white/20">
                   <div className="h-full w-3/4 bg-white" />
                 </div>
@@ -423,17 +542,19 @@ function WatchPage() {
               {hasNextEpisode && (
                 <Button
                   variant="ghost"
-                  className="flex items-center gap-2 text-white hover:bg-white/10"
+                  className="flex items-center gap-2 text-white hover:bg-white/10 cursor-pointer"
                   onClick={playNextEpisode}
                 >
                   <FastForward className="h-5 w-5" />
                   <span>Next Episode</span>
                 </Button>
               )}
-              {related !== undefined && related.length > 0 && (
-                <div className="hidden items-center gap-2 md:flex">
-                  <Info className="h-5 w-5 text-gray-400" />
-                  <span className="text-sm font-medium text-gray-300">More Like This</span>
+              {relatedMovies.length > 0 && (
+                <div className="hidden items-center gap-2 md:flex cursor-pointer group/info">
+                  <Info className="h-5 w-5 text-gray-400 group-hover/info:text-white transition-colors" />
+                  <span className="text-sm font-medium text-gray-300 group-hover/info:text-white transition-colors">
+                    {movie?.collection !== null ? 'Next in Franchise' : 'More Like This'}
+                  </span>
                 </div>
               )}
               <Maximize className="h-6 w-6 cursor-pointer text-gray-400 hover:text-white" />
@@ -443,10 +564,14 @@ function WatchPage() {
       </div>
 
       {/* Related Content Overlay (Mobile/Scrolled) */}
-      {!isPlaying && related !== undefined && related.length > 0 && (
+      {!isPlaying && relatedMovies.length > 0 && (
         <div className="absolute inset-0 z-0 bg-black/60 pt-20">
           <div className="h-full overflow-y-auto p-12">
-            <MovieRow title="More Like This" movies={related} className="!px-0" />
+            <MovieRow
+              title={movie?.collection !== null ? 'Related in Franchise' : 'More Like This'}
+              movies={relatedMovies as any}
+              className="!px-0"
+            />
           </div>
         </div>
       )}

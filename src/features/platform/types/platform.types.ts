@@ -45,6 +45,7 @@ export interface ScheduleInfo {
   next_run_at: string
   last_run_at: string | null
   last_run_status: string | null
+  last_error: string | null
   run_count: number
 }
 

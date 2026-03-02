@@ -86,6 +86,9 @@ function EditMoviePage() {
             movieId={movieId}
             defaultValues={{
               title: movie.title,
+              kind: movie.kind,
+              collection_id: movie.collection_id ?? '',
+              collection_order: movie.collection_order ?? 0,
               description: movie.description ?? '',
               release_date: movie.release_date?.split('T')[0] ?? '',
               duration_minutes: movie.duration_minutes ?? 0,

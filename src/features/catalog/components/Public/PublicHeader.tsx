@@ -45,12 +45,6 @@ export function PublicHeader() {
             to="/"
             className="text-sm font-light text-white transition-colors hover:text-gray-300"
           >
-            TV Shows
-          </Link>
-          <Link
-            to="/"
-            className="text-sm font-light text-white transition-colors hover:text-gray-300"
-          >
             Movies
           </Link>
           <Link

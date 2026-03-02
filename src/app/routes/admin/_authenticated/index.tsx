@@ -48,12 +48,11 @@ function DashboardPage() {
     return acc + (q.data?.in_dlq ?? 0)
   }, 0)
 
-  const queuesHealthText =
-    queues !== undefined
-      ? totalDlqItems > 0
-        ? `${String(queues.length)} queues / ${String(totalDlqItems)} in DLQ`
-        : `${String(queues.length)} queues`
-      : '-'
+  const queuesHealthText = Array.isArray(queues)
+    ? totalDlqItems > 0
+      ? `${String(queues.length)} queues / ${String(totalDlqItems)} in DLQ`
+      : `${String(queues.length)} queues`
+    : '-'
 
   // Errors
   const { data: errorStats } = useQuery({
@@ -75,7 +74,7 @@ function DashboardPage() {
           <h2 className="text-muted-foreground mb-3 text-sm font-medium">
             {t('dashboard.authStats')}
           </h2>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-3">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-muted-foreground text-sm font-normal">
@@ -85,6 +84,18 @@ function DashboardPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-3xl font-bold">{authStats?.total_users ?? '-'}</p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-muted-foreground text-sm font-normal">
+                  {t('dashboard.totalRoles')}
+                </CardTitle>
+                <Hash className="text-muted-foreground size-4" />
+              </CardHeader>
+              <CardContent>
+                <p className="text-3xl font-bold">{authStats?.total_roles ?? '-'}</p>
               </CardContent>
             </Card>
 

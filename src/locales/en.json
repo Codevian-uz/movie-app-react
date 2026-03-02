@@ -78,6 +78,19 @@
         "passwordRequired": "Password is required"
       }
     },
+    "register": {
+      "title": "Create an Account",
+      "description": "Enter your details to join AnimeApp",
+      "username": "Username",
+      "password": "Password",
+      "submit": "Sign up",
+      "success": "Registration successful! You can now log in.",
+      "error": "Registration failed",
+      "validation": {
+        "usernameRequired": "Username is required",
+        "passwordRequired": "Password is required"
+      }
+    },
     "users": {
       "title": "Users",
       "createUser": "Create User",
@@ -271,6 +284,7 @@
     "welcome": "Welcome to Movie App",
     "authStats": "Auth",
     "totalUsers": "Total Users",
+    "totalRoles": "Total Roles",
     "activeSessions": "Active Sessions",
     "tasks": "Tasks",
     "taskSchedules": "Task Schedules",
@@ -299,7 +313,8 @@
       "platform": "Platform",
       "catalog": "Catalog"
     },
-    "movies": "Movies"
+    "movies": "Movies",
+    "collections": "Collections"
   },
   "catalog": {
     "movies": {
@@ -360,6 +375,23 @@
       "characterName": "Character Name",
       "displayOrder": "Display Order",
       "person": "Person"
+    },
+    "collections": {
+      "title": "Collections",
+      "createCollection": "Create Collection",
+      "editCollection": "Edit Collection",
+      "collectionTitle": "Title",
+      "slug": "Slug",
+      "description": "Description",
+      "poster": "Poster",
+      "backdrop": "Backdrop",
+      "created": "Collection created successfully",
+      "updated": "Collection updated successfully",
+      "deleted": "Collection deleted successfully",
+      "noCollections": "No collections found",
+      "deleteConfirm": "Are you sure you want to delete this collection?",
+      "uploadPoster": "Upload Poster",
+      "uploadBackdrop": "Upload Backdrop"
     }
   },
   "notFound": {

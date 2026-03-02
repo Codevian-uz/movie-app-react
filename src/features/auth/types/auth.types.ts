@@ -17,6 +17,7 @@ export interface User {
   roles: string[]
   direct_permissions: string[]
   last_active_at: string | null
+  deleted_at: string | null
   created_at: string
   updated_at: string
 }
@@ -117,5 +118,6 @@ export interface GetUserSessionsParams {
 
 export interface AuthStats {
   total_users: number
+  total_roles: number
   active_sessions: number
 }

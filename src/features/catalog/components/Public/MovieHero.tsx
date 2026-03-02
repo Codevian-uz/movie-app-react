@@ -33,16 +33,30 @@ export function MovieHero({ movie }: MovieHeroProps) {
             {movie.description ?? ''}
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
-            <Button
-              asChild
-              size="lg"
-              className="h-12 bg-white px-8 text-lg font-bold text-black hover:bg-white/90"
-            >
-              <Link to="/watch/$movieId" params={{ movieId: movie.id }}>
-                <Play className="mr-2 h-6 w-6 fill-current" />
-                Play
-              </Link>
-            </Button>
+            {movie.kind === 'movie' ? (
+              <Button
+                asChild
+                size="lg"
+                className="h-12 bg-white px-8 text-lg font-bold text-black hover:bg-white/90"
+              >
+                <Link to="/watch/$movieId" params={{ movieId: movie.id }}>
+                  <Play className="mr-2 h-6 w-6 fill-current" />
+                  Play
+                </Link>
+              </Button>
+            ) : (
+              <Button
+                asChild
+                size="lg"
+                className="h-12 bg-white px-8 text-lg font-bold text-black hover:bg-white/90"
+              >
+                {/* For series, we go to details page first to select episode */}
+                <Link to="/watch/$movieId" params={{ movieId: movie.id }}>
+                  <Play className="mr-2 h-6 w-6 fill-current" />
+                  Watch Episodes
+                </Link>
+              </Button>
+            )}
             <Button
               size="lg"
               variant="secondary"
