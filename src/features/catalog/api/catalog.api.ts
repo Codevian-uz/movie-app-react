@@ -25,6 +25,7 @@ import type {
   Movie,
   MovieWithDetails,
   Person,
+  TitleDetailsResponse,
   ToggleFavoriteRequest,
   UpdateCollectionRequest,
   UpdateGenreRequest,
@@ -48,6 +49,20 @@ export async function listMovies(params?: ListMoviesParams): Promise<ListMoviesR
 
 export async function getMovie(id: string): Promise<MovieWithDetails> {
   const response = await apiClient.get<MovieWithDetails>(`v1/catalog/movies/${id}`)
+  return response.data
+}
+
+export async function getTitleDetails(
+  id: string,
+  episodeId?: string,
+): Promise<TitleDetailsResponse> {
+  const params: Record<string, string> = { id }
+  if (episodeId !== undefined) {
+    params.episode_id = episodeId
+  }
+  const response = await apiClient.get<TitleDetailsResponse>('v1/catalog/get-title-details', {
+    params,
+  })
   return response.data
 }
 

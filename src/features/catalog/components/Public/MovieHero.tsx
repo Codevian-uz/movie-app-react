@@ -51,7 +51,7 @@ export function MovieHero({ movie }: MovieHeroProps) {
                 className="h-12 bg-white px-8 text-lg font-bold text-black hover:bg-white/90"
               >
                 {/* For series, we go to details page first to select episode */}
-                <Link to="/watch/$movieId" params={{ movieId: movie.id }}>
+                <Link to="/movies/$movieId" params={{ movieId: movie.id }}>
                   <Play className="mr-2 h-6 w-6 fill-current" />
                   Watch Episodes
                 </Link>

@@ -35,7 +35,9 @@ export function HomeSpotlight({ movies }: HomeSpotlightProps) {
   }
 
   const prevSlide = () => {
-    setCurrentIndex((prev) => (prev - 1 + Math.min(movies.length, 10)) % Math.min(movies.length, 10))
+    setCurrentIndex(
+      (prev) => (prev - 1 + Math.min(movies.length, 10)) % Math.min(movies.length, 10),
+    )
   }
 
   if (!movie) {
@@ -50,7 +52,7 @@ export function HomeSpotlight({ movies }: HomeSpotlightProps) {
           key={movie.id}
           src={movie.backdrop_url ?? movie.poster_url ?? '/placeholder-backdrop.jpg'}
           alt={movie.title}
-          className="h-full w-full animate-in fade-in zoom-in-105 object-cover duration-1000"
+          className="animate-in fade-in zoom-in-105 h-full w-full object-cover duration-1000"
         />
         {/* Gradients */}
         <div className="absolute inset-0 bg-linear-to-r from-zinc-950 via-zinc-950/60 to-transparent" />
@@ -59,18 +61,16 @@ export function HomeSpotlight({ movies }: HomeSpotlightProps) {
       </div>
 
       {/* Content */}
-      <div className="container relative z-10 flex h-full flex-col justify-center px-6 lg:px-12">
-        <div className="max-w-3xl animate-in fade-in slide-in-from-left-10 duration-700">
+      <div className="relative z-10 container flex h-full flex-col justify-center px-6 lg:px-12">
+        <div className="animate-in fade-in slide-in-from-left-10 max-w-3xl duration-700">
           <div className="mb-4 flex items-center gap-3">
-            <span className="rounded-md bg-orange-500 px-2 py-1 text-xs font-bold text-white uppercase tracking-wider">
+            <span className="rounded-md bg-orange-500 px-2 py-1 text-xs font-bold tracking-wider text-white uppercase">
               # {currentIndex + 1} Trending
             </span>
             <div className="flex items-center gap-1 text-sm font-medium text-orange-400">
               <Star className="h-4 w-4 fill-current" />
               <span>
-                {typeof movie.rating_average === 'number'
-                  ? movie.rating_average.toFixed(1)
-                  : '0.0'}
+                {typeof movie.rating_average === 'number' ? movie.rating_average.toFixed(1) : '0.0'}
               </span>
             </div>
           </div>
@@ -107,7 +107,7 @@ export function HomeSpotlight({ movies }: HomeSpotlightProps) {
             <Button
               asChild
               size="lg"
-              className="h-14 rounded-full bg-orange-500 px-10 text-lg font-bold text-white hover:bg-orange-600 active:scale-95 transition-all cursor-pointer shadow-lg shadow-orange-500/20"
+              className="h-14 cursor-pointer rounded-full bg-orange-500 px-10 text-lg font-bold text-white shadow-lg shadow-orange-500/20 transition-all hover:bg-orange-600 active:scale-95"
             >
               <Link to="/watch/$movieId" params={{ movieId: movie.id }}>
                 <Play className="mr-2 h-6 w-6 fill-current" />
@@ -118,9 +118,9 @@ export function HomeSpotlight({ movies }: HomeSpotlightProps) {
               asChild
               variant="secondary"
               size="lg"
-              className="h-14 rounded-full border-none bg-zinc-800/80 px-10 text-lg font-bold text-white backdrop-blur-md hover:bg-zinc-700 active:scale-95 transition-all cursor-pointer"
+              className="h-14 cursor-pointer rounded-full border-none bg-zinc-800/80 px-10 text-lg font-bold text-white backdrop-blur-md transition-all hover:bg-zinc-700 active:scale-95"
             >
-              <Link to="/watch/$movieId" params={{ movieId: movie.id }}>
+              <Link to="/movies/$movieId" params={{ movieId: movie.id }}>
                 <Info className="mr-2 h-6 w-6" />
                 Details
               </Link>
@@ -134,7 +134,7 @@ export function HomeSpotlight({ movies }: HomeSpotlightProps) {
         <Button
           variant="ghost"
           size="icon"
-          className="h-12 w-12 cursor-pointer rounded-full bg-zinc-900/50 text-white backdrop-blur-md hover:bg-orange-500 hover:text-white transition-all active:scale-90"
+          className="h-12 w-12 cursor-pointer rounded-full bg-zinc-900/50 text-white backdrop-blur-md transition-all hover:bg-orange-500 hover:text-white active:scale-90"
           onClick={prevSlide}
         >
           <ChevronLeft className="h-6 w-6" />
@@ -142,7 +142,7 @@ export function HomeSpotlight({ movies }: HomeSpotlightProps) {
         <Button
           variant="ghost"
           size="icon"
-          className="h-12 w-12 cursor-pointer rounded-full bg-zinc-900/50 text-white backdrop-blur-md hover:bg-orange-500 hover:text-white transition-all active:scale-90"
+          className="h-12 w-12 cursor-pointer rounded-full bg-zinc-900/50 text-white backdrop-blur-md transition-all hover:bg-orange-500 hover:text-white active:scale-90"
           onClick={nextSlide}
         >
           <ChevronRight className="h-6 w-6" />
@@ -150,12 +150,12 @@ export function HomeSpotlight({ movies }: HomeSpotlightProps) {
       </div>
 
       {/* Slide Indicators */}
-      <div className="absolute left-6 bottom-12 z-20 flex gap-2 md:left-12">
+      <div className="absolute bottom-12 left-6 z-20 flex gap-2 md:left-12">
         {movies.slice(0, 10).map((_, index) => (
           <button
             key={index}
             className={cn(
-              'h-1.5 rounded-full transition-all cursor-pointer',
+              'h-1.5 cursor-pointer rounded-full transition-all',
               currentIndex === index ? 'w-8 bg-orange-500' : 'w-2 bg-zinc-600 hover:bg-zinc-500',
             )}
             onClick={() => {

@@ -129,7 +129,11 @@ export function RegisterForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full bg-red-600 hover:bg-red-700" disabled={registerMutation.isPending}>
+        <Button
+          type="submit"
+          className="w-full bg-red-600 hover:bg-red-700"
+          disabled={registerMutation.isPending}
+        >
           {t('auth.register.submit')}
         </Button>
       </form>

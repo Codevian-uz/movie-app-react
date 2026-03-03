@@ -39,7 +39,7 @@ export function HomeSection({ title, movies, viewAllLink, className }: HomeSecti
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
         {movies.map((movie) => (
           <div key={movie.id} className="group relative">
-            <Link to="/watch/$movieId" params={{ movieId: movie.id }} className="block">
+            <Link to="/movies/$movieId" params={{ movieId: movie.id }} className="block">
               <div className="relative aspect-[2/3] overflow-hidden rounded-lg bg-zinc-900 shadow-md transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-xl group-hover:shadow-orange-500/10">
                 <img
                   src={movie.poster_url ?? '/placeholder-poster.jpg'}

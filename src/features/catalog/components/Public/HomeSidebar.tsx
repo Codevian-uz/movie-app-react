@@ -21,7 +21,7 @@ export function HomeSidebar({ topTen, genres, className }: HomeSidebarProps) {
           {topTen.slice(0, 10).map((movie, index) => (
             <Link
               key={movie.id}
-              to="/watch/$movieId"
+              to="/movies/$movieId"
               params={{ movieId: movie.id }}
               className="group flex items-center gap-4 rounded-lg p-2 transition-all hover:bg-zinc-900"
             >

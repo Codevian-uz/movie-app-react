@@ -19,6 +19,7 @@ import {
   getCollection,
   getHomeData,
   getMovie,
+  getTitleDetails,
   getPerson,
   getRelatedAnimes,
   listCollections,
@@ -41,6 +42,8 @@ export const catalogKeys = {
   all: ['catalog'] as const,
   movies: (params?: ListMoviesParams) => [...catalogKeys.all, 'movies', params] as const,
   movie: (id: string) => [...catalogKeys.all, 'movie', id] as const,
+  titleDetails: (id: string, episodeId?: string) =>
+    [...catalogKeys.all, 'title-details', id, episodeId] as const,
   genres: (params?: ListGenresParams) => [...catalogKeys.all, 'genres', params] as const,
   genre: (id: string) => [...catalogKeys.all, 'genre', id] as const,
   people: (params?: ListPeopleParams) => [...catalogKeys.all, 'people', params] as const,
@@ -75,6 +78,13 @@ export function movieQueryOptions(id: string) {
   return queryOptions({
     queryKey: catalogKeys.movie(id),
     queryFn: () => getMovie(id),
+  })
+}
+
+export function titleDetailsQueryOptions(id: string, episodeId?: string) {
+  return queryOptions({
+    queryKey: catalogKeys.titleDetails(id, episodeId),
+    queryFn: () => getTitleDetails(id, episodeId),
   })
 }
 

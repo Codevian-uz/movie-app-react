@@ -36,7 +36,7 @@ export function MovieCard({ movie, progress, className }: MovieCardProps) {
 
   return (
     <Link
-      to="/watch/$movieId"
+      to="/movies/$movieId"
       params={{ movieId: movie.id }}
       className={cn(
         'group bg-muted relative aspect-2/3 w-full cursor-pointer overflow-hidden rounded-md transition-all duration-300 hover:z-50 hover:scale-105 hover:shadow-2xl',
@@ -78,7 +78,7 @@ export function MovieCard({ movie, progress, className }: MovieCardProps) {
             <Button
               variant="ghost"
               size="icon"
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-white/40 bg-black/40 text-white transition-colors hover:bg-white/20 cursor-pointer"
+              className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-white/40 bg-black/40 text-white transition-colors hover:bg-white/20"
               onClick={handleToggleFavorite}
               disabled={toggleFavorite.isPending}
             >

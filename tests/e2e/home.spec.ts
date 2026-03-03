@@ -7,7 +7,7 @@ test.describe('Home Page', () => {
       // Either we see the spotlight or the empty state
       const spotlight = page.locator('main').getByText(/trending/i)
       const emptyState = page.getByText(/catalog is empty/i)
-      
+
       await expect(spotlight.or(emptyState)).toBeVisible({ timeout: 15_000 })
     })
 
@@ -21,7 +21,7 @@ test.describe('Home Page', () => {
     await test.step('sidebar displays top 10 and genres', async () => {
       const main = page.locator('main')
       const sidebar = main.locator('aside')
-      
+
       // Only check if not in empty state
       const isEmpty = await page.getByText(/catalog is empty/i).isVisible()
       if (!isEmpty) {

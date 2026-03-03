@@ -39,7 +39,7 @@ function HomePage() {
       <div className="relative min-h-svh bg-zinc-950 text-white">
         <PublicHeader />
         <div className="flex h-[80vh] flex-col items-center justify-center px-6 text-center">
-          <div className="max-w-md rounded-2xl border border-zinc-800 bg-zinc-900/50 p-8 backdrop-blur-xl shadow-2xl">
+          <div className="max-w-md rounded-2xl border border-zinc-800 bg-zinc-900/50 p-8 shadow-2xl backdrop-blur-xl">
             <div className="mb-6 flex justify-center">
               <div className="rounded-full bg-zinc-800 p-4">
                 <LayoutGrid className="h-12 w-12 text-zinc-600" />
@@ -52,12 +52,9 @@ function HomePage() {
             <Button
               asChild
               size="lg"
-              className="w-full bg-orange-500 font-bold text-white hover:bg-orange-600 shadow-lg shadow-orange-500/20"
+              className="w-full bg-orange-500 font-bold text-white shadow-lg shadow-orange-500/20 hover:bg-orange-600"
             >
-              <Link
-                to="/admin/catalog/movies"
-                search={{ page: undefined, pageSize: undefined }}
-              >
+              <Link to="/admin/catalog/movies" search={{ page: undefined, pageSize: undefined }}>
                 <Plus className="mr-2 h-5 w-5" />
                 Add Your First Anime
               </Link>
@@ -111,44 +108,46 @@ function HomePage() {
         <div className="container">
           <div className="grid grid-cols-2 gap-12 md:grid-cols-4">
             <div className="flex flex-col gap-4">
-              <h4 className="text-sm font-bold text-zinc-200 uppercase tracking-widest">Platform</h4>
-              <Link to="/" className="text-sm hover:text-orange-500 transition-colors">
+              <h4 className="text-sm font-bold tracking-widest text-zinc-200 uppercase">
+                Platform
+              </h4>
+              <Link to="/" className="text-sm transition-colors hover:text-orange-500">
                 Browse
               </Link>
-              <Link to="/" className="text-sm hover:text-orange-500 transition-colors">
+              <Link to="/" className="text-sm transition-colors hover:text-orange-500">
                 Genres
               </Link>
-              <Link to="/" className="text-sm hover:text-orange-500 transition-colors">
+              <Link to="/" className="text-sm transition-colors hover:text-orange-500">
                 Top Airing
               </Link>
             </div>
             <div className="flex flex-col gap-4">
-              <h4 className="text-sm font-bold text-zinc-200 uppercase tracking-widest">Support</h4>
-              <Link to="/" className="text-sm hover:text-orange-500 transition-colors">
+              <h4 className="text-sm font-bold tracking-widest text-zinc-200 uppercase">Support</h4>
+              <Link to="/" className="text-sm transition-colors hover:text-orange-500">
                 Help Center
               </Link>
-              <Link to="/" className="text-sm hover:text-orange-500 transition-colors">
+              <Link to="/" className="text-sm transition-colors hover:text-orange-500">
                 Terms of Use
               </Link>
-              <Link to="/" className="text-sm hover:text-orange-500 transition-colors">
+              <Link to="/" className="text-sm transition-colors hover:text-orange-500">
                 Privacy Policy
               </Link>
             </div>
             <div className="flex flex-col gap-4">
-              <h4 className="text-sm font-bold text-zinc-200 uppercase tracking-widest">Account</h4>
-              <Link to="/login" className="text-sm hover:text-orange-500 transition-colors">
+              <h4 className="text-sm font-bold tracking-widest text-zinc-200 uppercase">Account</h4>
+              <Link to="/login" className="text-sm transition-colors hover:text-orange-500">
                 Login
               </Link>
-              <Link to="/register" className="text-sm hover:text-orange-500 transition-colors">
+              <Link to="/register" className="text-sm transition-colors hover:text-orange-500">
                 Register
               </Link>
-              <Link to="/" className="text-sm hover:text-orange-500 transition-colors">
+              <Link to="/" className="text-sm transition-colors hover:text-orange-500">
                 My Profile
               </Link>
             </div>
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-2">
-                <div className="text-xl font-black text-white italic tracking-tighter">
+                <div className="text-xl font-black tracking-tighter text-white italic">
                   ANIME<span className="text-orange-500">WATCH</span>
                 </div>
                 <p className="max-w-200px text-xs leading-relaxed text-zinc-600">
@@ -159,10 +158,10 @@ function HomePage() {
             </div>
           </div>
           <div className="mt-16 flex flex-col items-center justify-between gap-6 border-t border-zinc-900 pt-8 md:flex-row">
-            <div className="text-xs">© {new Date().getFullYear()} AnimeWatch. All rights reserved.</div>
-            <div className="flex gap-6">
-              {/* Social icons placeholder */}
+            <div className="text-xs">
+              © {new Date().getFullYear()} AnimeWatch. All rights reserved.
             </div>
+            <div className="flex gap-6">{/* Social icons placeholder */}</div>
           </div>
         </div>
       </footer>

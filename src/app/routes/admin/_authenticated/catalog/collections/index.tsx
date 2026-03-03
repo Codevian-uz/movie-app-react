@@ -15,11 +15,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { DEFAULT_PAGE_SIZE } from '@/config/constants'
-import {
-  collectionsQueryOptions,
-  CollectionsTable,
-  useDeleteCollection,
-} from '@/features/catalog'
+import { collectionsQueryOptions, CollectionsTable, useDeleteCollection } from '@/features/catalog'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useTranslation } from '@/lib/i18n'
 
@@ -100,7 +96,10 @@ function CollectionsIndexPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold tracking-tight">{t('catalog.collections.title')}</h1>
         <Button asChild>
-          <Link to="/admin/catalog/collections/create" search={{ page: 1, pageSize: DEFAULT_PAGE_SIZE }}>
+          <Link
+            to="/admin/catalog/collections/create"
+            search={{ page: 1, pageSize: DEFAULT_PAGE_SIZE }}
+          >
             <Plus className="mr-2 size-4" />
             {t('catalog.collections.createCollection')}
           </Link>
@@ -108,7 +107,7 @@ function CollectionsIndexPage() {
       </div>
 
       <div className="flex flex-wrap items-center gap-4">
-        <div className="relative flex-1 min-w-[200px] max-w-sm">
+        <div className="relative max-w-sm min-w-[200px] flex-1">
           <Search className="text-muted-foreground absolute top-2.5 left-2 size-4" />
           <Input
             placeholder={t('common.actions.search')}

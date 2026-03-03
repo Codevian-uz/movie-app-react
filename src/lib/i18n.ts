@@ -46,5 +46,7 @@ export function t(key: string, params?: Record<string, string | number>): string
 
 export function useTranslation() {
   const locale = useLocaleStore((s) => s.locale)
-  return { t: (key: string, params?: Record<string, string | number>) => resolve(locale, key, params) } as const
+  return {
+    t: (key: string, params?: Record<string, string | number>) => resolve(locale, key, params),
+  } as const
 }

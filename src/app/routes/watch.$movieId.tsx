@@ -22,7 +22,7 @@ import {
   continueWatchingQueryOptions,
 } from '@/features/catalog'
 import { MovieRow } from '@/features/catalog/components/Public/MovieRow'
-import type { Episode } from '@/features/catalog/types/catalog.types'
+import type { Episode, Movie } from '@/features/catalog/types/catalog.types'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/stores/auth.store'
 
@@ -215,7 +215,7 @@ function WatchPage() {
           video_url: null,
           backdrop_url: null,
         }))
-      : related ?? []
+      : (related ?? [])
 
   return (
     <div className="relative h-svh w-full overflow-hidden bg-black text-white">
@@ -224,7 +224,7 @@ function WatchPage() {
         key={activeEpisode?.id ?? 'movie'}
         ref={videoRef}
         src={videoSrc}
-        className="h-full w-full object-contain cursor-pointer"
+        className="h-full w-full cursor-pointer object-contain"
         autoPlay
         onClick={() => {
           togglePlay()
@@ -250,7 +250,9 @@ function WatchPage() {
       <div
         className={cn(
           'absolute inset-0 z-10 flex flex-col justify-between transition-opacity duration-500',
-          showControls || !isPlaying || showDetails ? 'opacity-100' : 'pointer-events-none opacity-0',
+          showControls || !isPlaying || showDetails
+            ? 'opacity-100'
+            : 'pointer-events-none opacity-0',
         )}
       >
         {/* Top Bar */}
@@ -259,7 +261,7 @@ function WatchPage() {
             <Button
               variant="ghost"
               size="icon"
-              className="h-10 w-10 text-white hover:bg-white/10 cursor-pointer"
+              className="h-10 w-10 cursor-pointer text-white hover:bg-white/10"
               onClick={() => {
                 void navigate({ to: '/' })
               }}
@@ -283,7 +285,7 @@ function WatchPage() {
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"
-              className="flex items-center gap-2 text-white hover:bg-white/10 cursor-pointer"
+              className="flex cursor-pointer items-center gap-2 text-white hover:bg-white/10"
               onClick={() => {
                 setShowDetails(!showDetails)
                 if (!showDetails) {
@@ -298,7 +300,7 @@ function WatchPage() {
             {movie?.collection !== null && (
               <Button
                 variant="outline"
-                className="hidden border-white/20 bg-white/10 text-white hover:bg-white/20 md:flex cursor-pointer"
+                className="hidden cursor-pointer border-white/20 bg-white/10 text-white hover:bg-white/20 md:flex"
                 asChild
               >
                 <Link
@@ -312,7 +314,7 @@ function WatchPage() {
             {episodes !== undefined && episodes.length > 0 && (
               <Button
                 variant="ghost"
-                className="flex items-center gap-2 text-white hover:bg-white/10 cursor-pointer"
+                className="flex cursor-pointer items-center gap-2 text-white hover:bg-white/10"
                 onClick={() => {
                   setShowEpisodes(!showEpisodes)
                   setShowDetails(false)
@@ -341,27 +343,31 @@ function WatchPage() {
 
         {/* Details Overlay */}
         {showDetails && movie !== undefined && (
-          <div className="absolute inset-0 z-40 bg-black/90 backdrop-blur-md overflow-y-auto p-8 md:p-16">
-            <div className="max-w-4xl mx-auto space-y-12">
-              <div className="flex flex-col md:flex-row gap-8">
-                <div className="w-full md:w-1/4 shrink-0 mx-auto md:mx-0">
+          <div className="absolute inset-0 z-40 overflow-y-auto bg-black/90 p-8 backdrop-blur-md md:p-16">
+            <div className="mx-auto max-w-4xl space-y-12">
+              <div className="flex flex-col gap-8 md:flex-row">
+                <div className="mx-auto w-full shrink-0 md:mx-0 md:w-1/4">
                   <img
                     src={movie.poster_url ?? '/placeholder-poster.jpg'}
                     alt={movie.title}
-                    className="w-full aspect-2/3 object-cover rounded-lg shadow-2xl border border-white/10"
+                    className="aspect-2/3 w-full rounded-lg border border-white/10 object-cover shadow-2xl"
                   />
                 </div>
                 <div className="flex-1 space-y-6">
                   <div className="space-y-2">
-                    <h2 className="text-4xl md:text-5xl font-black tracking-tight">{movie.title}</h2>
+                    <h2 className="text-4xl font-black tracking-tight md:text-5xl">
+                      {movie.title}
+                    </h2>
                     <div className="flex items-center gap-4 text-sm font-medium text-gray-400">
-                      <span className="text-green-500 font-bold">{movie.rating_average.toFixed(1)} Rating</span>
+                      <span className="font-bold text-green-500">
+                        {movie.rating_average.toFixed(1)} Rating
+                      </span>
                       <span>{movie.release_date?.split('-')[0]}</span>
                       {movie.kind === 'movie' && <span>{movie.duration_minutes}m</span>}
                     </div>
                   </div>
-                  <p className="text-lg text-gray-200 leading-relaxed">
-                    {movie.description || 'No description available.'}
+                  <p className="text-lg leading-relaxed text-gray-200">
+                    {movie.description ?? 'No description available.'}
                   </p>
                   <div className="flex flex-wrap gap-2 pt-4">
                     {movie.genres.map((genre) => (
@@ -489,7 +495,7 @@ function WatchPage() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-10 w-10 text-white hover:bg-white/10 cursor-pointer"
+                className="h-10 w-10 cursor-pointer text-white hover:bg-white/10"
                 onClick={() => {
                   togglePlay()
                 }}
@@ -507,7 +513,7 @@ function WatchPage() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-10 w-10 text-white hover:bg-white/10 cursor-pointer"
+                className="h-10 w-10 cursor-pointer text-white hover:bg-white/10"
                 onClick={() => {
                   skip(-10)
                 }}
@@ -518,7 +524,7 @@ function WatchPage() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-10 w-10 text-white hover:bg-white/10 cursor-pointer"
+                className="h-10 w-10 cursor-pointer text-white hover:bg-white/10"
                 onClick={() => {
                   skip(10)
                 }}
@@ -526,8 +532,8 @@ function WatchPage() {
                 <RotateCw className="h-7 w-7" />
               </Button>
 
-              <div className="flex items-center gap-2 cursor-pointer group/volume">
-                <Volume2 className="h-6 w-6 text-gray-400 group-hover/volume:text-white transition-colors" />
+              <div className="group/volume flex cursor-pointer items-center gap-2">
+                <Volume2 className="h-6 w-6 text-gray-400 transition-colors group-hover/volume:text-white" />
                 <div className="h-1 w-24 bg-white/20">
                   <div className="h-full w-3/4 bg-white" />
                 </div>
@@ -542,7 +548,7 @@ function WatchPage() {
               {hasNextEpisode && (
                 <Button
                   variant="ghost"
-                  className="flex items-center gap-2 text-white hover:bg-white/10 cursor-pointer"
+                  className="flex cursor-pointer items-center gap-2 text-white hover:bg-white/10"
                   onClick={playNextEpisode}
                 >
                   <FastForward className="h-5 w-5" />
@@ -550,9 +556,9 @@ function WatchPage() {
                 </Button>
               )}
               {relatedMovies.length > 0 && (
-                <div className="hidden items-center gap-2 md:flex cursor-pointer group/info">
-                  <Info className="h-5 w-5 text-gray-400 group-hover/info:text-white transition-colors" />
-                  <span className="text-sm font-medium text-gray-300 group-hover/info:text-white transition-colors">
+                <div className="group/info hidden cursor-pointer items-center gap-2 md:flex">
+                  <Info className="h-5 w-5 text-gray-400 transition-colors group-hover/info:text-white" />
+                  <span className="text-sm font-medium text-gray-300 transition-colors group-hover/info:text-white">
                     {movie?.collection !== null ? 'Next in Franchise' : 'More Like This'}
                   </span>
                 </div>
@@ -569,7 +575,7 @@ function WatchPage() {
           <div className="h-full overflow-y-auto p-12">
             <MovieRow
               title={movie?.collection !== null ? 'Related in Franchise' : 'More Like This'}
-              movies={relatedMovies as any}
+              movies={relatedMovies as unknown as Movie[]}
               className="px-0!"
             />
           </div>

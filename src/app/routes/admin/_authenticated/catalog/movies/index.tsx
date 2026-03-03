@@ -228,7 +228,11 @@ function MoviesPage() {
           value={role ?? 'all'}
           onValueChange={(val) => {
             void routeNavigate({
-              search: (prev) => ({ ...prev, role: val === 'all' ? undefined : val, page: undefined }),
+              search: (prev) => ({
+                ...prev,
+                role: val === 'all' ? undefined : val,
+                page: undefined,
+              }),
             })
           }}
           disabled={person_id === undefined}
@@ -318,7 +322,6 @@ function MoviesPage() {
           })
         }}
       />
-
     </div>
   )
 }

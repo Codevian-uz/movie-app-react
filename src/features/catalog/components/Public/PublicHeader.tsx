@@ -24,7 +24,9 @@ export function PublicHeader() {
     <header
       className={cn(
         'fixed top-0 z-50 flex w-full items-center justify-between px-6 py-4 transition-all duration-300 md:px-12',
-        isScrolled ? 'bg-zinc-950/95 shadow-xl backdrop-blur-md' : 'bg-linear-to-b from-zinc-950/80 to-transparent',
+        isScrolled
+          ? 'bg-zinc-950/95 shadow-xl backdrop-blur-md'
+          : 'bg-linear-to-b from-zinc-950/80 to-transparent',
       )}
     >
       <div className="flex items-center gap-8">
@@ -32,7 +34,10 @@ export function PublicHeader() {
           <Button variant="ghost" size="icon" className="text-white lg:hidden">
             <Menu className="h-6 w-6" />
           </Button>
-          <Link to="/" className="flex items-center gap-1 text-2xl font-black italic tracking-tighter text-white md:text-3xl">
+          <Link
+            to="/"
+            className="flex items-center gap-1 text-2xl font-black tracking-tighter text-white italic md:text-3xl"
+          >
             ANIME<span className="text-orange-500">WATCH</span>
           </Link>
         </div>
@@ -74,17 +79,21 @@ export function PublicHeader() {
             className="h-10 rounded-full bg-zinc-900 px-10 text-xs font-medium text-white transition-all focus:w-64 focus:ring-1 focus:ring-orange-500 focus:outline-hidden lg:w-48"
           />
         </div>
-        
+
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" className="relative h-10 w-10 text-zinc-400 hover:bg-zinc-900 hover:text-white">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="relative h-10 w-10 text-zinc-400 hover:bg-zinc-900 hover:text-white"
+          >
             <Bell className="h-5 w-5" />
             <span className="absolute top-2 right-2 flex h-2 w-2 rounded-full bg-orange-500">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-orange-400 opacity-75"></span>
             </span>
           </Button>
-          
+
           <Link to={isAuthenticated ? '/admin' : '/login'}>
-            <div className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-zinc-900 border border-zinc-800 transition-all hover:bg-zinc-800 hover:border-orange-500/50">
+            <div className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-zinc-800 bg-zinc-900 transition-all hover:border-orange-500/50 hover:bg-zinc-800">
               <User className="h-5 w-5 text-zinc-400" />
             </div>
           </Link>

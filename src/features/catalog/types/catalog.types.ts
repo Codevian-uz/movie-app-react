@@ -48,6 +48,54 @@ export interface Credit {
   photo_url: string | null
 }
 
+export interface TitleDetailsResponse {
+  movie: {
+    id: string
+    title: string
+    slug: string
+    kind: MovieKind
+    description: string | null
+    poster_url: string | null
+    backdrop_url: string | null
+    trailer_url: string | null
+    video_url: string | null
+    release_date: string | null
+    duration_minutes: number | null
+    rating_average: number
+    vote_count: number
+    studio: string | null
+    status: string | null
+  }
+  genres: Genre[]
+  credits: {
+    id: string
+    person_id: string
+    person_name: string
+    person_photo_url: string | null
+    role: string
+    character_name: string | null
+  }[]
+  seasons:
+    | {
+        season_number: number
+        episodes: {
+          id: string
+          episode_number: number
+          title: string
+          video_url: string | null
+          duration_minutes: number | null
+        }[]
+      }[]
+    | null
+  recommendations: {
+    id: string
+    title: string
+    slug: string
+    poster_url: string | null
+    rating_average: number
+  }[]
+}
+
 export interface MovieWithDetails extends Movie {
   genres: Genre[]
   credits: Credit[]

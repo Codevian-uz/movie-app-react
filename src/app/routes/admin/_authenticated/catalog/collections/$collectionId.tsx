@@ -33,7 +33,9 @@ function EditCollectionPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-2xl font-bold tracking-tight">{t('catalog.collections.editCollection')}</h1>
+      <h1 className="text-2xl font-bold tracking-tight">
+        {t('catalog.collections.editCollection')}
+      </h1>
 
       <Card>
         <CardHeader>
