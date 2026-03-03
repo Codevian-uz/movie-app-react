@@ -151,7 +151,7 @@ function HomePage() {
                 <div className="text-xl font-black text-white italic tracking-tighter">
                   ANIME<span className="text-orange-500">WATCH</span>
                 </div>
-                <p className="max-w-[200px] text-xs leading-relaxed text-zinc-600">
+                <p className="max-w-200px text-xs leading-relaxed text-zinc-600">
                   The ultimate destination for anime enthusiasts. Watch thousands of episodes for
                   free.
                 </p>
