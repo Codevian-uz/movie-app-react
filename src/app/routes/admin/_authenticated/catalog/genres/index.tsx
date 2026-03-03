@@ -1,11 +1,21 @@
 import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { createFileRoute } from '@tanstack/react-router'
-import { Plus } from 'lucide-react'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { Plus, Search, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import { TablePagination } from '@/components/TablePagination'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { DEFAULT_PAGE_SIZE } from '@/config/constants'
 import {
   GenreForm,
   genresQueryOptions,
@@ -15,32 +25,60 @@ import {
   useUpdateGenre,
   type Genre,
 } from '@/features/catalog'
+import { useDebounce } from '@/hooks/use-debounce'
 import { useTranslation } from '@/lib/i18n'
 import { ApiException } from '@/types/api.types'
 
 const genresSearchSchema = z.object({
   page: z.number().catch(1),
+  pageSize: z.number().catch(DEFAULT_PAGE_SIZE),
   search: z.string().optional(),
+  sort: z.string().optional(),
 })
 
 export const Route = createFileRoute('/admin/_authenticated/catalog/genres/')({
-  validateSearch: (search) => genresSearchSchema.parse(search),
+  validateSearch: (search: Record<string, unknown>): GenreSearch =>
+    genresSearchSchema.parse(search),
   component: GenresPage,
 })
 
+interface GenreSearch {
+  page?: number | undefined
+  pageSize?: number | undefined
+  search?: string | undefined
+  sort?: string | undefined
+}
+
 function GenresPage() {
   const { t } = useTranslation()
-  const { page, search } = Route.useSearch()
+  const { page = 1, pageSize = DEFAULT_PAGE_SIZE, search, sort } = Route.useSearch()
+  const navigate = useNavigate({ from: Route.fullPath })
   const [editingGenre, setEditingGenre] = useState<Genre | null>(null)
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
 
-  const { data: genresResponse } = useQuery(
-    genresQueryOptions({
+  const [searchInput, setSearchInput] = useState(search ?? '')
+  const debouncedSearch = useDebounce(searchInput, 500)
+
+  // Sync debounced search to URL
+  if (debouncedSearch !== (search ?? '')) {
+    void navigate({
+      search: (prev: GenreSearch) => ({
+        ...prev,
+        search: debouncedSearch === '' ? undefined : debouncedSearch,
+        page: 1,
+      }),
+    })
+  }
+
+  const { data: genresResponse, isFetching } = useQuery({
+    ...genresQueryOptions({
       page_number: page,
-      page_size: 20,
+      page_size: pageSize,
       search: search ?? undefined,
+      sort: sort ?? undefined,
     }),
-  )
+    placeholderData: keepPreviousData,
+  })
 
   const createGenre = useCreateGenre()
   const updateGenre = useUpdateGenre()
@@ -85,13 +123,22 @@ function GenresPage() {
     }
   }
 
+  const clearFilters = () => {
+    setSearchInput('')
+    void navigate({
+      search: (prev: GenreSearch) => ({
+        ...prev,
+        search: undefined,
+        sort: undefined,
+        page: 1,
+      }),
+    })
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">{t('catalog.genres.title')}</h1>
-          <p className="text-muted-foreground">{t('catalog.genres.noGenres')}</p>
-        </div>
+        <h1 className="text-2xl font-semibold tracking-tight">{t('catalog.genres.title')}</h1>
         <Button
           onClick={() => {
             setIsCreateDialogOpen(true)
@@ -102,13 +149,70 @@ function GenresPage() {
         </Button>
       </div>
 
-      <GenresTable
-        genres={genresResponse?.content ?? []}
-        onEdit={(genre) => {
-          setEditingGenre(genre)
+      <div className="flex flex-wrap items-center gap-4">
+        <div className="relative flex-1 min-w-[200px] max-w-sm">
+          <Search className="text-muted-foreground absolute top-2.5 left-2 size-4" />
+          <Input
+            placeholder={t('common.actions.search')}
+            value={searchInput}
+            onChange={(e) => {
+              setSearchInput(e.target.value)
+            }}
+            className="pl-8"
+          />
+        </div>
+
+        <Select
+          value={sort ?? 'name:asc'}
+          onValueChange={(val) => {
+            void navigate({
+              search: (prev: GenreSearch) => ({ ...prev, sort: val, page: 1 }),
+            })
+          }}
+        >
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Sort By" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="name:asc">Name (A-Z)</SelectItem>
+            <SelectItem value="name:desc">Name (Z-A)</SelectItem>
+            <SelectItem value="created_at:desc">Newest First</SelectItem>
+            <SelectItem value="created_at:asc">Oldest First</SelectItem>
+          </SelectContent>
+        </Select>
+
+        {(search !== undefined || sort !== undefined) && (
+          <Button variant="ghost" size="icon" onClick={clearFilters} title="Clear Filters">
+            <X className="size-4" />
+          </Button>
+        )}
+      </div>
+
+      <div className={isFetching ? 'opacity-50' : ''}>
+        <GenresTable
+          genres={genresResponse?.content ?? []}
+          onEdit={(genre) => {
+            setEditingGenre(genre)
+          }}
+          onDelete={(id) => {
+            void handleDelete(id)
+          }}
+        />
+      </div>
+
+      <TablePagination
+        page={page}
+        pageSize={pageSize}
+        totalCount={genresResponse?.count}
+        onPageChange={(newPage) => {
+          void navigate({
+            search: (prev: GenreSearch) => ({ ...prev, page: newPage }),
+          })
         }}
-        onDelete={(id) => {
-          void handleDelete(id)
+        onPageSizeChange={(newSize) => {
+          void navigate({
+            search: (prev: GenreSearch) => ({ ...prev, pageSize: newSize, page: 1 }),
+          })
         }}
       />
 

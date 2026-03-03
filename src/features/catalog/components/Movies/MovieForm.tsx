@@ -206,19 +206,21 @@ export function MovieForm({ movieId, defaultValues, onSubmit, isSubmitting }: Mo
                     )}
                   />
 
-                  <FormField
-                    control={form.control}
-                    name="duration_minutes"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('catalog.movies.duration')}</FormLabel>
-                        <FormControl>
-                          <Input type="number" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  {kind === 'movie' && (
+                    <FormField
+                      control={form.control}
+                      name="duration_minutes"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('catalog.movies.duration')}</FormLabel>
+                          <FormControl>
+                            <Input type="number" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )}
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
@@ -293,12 +295,14 @@ export function MovieForm({ movieId, defaultValues, onSubmit, isSubmitting }: Mo
                     form={form}
                     type="video"
                   />
-                  <FileUploadField
-                    name="video_url"
-                    label={t('catalog.movies.video')}
-                    form={form}
-                    type="video"
-                  />
+                  {kind === 'movie' && (
+                    <FileUploadField
+                      name="video_url"
+                      label={t('catalog.movies.video')}
+                      form={form}
+                      type="video"
+                    />
+                  )}
                 </div>
               </div>
             </div>

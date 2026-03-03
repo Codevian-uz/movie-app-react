@@ -348,7 +348,7 @@ function WatchPage() {
                   <img
                     src={movie.poster_url ?? '/placeholder-poster.jpg'}
                     alt={movie.title}
-                    className="w-full aspect-[2/3] object-cover rounded-lg shadow-2xl border border-white/10"
+                    className="w-full aspect-2/3 object-cover rounded-lg shadow-2xl border border-white/10"
                   />
                 </div>
                 <div className="flex-1 space-y-6">
@@ -570,7 +570,7 @@ function WatchPage() {
             <MovieRow
               title={movie?.collection !== null ? 'Related in Franchise' : 'More Like This'}
               movies={relatedMovies as any}
-              className="!px-0"
+              className="px-0!"
             />
           </div>
         </div>

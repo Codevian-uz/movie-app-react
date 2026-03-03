@@ -23,9 +23,8 @@ test.describe('Authentication', () => {
     await test.step('welcome page displays content and admin link', async () => {
       await page.goto('/')
       await expect(page).toHaveURL('/')
-      await expect(page.getByText(/enterprise blueprint/i)).toBeVisible()
-      const adminLink = page.getByRole('link', { name: /admin|panel|boshqaruv/i })
-      await expect(adminLink).toBeVisible()
+      await expect(page.getByText(/ANIME/i)).toBeVisible()
+      await expect(page.getByText(/WATCH/i)).toBeVisible()
     })
 
     await test.step('admin link navigates to login when unauthenticated', async () => {

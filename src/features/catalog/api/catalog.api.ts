@@ -9,6 +9,7 @@ import type {
   Episode,
   Genre,
   GetRelatedAnimesParams,
+  HomeData,
   ListCollectionsParams,
   ListCollectionsResponse,
   ListContinueWatchingResponse,
@@ -32,6 +33,12 @@ import type {
   UpdateProgressRequest,
   UpsertEpisodeRequest,
 } from '../types/catalog.types'
+
+// Home
+export async function getHomeData(): Promise<HomeData> {
+  const response = await apiClient.get<HomeData>('v1/catalog/get-home-data')
+  return response.data
+}
 
 // Movies
 export async function listMovies(params?: ListMoviesParams): Promise<ListMoviesResponse> {

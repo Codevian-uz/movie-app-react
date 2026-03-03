@@ -20,7 +20,10 @@ function CreateCollectionPage() {
   const onSubmit = async (values: CollectionFormValues) => {
     await createMutation.mutateAsync(values).then(() => {
       toast.success(t('catalog.collections.created'))
-      void navigate({ to: '/admin/catalog/collections' })
+      void navigate({
+        to: '/admin/catalog/collections',
+        search: { page: undefined, pageSize: undefined, search: undefined, sort: undefined },
+      })
     })
   }
 

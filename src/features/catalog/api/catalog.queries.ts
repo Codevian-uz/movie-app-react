@@ -17,6 +17,7 @@ import {
   deleteMovie,
   deletePerson,
   getCollection,
+  getHomeData,
   getMovie,
   getPerson,
   getRelatedAnimes,
@@ -51,6 +52,15 @@ export const catalogKeys = {
   continueWatching: () => [...catalogKeys.all, 'continue-watching'] as const,
   myList: () => [...catalogKeys.all, 'my-list'] as const,
   relatedAnimes: (movieId: string) => [...catalogKeys.all, 'related', movieId] as const,
+  homeData: () => [...catalogKeys.all, 'home-data'] as const,
+}
+
+// Home
+export function homeDataQueryOptions() {
+  return queryOptions({
+    queryKey: catalogKeys.homeData(),
+    queryFn: getHomeData,
+  })
 }
 
 // Movies

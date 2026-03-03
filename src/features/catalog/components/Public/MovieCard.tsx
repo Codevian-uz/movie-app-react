@@ -39,7 +39,7 @@ export function MovieCard({ movie, progress, className }: MovieCardProps) {
       to="/watch/$movieId"
       params={{ movieId: movie.id }}
       className={cn(
-        'group bg-muted relative aspect-[2/3] w-full cursor-pointer overflow-hidden rounded-md transition-all duration-300 hover:z-50 hover:scale-105 hover:shadow-2xl',
+        'group bg-muted relative aspect-2/3 w-full cursor-pointer overflow-hidden rounded-md transition-all duration-300 hover:z-50 hover:scale-105 hover:shadow-2xl',
         className,
       )}
     >

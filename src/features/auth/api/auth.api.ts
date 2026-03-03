@@ -19,6 +19,7 @@ import type {
   UpdateUserRequest,
   User,
   UserPermission,
+  RegisterResponse,
 } from '../types/auth.types'
 
 // --- Auth ---
@@ -33,8 +34,9 @@ export async function userLogin(req: LoginRequest): Promise<LoginResponse> {
   return response.data
 }
 
-export async function register(req: CreateUserRequest): Promise<void> {
-  await apiClient.post('v1/auth/register', req)
+export async function register(req: CreateUserRequest): Promise<RegisterResponse> {
+  const response = await apiClient.post<RegisterResponse>('v1/auth/register', req)
+  return response.data
 }
 
 export async function refreshToken(token: string): Promise<LoginResponse> {

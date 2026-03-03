@@ -70,7 +70,14 @@ export function MoviesTable({ movies, onDelete }: MoviesTableProps) {
                     : '-'}
                 </TableCell>
                 <TableCell>
-                  {movie.kind === 'movie' ? (movie.duration_minutes ?? '-') : '-'}
+                  {movie.kind === 'movie' ? (
+                    <div className="flex items-center gap-1">
+                      <span>{movie.duration_minutes ?? 0}</span>
+                      <span className="text-muted-foreground text-[10px]">min</span>
+                    </div>
+                  ) : (
+                    '-'
+                  )}
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">

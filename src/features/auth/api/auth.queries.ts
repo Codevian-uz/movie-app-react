@@ -7,6 +7,7 @@ import type {
   LoginRequest,
   LoginResponse,
   CreateUserRequest,
+  RegisterResponse,
 } from '../types/auth.types'
 import { bootstrapPermissions } from '../utils/bootstrap-permissions'
 import {
@@ -148,7 +149,7 @@ export function useUserLogin() {
 }
 
 export function useRegister() {
-  return useMutation<void, unknown, CreateUserRequest>({
+  return useMutation<RegisterResponse, unknown, CreateUserRequest>({
     mutationFn: register,
   })
 }

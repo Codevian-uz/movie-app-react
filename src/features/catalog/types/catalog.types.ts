@@ -274,6 +274,24 @@ export interface ListCollectionsParams {
   sort?: string | undefined
 }
 
+export interface HomeData {
+  continue_watching: {
+    movie: {
+      id: string
+      title: string
+      slug: string
+      poster_url: string | null
+      duration_minutes: number | null
+    }
+    progress_seconds: number
+  }[]
+  trending: Movie[]
+  popular: Movie[]
+  new_releases: Movie[]
+  my_list: Movie[]
+  genres: Genre[]
+}
+
 export interface ListCollectionsResponse {
   items: Collection[]
   total: number

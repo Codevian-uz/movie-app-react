@@ -1,86 +1,63 @@
-import { useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { Plus } from 'lucide-react'
+import { Plus, LayoutGrid } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
-  continueWatchingQueryOptions,
-  genresQueryOptions,
-  moviesQueryOptions,
-  myListQueryOptions,
+  homeDataQueryOptions,
+  HomeSpotlight,
+  HomeSection,
+  HomeSidebar,
+  ContinueWatchingRow,
+  PublicHeader,
 } from '@/features/catalog'
-import { MovieHero } from '@/features/catalog/components/Public/MovieHero'
-import { MovieRow } from '@/features/catalog/components/Public/MovieRow'
-import { PublicHeader } from '@/features/catalog/components/Public/PublicHeader'
-import { useAuthStore } from '@/stores/auth.store'
 
 export const Route = createFileRoute('/')({
   component: HomePage,
 })
 
 function HomePage() {
-  const { isAuthenticated } = useAuthStore()
+  const { data: homeData, isLoading } = useQuery(homeDataQueryOptions())
 
-  // 1. Fetch Featured/Latest Movies
-  const { data: moviesResponse, isLoading: isMoviesLoading } = useQuery(
-    moviesQueryOptions({ limit: 20 }),
-  )
-
-  // 2. Fetch User State (If authenticated)
-  const { data: continueWatchingData } = useQuery({
-    ...continueWatchingQueryOptions(),
-    enabled: isAuthenticated,
-  })
-  const { data: myListData } = useQuery({
-    ...myListQueryOptions(),
-    enabled: isAuthenticated,
-  })
-
-  // 3. Fetch Genres to create dynamic rows
-  const { data: genresResponse } = useQuery(genresQueryOptions({ page_size: 10 }))
-
-  const movies = moviesResponse?.items ?? []
-  const genres = genresResponse?.content ?? []
-  const continueWatching = continueWatchingData?.content ?? []
-  const myList = myListData?.content ?? []
-
-  const [featuredIndex, setFeaturedIndex] = useState(0)
-  const featuredMovie = movies[featuredIndex]
-
-  // Auto-cycle featured anime
-  useEffect(() => {
-    if (movies.length === 0) {
-      return
-    }
-    const interval = setInterval(() => {
-      setFeaturedIndex((prev) => (prev + 1) % Math.min(movies.length, 5))
-    }, 10000)
-    return () => {
-      clearInterval(interval)
-    }
-  }, [movies.length])
-
-  if (isMoviesLoading) {
+  if (isLoading) {
     return (
-      <div className="flex h-svh w-full items-center justify-center bg-[#141414]">
-        <div className="h-12 w-12 animate-spin rounded-full border-t-2 border-red-600" />
+      <div className="flex h-svh w-full items-center justify-center bg-zinc-950">
+        <div className="h-12 w-12 animate-spin rounded-full border-t-2 border-orange-500" />
       </div>
     )
   }
 
+  const trending = homeData?.trending ?? []
+  const popular = homeData?.popular ?? []
+  const newReleases = homeData?.new_releases ?? []
+  const continueWatching = homeData?.continue_watching ?? []
+  const myList = homeData?.my_list ?? []
+  const genres = homeData?.genres ?? []
+
   // Empty State: If no movies in database
-  if (movies.length === 0) {
+  if (trending.length === 0 && popular.length === 0 && newReleases.length === 0) {
     return (
-      <div className="relative min-h-svh bg-[#141414] text-white">
+      <div className="relative min-h-svh bg-zinc-950 text-white">
         <PublicHeader />
         <div className="flex h-[80vh] flex-col items-center justify-center px-6 text-center">
-          <div className="max-w-md rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl">
-            <h2 className="mb-4 text-3xl font-bold">Your Catalog is Empty</h2>
-            <p className="mb-8 text-gray-400">
-              Start building your anime empire by adding movies and series via the admin panel.
+          <div className="max-w-md rounded-2xl border border-zinc-800 bg-zinc-900/50 p-8 backdrop-blur-xl shadow-2xl">
+            <div className="mb-6 flex justify-center">
+              <div className="rounded-full bg-zinc-800 p-4">
+                <LayoutGrid className="h-12 w-12 text-zinc-600" />
+              </div>
+            </div>
+            <h2 className="mb-4 text-3xl font-bold tracking-tight">Catalog is Empty</h2>
+            <p className="mb-8 text-zinc-400">
+              No anime found. Start building your collection via the admin panel.
             </p>
-            <Button asChild size="lg" className="bg-red-600 hover:bg-red-700">
-              <Link to="/admin/catalog/movies" search={{ page: undefined, pageSize: undefined }}>
+            <Button
+              asChild
+              size="lg"
+              className="w-full bg-orange-500 font-bold text-white hover:bg-orange-600 shadow-lg shadow-orange-500/20"
+            >
+              <Link
+                to="/admin/catalog/movies"
+                search={{ page: undefined, pageSize: undefined }}
+              >
                 <Plus className="mr-2 h-5 w-5" />
                 Add Your First Anime
               </Link>
@@ -92,87 +69,103 @@ function HomePage() {
   }
 
   return (
-    <div className="relative min-h-svh overflow-x-hidden bg-[#141414] text-white">
+    <div className="relative min-h-svh overflow-x-hidden bg-zinc-950 text-zinc-100 selection:bg-orange-500/30 selection:text-orange-500">
       <PublicHeader />
 
-      <main className="relative pb-24">
-        {featuredMovie !== undefined && <MovieHero movie={featuredMovie} />}
+      <main className="pb-20">
+        {/* Hero Spotlight */}
+        <HomeSpotlight movies={trending} />
 
-        <div className="relative z-20 -mt-32 space-y-8 md:space-y-16">
-          {/* 1. Continue Watching (Authenticated) */}
-          {continueWatching.length > 0 && (
-            <MovieRow
-              title="Continue Watching"
-              movies={continueWatching.map((cw) => ({
-                ...cw.movie,
-                progress:
-                  cw.movie.duration_minutes !== null && cw.movie.duration_minutes > 0
-                    ? (cw.progress_seconds / (cw.movie.duration_minutes * 60)) * 100
-                    : 0,
-              }))}
-            />
-          )}
+        <div className="container mt-8 px-6 lg:px-12">
+          <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
+            {/* Main Content */}
+            <div className="space-y-16 lg:col-span-8 xl:col-span-9">
+              {/* 1. Continue Watching (Authenticated) */}
+              {continueWatching.length > 0 && <ContinueWatchingRow items={continueWatching} />}
 
-          {/* 2. My List (Authenticated) */}
-          {myList.length > 0 && <MovieRow title="My List" movies={myList} />}
+              {/* 2. My List (Authenticated) */}
+              {myList.length > 0 && <HomeSection title="My List" movies={myList} />}
 
-          {/* 3. Trending (Latest Added) */}
-          <MovieRow title="Trending Now" movies={movies.slice(0, 10)} />
+              {/* 3. New Releases (Latest Episodes) */}
+              <HomeSection title="Latest Episodes" movies={newReleases} />
 
-          {/* 4. Dynamic Genre Rows */}
-          {genres.map((genre) => (
-            <GenreRow key={genre.id} genreId={genre.id} title={genre.name} />
-          ))}
+              {/* 4. Most Popular */}
+              <HomeSection title="Most Popular" movies={popular} />
 
-          {/* 5. Watch Again (Randomized/Reverse order) */}
-          <MovieRow title="Watch Again" movies={[...movies].reverse().slice(0, 10)} />
+              {/* 5. Trending (Grid) */}
+              <HomeSection title="Trending Now" movies={trending} />
+            </div>
+
+            {/* Sidebar */}
+            <div className="lg:col-span-4 xl:col-span-3">
+              <div className="sticky top-24">
+                <HomeSidebar topTen={trending} genres={genres} />
+              </div>
+            </div>
+          </div>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="mt-10 border-t border-white/10 px-6 py-10 text-gray-500 lg:px-12">
-        <div className="grid grid-cols-2 gap-8 md:grid-cols-4 lg:max-w-4xl">
-          <div className="flex flex-col gap-2">
-            <span className="cursor-pointer text-xs hover:underline md:text-sm">
-              Audio Description
-            </span>
-            <span className="cursor-pointer text-xs hover:underline md:text-sm">Help Center</span>
-            <span className="cursor-pointer text-xs hover:underline md:text-sm">Gift Cards</span>
-            <span className="cursor-pointer text-xs hover:underline md:text-sm">Media Center</span>
+      <footer className="mt-20 border-t border-zinc-900 bg-zinc-900/30 px-6 py-16 text-zinc-500 lg:px-12">
+        <div className="container">
+          <div className="grid grid-cols-2 gap-12 md:grid-cols-4">
+            <div className="flex flex-col gap-4">
+              <h4 className="text-sm font-bold text-zinc-200 uppercase tracking-widest">Platform</h4>
+              <Link to="/" className="text-sm hover:text-orange-500 transition-colors">
+                Browse
+              </Link>
+              <Link to="/" className="text-sm hover:text-orange-500 transition-colors">
+                Genres
+              </Link>
+              <Link to="/" className="text-sm hover:text-orange-500 transition-colors">
+                Top Airing
+              </Link>
+            </div>
+            <div className="flex flex-col gap-4">
+              <h4 className="text-sm font-bold text-zinc-200 uppercase tracking-widest">Support</h4>
+              <Link to="/" className="text-sm hover:text-orange-500 transition-colors">
+                Help Center
+              </Link>
+              <Link to="/" className="text-sm hover:text-orange-500 transition-colors">
+                Terms of Use
+              </Link>
+              <Link to="/" className="text-sm hover:text-orange-500 transition-colors">
+                Privacy Policy
+              </Link>
+            </div>
+            <div className="flex flex-col gap-4">
+              <h4 className="text-sm font-bold text-zinc-200 uppercase tracking-widest">Account</h4>
+              <Link to="/login" className="text-sm hover:text-orange-500 transition-colors">
+                Login
+              </Link>
+              <Link to="/register" className="text-sm hover:text-orange-500 transition-colors">
+                Register
+              </Link>
+              <Link to="/" className="text-sm hover:text-orange-500 transition-colors">
+                My Profile
+              </Link>
+            </div>
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-2">
+                <div className="text-xl font-black text-white italic tracking-tighter">
+                  ANIME<span className="text-orange-500">WATCH</span>
+                </div>
+                <p className="max-w-[200px] text-xs leading-relaxed text-zinc-600">
+                  The ultimate destination for anime enthusiasts. Watch thousands of episodes for
+                  free.
+                </p>
+              </div>
+            </div>
           </div>
-          <div className="flex flex-col gap-2">
-            <span className="cursor-pointer text-xs hover:underline md:text-sm">
-              Investor Relations
-            </span>
-            <span className="cursor-pointer text-xs hover:underline md:text-sm">Jobs</span>
-            <span className="cursor-pointer text-xs hover:underline md:text-sm">Terms of Use</span>
-            <span className="cursor-pointer text-xs hover:underline md:text-sm">Privacy</span>
-          </div>
-          <div className="flex flex-col gap-2">
-            <span className="cursor-pointer text-xs hover:underline md:text-sm">Legal Notices</span>
-            <span className="cursor-pointer text-xs hover:underline md:text-sm">
-              Cookie Preferences
-            </span>
-            <span className="cursor-pointer text-xs hover:underline md:text-sm">
-              Corporate Information
-            </span>
-            <span className="cursor-pointer text-xs hover:underline md:text-sm">Contact Us</span>
+          <div className="mt-16 flex flex-col items-center justify-between gap-6 border-t border-zinc-900 pt-8 md:flex-row">
+            <div className="text-xs">© {new Date().getFullYear()} AnimeWatch. All rights reserved.</div>
+            <div className="flex gap-6">
+              {/* Social icons placeholder */}
+            </div>
           </div>
         </div>
-        <div className="mt-8 text-[10px]">© 1997-{new Date().getFullYear()} AnimeApp, Inc.</div>
       </footer>
     </div>
   )
-}
-
-// Helper component to fetch movies for a specific genre
-function GenreRow({ genreId, title }: { genreId: string; title: string }) {
-  const { data } = useQuery(moviesQueryOptions({ genre_id: genreId, limit: 10 }))
-  const movies = data?.items ?? []
-
-  if (movies.length === 0) {
-    return null
-  }
-
-  return <MovieRow title={title} movies={movies} />
 }

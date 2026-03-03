@@ -10,6 +10,11 @@ export interface LoginResponse {
   refresh_token_expires_at: string
 }
 
+export interface RegisterResponse extends LoginResponse {
+  id: string
+  username: string
+}
+
 export interface User {
   id: string
   username: string

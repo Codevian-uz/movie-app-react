@@ -24,7 +24,10 @@ function EditCollectionPage() {
   const onSubmit = async (values: CollectionFormValues) => {
     await updateMutation.mutateAsync({ id: collectionId, ...values }).then(() => {
       toast.success(t('catalog.collections.updated'))
-      void navigate({ to: '/admin/catalog/collections' })
+      void navigate({
+        to: '/admin/catalog/collections',
+        search: { page: undefined, pageSize: undefined, search: undefined, sort: undefined },
+      })
     })
   }
 
