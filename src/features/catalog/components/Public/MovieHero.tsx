@@ -33,37 +33,30 @@ export function MovieHero({ movie }: MovieHeroProps) {
             {movie.description ?? ''}
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
-            {movie.kind === 'movie' ? (
-              <Button
-                asChild
-                size="lg"
-                className="h-12 bg-white px-8 text-lg font-bold text-black hover:bg-white/90"
-              >
-                <Link to="/watch/$movieId" params={{ movieId: movie.id }}>
-                  <Play className="mr-2 h-6 w-6 fill-current" />
-                  Play
-                </Link>
-              </Button>
-            ) : (
-              <Button
-                asChild
-                size="lg"
-                className="h-12 bg-white px-8 text-lg font-bold text-black hover:bg-white/90"
-              >
-                {/* For series, we go to details page first to select episode */}
-                <Link to="/movies/$movieId" params={{ movieId: movie.id }}>
-                  <Play className="mr-2 h-6 w-6 fill-current" />
-                  Watch Episodes
-                </Link>
-              </Button>
-            )}
             <Button
+              asChild
+              size="lg"
+              className="h-12 bg-white px-8 text-lg font-bold text-black hover:bg-white/90"
+            >
+              <Link
+                to="/movies/$movieId"
+                params={{ movieId: movie.id }}
+                search={{ autoplay: true }}
+              >
+                <Play className="mr-2 h-6 w-6 fill-current" />
+                {movie.kind === 'movie' ? 'Watch Now' : 'Watch Episodes'}
+              </Link>
+            </Button>
+            <Button
+              asChild
               size="lg"
               variant="secondary"
               className="h-12 border-none bg-gray-500/50 px-8 text-lg font-bold text-white backdrop-blur-md hover:bg-gray-500/70"
             >
-              <Info className="mr-2 h-6 w-6" />
-              More Info
+              <Link to="/movies/$movieId" params={{ movieId: movie.id }}>
+                <Info className="mr-2 h-6 w-6" />
+                More Info
+              </Link>
             </Button>
           </div>
         </div>

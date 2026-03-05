@@ -3,9 +3,9 @@ import { Link } from '@tanstack/react-router'
 import { Check, Play, Plus } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { myListQueryOptions, useToggleFavorite } from '@/features/interactions'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/stores/auth.store'
-import { myListQueryOptions, useToggleFavorite } from '../../api/catalog.queries'
 import type { Movie } from '../../types/catalog.types'
 
 interface MovieCardProps {
@@ -23,7 +23,9 @@ export function MovieCard({ movie, progress, className }: MovieCardProps) {
     enabled: isAuthenticated,
   })
 
-  const isFavorite = (myListData?.content ?? []).some((m) => m.id === movie.id)
+  const isFavorite = (myListData?.content ?? []).some(
+    (m) => m.target_type === 'movie' && m.target_id === movie.id,
+  )
 
   const handleToggleFavorite = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -31,7 +33,7 @@ export function MovieCard({ movie, progress, className }: MovieCardProps) {
     if (!isAuthenticated) {
       return
     }
-    toggleFavorite.mutate({ movie_id: movie.id })
+    toggleFavorite.mutate({ target_type: 'movie', target_id: movie.id })
   }
 
   return (
@@ -87,7 +89,7 @@ export function MovieCard({ movie, progress, className }: MovieCardProps) {
           )}
         </div>
         <div className="mt-2 flex flex-wrap gap-2 text-[10px] text-gray-300">
-          {movie.rating_average > 0 && (
+          {movie.rating_average !== undefined && movie.rating_average > 0 && (
             <span className="font-semibold text-green-500">
               {movie.rating_average.toFixed(1)} Rating
             </span>

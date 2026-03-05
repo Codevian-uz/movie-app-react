@@ -40,7 +40,7 @@ export function HomeSection({ title, movies, viewAllLink, className }: HomeSecti
         {movies.map((movie) => (
           <div key={movie.id} className="group relative">
             <Link to="/movies/$movieId" params={{ movieId: movie.id }} className="block">
-              <div className="relative aspect-[2/3] overflow-hidden rounded-lg bg-zinc-900 shadow-md transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-xl group-hover:shadow-orange-500/10">
+              <div className="relative aspect-2/3 overflow-hidden rounded-lg bg-zinc-900 shadow-md transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-xl group-hover:shadow-orange-500/10">
                 <img
                   src={movie.poster_url ?? '/placeholder-poster.jpg'}
                   alt={movie.title}
@@ -56,7 +56,7 @@ export function HomeSection({ title, movies, viewAllLink, className }: HomeSecti
 
                 {/* Labels */}
                 <div className="absolute top-2 left-2 flex flex-col gap-1">
-                  {movie.rating_average >= 8 && (
+                  {movie.rating_average !== undefined && movie.rating_average >= 8 && (
                     <span className="rounded bg-orange-500 px-1.5 py-0.5 text-[10px] font-bold text-white uppercase">
                       Hot
                     </span>
@@ -73,7 +73,9 @@ export function HomeSection({ title, movies, viewAllLink, className }: HomeSecti
                 </h3>
                 <div className="flex items-center gap-2 text-xs text-zinc-500">
                   <span>
-                    {movie.release_date !== null && movie.release_date !== ''
+                    {movie.release_date !== undefined &&
+                    movie.release_date !== null &&
+                    movie.release_date !== ''
                       ? new Date(movie.release_date).getFullYear()
                       : 'N/A'}
                   </span>

@@ -52,7 +52,7 @@ export const useAuthStore = create<AuthState>()(
       },
       hasPermission: (permission) => {
         const { permissions } = get()
-        return permissions.includes(permission)
+        return permissions.includes('*') || permissions.includes(permission)
       },
     }),
     {

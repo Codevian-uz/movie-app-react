@@ -5,37 +5,45 @@ import type {
   ListGenresParams,
   ListMoviesParams,
   ListPeopleParams,
+  ListSeasonsParams,
+  ListStudiosParams,
+  StreamManifest,
 } from '../types/catalog.types'
 import {
   createCollection,
   createGenre,
   createMovie,
   createPerson,
+  createStudio,
   deleteCollection,
   deleteEpisode,
   deleteGenre,
   deleteMovie,
   deletePerson,
+  deleteSeason,
+  deleteStudio,
   getCollection,
   getHomeData,
   getMovie,
-  getTitleDetails,
+  getStreamManifest,
+  getStudio,
   getPerson,
   getRelatedAnimes,
+  getTitleDetails,
   listCollections,
-  listContinueWatching,
   listEpisodes,
   listGenres,
   listMovies,
-  listMyList,
   listPeople,
-  toggleFavorite,
+  listSeasons,
+  listStudios,
   updateCollection,
   updateGenre,
   updateMovie,
   updatePerson,
-  updateProgress,
+  updateStudio,
   upsertEpisode,
+  upsertSeason,
 } from './catalog.api'
 
 export const catalogKeys = {
@@ -48,12 +56,15 @@ export const catalogKeys = {
   genre: (id: string) => [...catalogKeys.all, 'genre', id] as const,
   people: (params?: ListPeopleParams) => [...catalogKeys.all, 'people', params] as const,
   person: (id: string) => [...catalogKeys.all, 'person', id] as const,
+  studios: (params?: ListStudiosParams) => [...catalogKeys.all, 'studios', params] as const,
+  studio: (id: string) => [...catalogKeys.all, 'studio', id] as const,
+  seasons: (params: ListSeasonsParams) => [...catalogKeys.all, 'seasons', params] as const,
   collections: (params?: ListCollectionsParams) =>
     [...catalogKeys.all, 'collections', params] as const,
   collection: (id: string) => [...catalogKeys.all, 'collection', id] as const,
   episodes: (params: ListEpisodesParams) => [...catalogKeys.all, 'episodes', params] as const,
-  continueWatching: () => [...catalogKeys.all, 'continue-watching'] as const,
-  myList: () => [...catalogKeys.all, 'my-list'] as const,
+  streamManifest: (params: { movie_id?: string | undefined; episode_id?: string | undefined }) =>
+    [...catalogKeys.all, 'stream-manifest', params] as const,
   relatedAnimes: (movieId: string) => [...catalogKeys.all, 'related', movieId] as const,
   homeData: () => [...catalogKeys.all, 'home-data'] as const,
 }
@@ -172,39 +183,35 @@ export function useDeleteCollection() {
   })
 }
 
-// User Progress
-export function useUpdateProgress() {
+// Seasons
+export function seasonsQueryOptions(params: ListSeasonsParams) {
+  return queryOptions({
+    queryKey: catalogKeys.seasons(params),
+    queryFn: () => listSeasons(params),
+  })
+}
+
+export function useUpsertSeason() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: updateProgress,
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: catalogKeys.continueWatching() })
+    mutationFn: upsertSeason,
+    onSuccess: async (_, variables) => {
+      await queryClient.invalidateQueries({
+        queryKey: catalogKeys.seasons({ movie_id: variables.movie_id }),
+      })
     },
   })
 }
 
-export function continueWatchingQueryOptions() {
-  return queryOptions({
-    queryKey: catalogKeys.continueWatching(),
-    queryFn: listContinueWatching,
-  })
-}
-
-// Favorites
-export function useToggleFavorite() {
+export function useDeleteSeason(movieId: string) {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: toggleFavorite,
+    mutationFn: deleteSeason,
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: catalogKeys.myList() })
+      await queryClient.invalidateQueries({
+        queryKey: catalogKeys.seasons({ movie_id: movieId }),
+      })
     },
-  })
-}
-
-export function myListQueryOptions() {
-  return queryOptions({
-    queryKey: catalogKeys.myList(),
-    queryFn: listMyList,
   })
 }
 
@@ -216,14 +223,31 @@ export function episodesQueryOptions(params: ListEpisodesParams) {
   })
 }
 
+export function streamManifestQueryOptions(params: {
+  movie_id?: string | undefined
+  episode_id?: string | undefined
+}) {
+  return queryOptions<StreamManifest | null>({
+    queryKey: catalogKeys.streamManifest(params),
+    queryFn: () => getStreamManifest(params),
+  })
+}
+
 export function useUpsertEpisode() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: upsertEpisode,
     onSuccess: async (_, variables) => {
+      // Since upsert-episode in backend resolves season and might create it,
+      // it's safer to invalidate seasons too if we use season_number
       await queryClient.invalidateQueries({
         queryKey: catalogKeys.episodes({ movie_id: variables.movie_id }),
       })
+      if (variables.movie_id) {
+        await queryClient.invalidateQueries({
+          queryKey: catalogKeys.seasons({ movie_id: variables.movie_id }),
+        })
+      }
     },
   })
 }
@@ -320,6 +344,52 @@ export function useDeletePerson() {
     mutationFn: deletePerson,
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: catalogKeys.people() })
+    },
+  })
+}
+
+// Studios
+export function studiosQueryOptions(params?: ListStudiosParams) {
+  return queryOptions({
+    queryKey: catalogKeys.studios(params),
+    queryFn: () => listStudios(params),
+  })
+}
+
+export function studioQueryOptions(id: string) {
+  return queryOptions({
+    queryKey: catalogKeys.studio(id),
+    queryFn: () => getStudio(id),
+  })
+}
+
+export function useCreateStudio() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: createStudio,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: catalogKeys.studios() })
+    },
+  })
+}
+
+export function useUpdateStudio() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: updateStudio,
+    onSuccess: async (_, variables) => {
+      await queryClient.invalidateQueries({ queryKey: catalogKeys.studios() })
+      await queryClient.invalidateQueries({ queryKey: catalogKeys.studio(variables.id) })
+    },
+  })
+}
+
+export function useDeleteStudio() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: deleteStudio,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: catalogKeys.studios() })
     },
   })
 }

@@ -10,7 +10,7 @@ interface ContinueWatchingRowProps {
 }
 
 export function ContinueWatchingRow({ items, className }: ContinueWatchingRowProps) {
-  if (items.length === 0) {
+  if (!items || items.length === 0) {
     return null
   }
 
@@ -32,7 +32,12 @@ export function ContinueWatchingRow({ items, className }: ContinueWatchingRowPro
               key={item.movie.id}
               className="group relative w-64 shrink-0 transition-all duration-300 hover:-translate-y-1"
             >
-              <Link to="/watch/$movieId" params={{ movieId: item.movie.id }} className="block">
+              <Link
+                to="/movies/$movieId"
+                params={{ movieId: item.movie.id }}
+                search={{ autoplay: true }}
+                className="block"
+              >
                 <div className="relative aspect-video overflow-hidden rounded-lg bg-zinc-900 shadow-md">
                   <img
                     src={item.movie.poster_url ?? '/placeholder-poster.jpg'}

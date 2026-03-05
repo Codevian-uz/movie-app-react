@@ -87,14 +87,16 @@ function MoviesPage() {
 
   const { data: moviesResponse, isFetching } = useQuery({
     ...moviesQueryOptions({
-      limit: currentPageSize,
-      offset: (currentPage - 1) * currentPageSize,
+      page_size: currentPageSize,
+      page_number: currentPage,
       search: search,
       genre_id: genre_id,
       person_id: person_id,
       role: role,
-      sort_by: sort_by,
-      sort_order: sort_order,
+      sort:
+        sort_by !== undefined && sort_by !== '' && sort_order !== undefined && sort_order !== ''
+          ? `${sort_by}:${sort_order}`
+          : undefined,
     }),
     placeholderData: keepPreviousData,
   })
@@ -296,7 +298,7 @@ function MoviesPage() {
 
       <div className={isFetching ? 'opacity-50' : ''}>
         <MoviesTable
-          movies={moviesResponse?.items ?? []}
+          movies={moviesResponse?.content ?? []}
           onDelete={(id) => {
             void handleDelete(id)
           }}
@@ -306,7 +308,7 @@ function MoviesPage() {
       <TablePagination
         page={currentPage}
         pageSize={currentPageSize}
-        totalCount={moviesResponse?.total}
+        totalCount={moviesResponse?.count}
         onPageChange={(newPage) => {
           void routeNavigate({
             search: (prev) => ({ ...prev, page: newPage === 1 ? undefined : newPage }),

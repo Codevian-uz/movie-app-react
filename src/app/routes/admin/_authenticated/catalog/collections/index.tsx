@@ -60,8 +60,8 @@ function CollectionsIndexPage() {
 
   const { data, isFetching } = useQuery({
     ...collectionsQueryOptions({
-      limit: pageSize,
-      offset: (page - 1) * pageSize,
+      page_size: pageSize,
+      page_number: page,
       search: search ?? undefined,
       sort: sort ?? undefined,
     }),
@@ -147,7 +147,7 @@ function CollectionsIndexPage() {
 
       <div className={isFetching ? 'opacity-50' : ''}>
         <CollectionsTable
-          collections={data?.items ?? []}
+          collections={data?.content ?? []}
           onEdit={(collection) => {
             void navigate({
               to: '/admin/catalog/collections/$collectionId',
@@ -161,7 +161,7 @@ function CollectionsIndexPage() {
       <TablePagination
         page={page}
         pageSize={pageSize}
-        totalCount={data?.total}
+        totalCount={data?.count}
         onPageChange={(newPage) => {
           void navigate({
             search: (prev: CollectionSearch) => ({ ...prev, page: newPage }),

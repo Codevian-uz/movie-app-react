@@ -9,6 +9,13 @@ test.describe('Home Page', () => {
       const emptyState = page.getByText(/catalog is empty/i)
 
       await expect(spotlight.or(emptyState)).toBeVisible({ timeout: 15_000 })
+
+      if (await spotlight.isVisible()) {
+        // Verify "Watch Now" is NOT present (Requirement 1)
+        await expect(page.getByRole('link', { name: /watch now/i })).not.toBeVisible()
+        // But "Details" should be present
+        await expect(page.getByRole('link', { name: /details/i })).toBeVisible()
+      }
     })
 
     await test.step('header contains logo and navigation', async () => {

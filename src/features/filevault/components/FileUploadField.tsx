@@ -79,6 +79,7 @@ export function FileUploadField<T extends FieldValues>({
               'bg-muted relative w-full overflow-hidden rounded-md border',
               aspectClasses[aspect],
               aspect === 'square' && 'max-w-32',
+              aspect === 'poster' && 'max-w-40',
             )}
           >
             {isFetching ? (

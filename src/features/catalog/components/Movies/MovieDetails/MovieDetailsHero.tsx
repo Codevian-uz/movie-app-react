@@ -1,7 +1,17 @@
+import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
-import { Play, Info, Calendar, Clock, Star } from 'lucide-react'
+import { Play, Info, Calendar, Clock, Star, Heart, Plus, Check } from 'lucide-react'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import type { TitleDetailsResponse } from '@/features/catalog/types/catalog.types'
+import {
+  useToggleFavorite,
+  useToggleLike,
+  statusQueryOptions,
+  statsQueryOptions,
+} from '@/features/interactions'
+import { cn } from '@/lib/utils'
+import { useAuthStore } from '@/stores/auth.store'
 
 interface Props {
   movie: TitleDetailsResponse['movie']
@@ -9,8 +19,57 @@ interface Props {
 }
 
 export function MovieDetailsHero({ movie, genres }: Props) {
+  const { isAuthenticated } = useAuthStore()
+  const toggleLike = useToggleLike()
+  const toggleFavorite = useToggleFavorite()
+
+  const { data: status } = useQuery({
+    ...statusQueryOptions({ target_type: 'movie', target_id: movie.id }),
+    enabled: isAuthenticated,
+  })
+
+  const { data: stats } = useQuery({
+    ...statsQueryOptions({ target_type: 'movie', target_id: movie.id }),
+  })
+
+  const isFavorited = status?.is_favorited ?? false
+  const isLiked = status?.is_liked ?? false
+  const likesCount = stats?.likes_count ?? 0
+
+  const handleToggleLike = async () => {
+    if (!isAuthenticated) {
+      toast.error('Please login to like this movie')
+      return
+    }
+    try {
+      const res = await toggleLike.mutateAsync({
+        target_type: 'movie',
+        target_id: movie.id,
+      })
+      toast.success(res.liked ? 'Added to liked' : 'Removed from liked')
+    } catch {
+      toast.error('Failed to toggle like')
+    }
+  }
+
+  const handleToggleFavorite = async () => {
+    if (!isAuthenticated) {
+      toast.error('Please login to add to your list')
+      return
+    }
+    try {
+      const res = await toggleFavorite.mutateAsync({
+        target_type: 'movie',
+        target_id: movie.id,
+      })
+      toast.success(res.favorited ? 'Added to My List' : 'Removed from My List')
+    } catch {
+      toast.error('Failed to toggle favorite')
+    }
+  }
+
   return (
-    <div className="relative flex h-[60vh] min-h-[500px] w-full items-center">
+    <div className="relative flex h-[60vh] min-h-125 w-full items-center">
       {/* Backdrop */}
       <div className="absolute inset-0 z-0">
         <img
@@ -18,8 +77,8 @@ export function MovieDetailsHero({ movie, genres }: Props) {
           alt={movie.title}
           className="h-full w-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/80 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-r from-black/95 via-black/80 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-black via-transparent to-transparent" />
       </div>
 
       {/* Content */}
@@ -59,7 +118,7 @@ export function MovieDetailsHero({ movie, genres }: Props) {
             {movie.description ?? 'No description available.'}
           </p>
 
-          <div className="flex items-center gap-4 pt-4">
+          <div className="flex flex-wrap items-center gap-4 pt-4">
             <Button size="lg" className="cursor-pointer gap-2 px-8" asChild>
               <Link to="/watch/$movieId" params={{ movieId: movie.id }}>
                 <Play className="h-5 w-5 fill-current" />
@@ -79,6 +138,37 @@ export function MovieDetailsHero({ movie, genres }: Props) {
                 </a>
               </Button>
             )}
+
+            <Button
+              size="icon"
+              variant="secondary"
+              className={cn(
+                'h-12 w-auto cursor-pointer rounded-full bg-white/10 px-4 text-white backdrop-blur-md hover:bg-white/20',
+                isLiked && 'bg-orange-500/20 text-orange-500 hover:bg-orange-500/30',
+              )}
+              onClick={() => {
+                void handleToggleLike()
+              }}
+              disabled={toggleLike.isPending}
+            >
+              <Heart className={cn('mr-2 h-6 w-6', isLiked && 'fill-current')} />
+              <span className="font-bold">{likesCount > 0 ? likesCount : 'Like'}</span>
+            </Button>
+
+            <Button
+              size="icon"
+              variant="secondary"
+              className={cn(
+                'h-12 w-12 cursor-pointer rounded-full bg-white/10 text-white backdrop-blur-md hover:bg-white/20',
+                isFavorited && 'bg-orange-500/20 text-orange-500 hover:bg-orange-500/30',
+              )}
+              onClick={() => {
+                void handleToggleFavorite()
+              }}
+              disabled={toggleFavorite.isPending}
+            >
+              {isFavorited ? <Check className="h-6 w-6" /> : <Plus className="h-6 w-6" />}
+            </Button>
           </div>
         </div>
       </div>

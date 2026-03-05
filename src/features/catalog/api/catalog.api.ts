@@ -6,33 +6,39 @@ import type {
   CreateGenreRequest,
   CreateMovieRequest,
   CreatePersonRequest,
+  CreateStudioRequest,
   Episode,
   Genre,
   GetRelatedAnimesParams,
   HomeData,
   ListCollectionsParams,
   ListCollectionsResponse,
-  ListContinueWatchingResponse,
   ListEpisodesParams,
   ListEpisodesResponse,
   ListGenresParams,
   ListGenresResponse,
   ListMoviesParams,
   ListMoviesResponse,
-  ListMyListResponse,
   ListPeopleParams,
   ListPeopleResponse,
+  ListSeasonsParams,
+  ListSeasonsResponse,
+  ListStudiosParams,
+  ListStudiosResponse,
   Movie,
   MovieWithDetails,
   Person,
+  Season,
+  Studio,
   TitleDetailsResponse,
-  ToggleFavoriteRequest,
   UpdateCollectionRequest,
   UpdateGenreRequest,
   UpdateMovieRequest,
   UpdatePersonRequest,
-  UpdateProgressRequest,
+  UpdateStudioRequest,
   UpsertEpisodeRequest,
+  UpsertSeasonRequest,
+  StreamManifest,
 } from '../types/catalog.types'
 
 // Home
@@ -48,7 +54,9 @@ export async function listMovies(params?: ListMoviesParams): Promise<ListMoviesR
 }
 
 export async function getMovie(id: string): Promise<MovieWithDetails> {
-  const response = await apiClient.get<MovieWithDetails>(`v1/catalog/movies/${id}`)
+  const response = await apiClient.get<MovieWithDetails>('v1/catalog/movies/get', {
+    params: { id },
+  })
   return response.data
 }
 
@@ -120,26 +128,21 @@ export async function deleteCollection(id: string): Promise<{ id: string }> {
   return response.data
 }
 
-// User Progress
-export async function updateProgress(data: UpdateProgressRequest): Promise<void> {
-  await apiClient.post('v1/catalog/update-progress', data)
+// Seasons
+export async function listSeasons(params: ListSeasonsParams): Promise<Season[]> {
+  const response = await apiClient.get<ListSeasonsResponse>('v1/catalog/list-seasons', {
+    params,
+  })
+  return response.data.content
 }
 
-export async function listContinueWatching(): Promise<ListContinueWatchingResponse> {
-  const response = await apiClient.get<ListContinueWatchingResponse>(
-    'v1/catalog/list-continue-watching',
-  )
+export async function upsertSeason(data: UpsertSeasonRequest): Promise<Season> {
+  const response = await apiClient.post<Season>('v1/catalog/upsert-season', data)
   return response.data
 }
 
-// Favorites
-export async function toggleFavorite(data: ToggleFavoriteRequest): Promise<void> {
-  await apiClient.post('v1/catalog/toggle-favorite', data)
-}
-
-export async function listMyList(): Promise<ListMyListResponse> {
-  const response = await apiClient.get<ListMyListResponse>('v1/catalog/list-my-list')
-  return response.data
+export async function deleteSeason(id: string): Promise<void> {
+  await apiClient.post('v1/catalog/delete-season', { id })
 }
 
 // Episodes
@@ -157,6 +160,42 @@ export async function upsertEpisode(data: UpsertEpisodeRequest): Promise<Episode
 
 export async function deleteEpisode(id: string): Promise<void> {
   await apiClient.post('v1/catalog/delete-episode', { id })
+}
+
+export async function getStreamManifest(params: {
+  movie_id?: string | undefined
+  episode_id?: string | undefined
+}): Promise<StreamManifest> {
+  const response = await apiClient.get<StreamManifest>('v1/catalog/get-stream-manifest', {
+    params,
+  })
+  return response.data
+}
+
+// Studios
+export async function listStudios(params?: ListStudiosParams): Promise<ListStudiosResponse> {
+  const response = await apiClient.get<ListStudiosResponse>('v1/catalog/studios', { params })
+  return response.data
+}
+
+export async function getStudio(id: string): Promise<Studio> {
+  const response = await apiClient.get<Studio>('v1/catalog/studios/get', { params: { id } })
+  return response.data
+}
+
+export async function createStudio(data: CreateStudioRequest): Promise<Studio> {
+  const response = await apiClient.post<Studio>('v1/catalog/studios', data)
+  return response.data
+}
+
+export async function updateStudio(data: UpdateStudioRequest): Promise<Studio> {
+  const response = await apiClient.post<Studio>('v1/catalog/studios/update', data)
+  return response.data
+}
+
+export async function deleteStudio(id: string): Promise<{ id: string }> {
+  const response = await apiClient.post<{ id: string }>('v1/catalog/studios/delete', { id })
+  return response.data
 }
 
 // Genres

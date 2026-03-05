@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { ChevronLeft, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { RouteErrorBoundary } from '@/components/errors/RouteErrorBoundary'
@@ -21,7 +21,6 @@ export const Route = createFileRoute('/admin/_authenticated/catalog/movies/$movi
 
 function EditMoviePage() {
   const { t } = useTranslation()
-  const navigate = useNavigate()
   const { movieId } = Route.useParams()
   const updateMovie = useUpdateMovie()
 
@@ -43,10 +42,6 @@ function EditMoviePage() {
         description: values.description !== '' ? values.description : undefined,
       })
       toast.success(t('catalog.movies.updated'))
-      void navigate({
-        to: '/admin/catalog/movies',
-        search: { page: undefined, pageSize: undefined },
-      })
     } catch {
       toast.error('Failed to update movie')
     }
@@ -86,7 +81,7 @@ function EditMoviePage() {
             movieId={movieId}
             defaultValues={{
               title: movie.title,
-              kind: movie.kind,
+              kind: movie.kind as 'movie' | 'series',
               collection_id: movie.collection_id ?? '',
               collection_order: movie.collection_order ?? 0,
               description: movie.description ?? '',
@@ -97,6 +92,7 @@ function EditMoviePage() {
               trailer_url: movie.trailer_url ?? '',
               video_url: movie.video_url ?? '',
               genre_ids: movie.genres.map((g) => g.id),
+              studio_ids: movie.studios.map((s) => s.id),
               credits: movie.credits.map((c) => ({
                 person_id: c.person_id,
                 role: c.role,

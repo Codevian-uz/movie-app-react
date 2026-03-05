@@ -17,13 +17,14 @@ import {
 } from '@/components/ui/select'
 import { DEFAULT_PAGE_SIZE } from '@/config/constants'
 import {
-  GenreForm,
-  genresQueryOptions,
-  GenresTable,
-  useCreateGenre,
-  useDeleteGenre,
-  useUpdateGenre,
-  type Genre,
+  StudioForm,
+  studiosQueryOptions,
+  StudiosTable,
+  useCreateStudio,
+  useDeleteStudio,
+  useUpdateStudio,
+  type Studio,
+  type StudioFormValues,
 } from '@/features/catalog'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useTranslation } from '@/lib/i18n'
@@ -32,35 +33,35 @@ import { ApiException } from '@/types/api.types'
 import { PERMISSIONS } from '@/types/permissions'
 import { requirePermission } from '../../-route-guards'
 
-const genresSearchSchema = z.object({
+const studiosSearchSchema = z.object({
   page: z.number().catch(1),
   pageSize: z.number().catch(DEFAULT_PAGE_SIZE),
   search: z.string().optional(),
   sort: z.string().optional(),
 })
 
-export const Route = createFileRoute('/admin/_authenticated/catalog/genres/')({
+export const Route = createFileRoute('/admin/_authenticated/catalog/studios/')({
   beforeLoad: () => {
-    requirePermission(PERMISSIONS.CATALOG_GENRE_READ)
+    requirePermission(PERMISSIONS.CATALOG_STUDIO_READ)
   },
-  validateSearch: (search: Record<string, unknown>): GenreSearch =>
-    genresSearchSchema.parse(search),
-  component: GenresPage,
+  validateSearch: (search: Record<string, unknown>): StudioSearch =>
+    studiosSearchSchema.parse(search),
+  component: StudiosPage,
 })
 
-interface GenreSearch {
+interface StudioSearch {
   page?: number | undefined
   pageSize?: number | undefined
   search?: string | undefined
   sort?: string | undefined
 }
 
-function GenresPage() {
+function StudiosPage() {
   const { t } = useTranslation()
   const hasPermission = useAuthStore((s) => s.hasPermission)
   const { page = 1, pageSize = DEFAULT_PAGE_SIZE, search, sort } = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
-  const [editingGenre, setEditingGenre] = useState<Genre | null>(null)
+  const [editingStudio, setEditingStudio] = useState<Studio | null>(null)
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
 
   const [searchInput, setSearchInput] = useState(search ?? '')
@@ -69,7 +70,7 @@ function GenresPage() {
   // Sync debounced search to URL
   if (debouncedSearch !== (search ?? '')) {
     void navigate({
-      search: (prev: GenreSearch) => ({
+      search: (prev: StudioSearch) => ({
         ...prev,
         search: debouncedSearch === '' ? undefined : debouncedSearch,
         page: 1,
@@ -77,8 +78,8 @@ function GenresPage() {
     })
   }
 
-  const { data: genresResponse, isFetching } = useQuery({
-    ...genresQueryOptions({
+  const { data: studiosResponse, isFetching } = useQuery({
+    ...studiosQueryOptions({
       page_number: page,
       page_size: pageSize,
       search: search ?? undefined,
@@ -87,36 +88,35 @@ function GenresPage() {
     placeholderData: keepPreviousData,
   })
 
-  const createGenre = useCreateGenre()
-  const updateGenre = useUpdateGenre()
-  const deleteGenre = useDeleteGenre()
-  const canManage = hasPermission(PERMISSIONS.CATALOG_GENRE_MANAGE)
-  const canCreate = canManage || hasPermission(PERMISSIONS.CATALOG_GENRE_CREATE)
+  const createStudio = useCreateStudio()
+  const updateStudio = useUpdateStudio()
+  const deleteStudio = useDeleteStudio()
+  const canManage = hasPermission(PERMISSIONS.CATALOG_STUDIO_MANAGE)
 
-  async function handleCreate(values: { name: string }) {
-    if (!canCreate) {
+  async function handleCreate(values: StudioFormValues) {
+    if (!canManage) {
       return
     }
     try {
-      await createGenre.mutateAsync(values)
-      toast.success(t('catalog.genres.created'))
+      await createStudio.mutateAsync(values)
+      toast.success(t('catalog.studios.created'))
       setIsCreateDialogOpen(false)
     } catch (error: unknown) {
-      const message = error instanceof ApiException ? error.message : 'Failed to create genre'
+      const message = error instanceof ApiException ? error.message : 'Failed to create studio'
       toast.error(message)
     }
   }
 
-  async function handleUpdate(values: { name: string }) {
-    if (!canManage || editingGenre === null) {
+  async function handleUpdate(values: StudioFormValues) {
+    if (!canManage || editingStudio === null) {
       return
     }
     try {
-      await updateGenre.mutateAsync({ id: editingGenre.id, ...values })
-      toast.success(t('catalog.genres.updated'))
-      setEditingGenre(null)
+      await updateStudio.mutateAsync({ id: editingStudio.id, ...values })
+      toast.success(t('catalog.studios.updated'))
+      setEditingStudio(null)
     } catch (error: unknown) {
-      const message = error instanceof ApiException ? error.message : 'Failed to update genre'
+      const message = error instanceof ApiException ? error.message : 'Failed to update studio'
       toast.error(message)
     }
   }
@@ -126,14 +126,14 @@ function GenresPage() {
       return
     }
     // eslint-disable-next-line no-alert
-    if (!confirm(t('catalog.genres.deleteConfirm'))) {
+    if (!confirm(t('catalog.studios.deleteConfirm'))) {
       return
     }
     try {
-      await deleteGenre.mutateAsync(id)
-      toast.success(t('catalog.genres.deleted'))
+      await deleteStudio.mutateAsync(id)
+      toast.success(t('catalog.studios.deleted'))
     } catch (error: unknown) {
-      const message = error instanceof ApiException ? error.message : 'Failed to delete genre'
+      const message = error instanceof ApiException ? error.message : 'Failed to delete studio'
       toast.error(message)
     }
   }
@@ -141,7 +141,7 @@ function GenresPage() {
   const clearFilters = () => {
     setSearchInput('')
     void navigate({
-      search: (prev: GenreSearch) => ({
+      search: (prev: StudioSearch) => ({
         ...prev,
         search: undefined,
         sort: undefined,
@@ -153,15 +153,15 @@ function GenresPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold tracking-tight">{t('catalog.genres.title')}</h1>
-        {canCreate && (
+        <h1 className="text-2xl font-semibold tracking-tight">{t('catalog.studios.title')}</h1>
+        {canManage && (
           <Button
             onClick={() => {
               setIsCreateDialogOpen(true)
             }}
           >
             <Plus className="mr-2 size-4" />
-            {t('catalog.genres.createGenre')}
+            {t('catalog.studios.createStudio')}
           </Button>
         )}
       </div>
@@ -183,7 +183,7 @@ function GenresPage() {
           value={sort ?? 'name:asc'}
           onValueChange={(val) => {
             void navigate({
-              search: (prev: GenreSearch) => ({ ...prev, sort: val, page: 1 }),
+              search: (prev: StudioSearch) => ({ ...prev, sort: val, page: 1 }),
             })
           }}
         >
@@ -206,10 +206,10 @@ function GenresPage() {
       </div>
 
       <div className={isFetching ? 'opacity-50' : ''}>
-        <GenresTable
-          genres={genresResponse?.content ?? []}
-          onEdit={(genre) => {
-            setEditingGenre(genre)
+        <StudiosTable
+          studios={studiosResponse?.content ?? []}
+          onEdit={(studio) => {
+            setEditingStudio(studio)
           }}
           onDelete={(id) => {
             void handleDelete(id)
@@ -220,15 +220,15 @@ function GenresPage() {
       <TablePagination
         page={page}
         pageSize={pageSize}
-        totalCount={genresResponse?.count}
+        totalCount={studiosResponse?.count}
         onPageChange={(newPage) => {
           void navigate({
-            search: (prev: GenreSearch) => ({ ...prev, page: newPage }),
+            search: (prev: StudioSearch) => ({ ...prev, page: newPage }),
           })
         }}
         onPageSizeChange={(newSize) => {
           void navigate({
-            search: (prev: GenreSearch) => ({ ...prev, pageSize: newSize, page: 1 }),
+            search: (prev: StudioSearch) => ({ ...prev, pageSize: newSize, page: 1 }),
           })
         }}
       />
@@ -239,31 +239,42 @@ function GenresPage() {
           setIsCreateDialogOpen(open)
         }}
       >
-        <DialogContent>
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>{t('catalog.genres.createGenre')}</DialogTitle>
+            <DialogTitle>{t('catalog.studios.createStudio')}</DialogTitle>
           </DialogHeader>
-          <GenreForm onSubmit={handleCreate} isSubmitting={createGenre.isPending} />
+          <StudioForm
+            onSubmit={(values) => {
+              void handleCreate(values)
+            }}
+            isSubmitting={createStudio.isPending}
+          />
         </DialogContent>
       </Dialog>
 
       <Dialog
-        open={editingGenre !== null}
+        open={editingStudio !== null}
         onOpenChange={(open) => {
           if (!open) {
-            setEditingGenre(null)
+            setEditingStudio(null)
           }
         }}
       >
-        <DialogContent>
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>{t('catalog.genres.editGenre')}</DialogTitle>
+            <DialogTitle>{t('catalog.studios.editStudio')}</DialogTitle>
           </DialogHeader>
-          {editingGenre !== null && (
-            <GenreForm
-              defaultValues={{ name: editingGenre.name }}
-              onSubmit={handleUpdate}
-              isSubmitting={updateGenre.isPending}
+          {editingStudio !== null && (
+            <StudioForm
+              defaultValues={{
+                name: editingStudio.name,
+                description: editingStudio.description ?? '',
+                logo_url: editingStudio.logo_url ?? '',
+              }}
+              onSubmit={(values) => {
+                void handleUpdate(values)
+              }}
+              isSubmitting={updateStudio.isPending}
             />
           )}
         </DialogContent>

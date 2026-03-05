@@ -65,7 +65,9 @@ export function MoviesTable({ movies, onDelete }: MoviesTableProps) {
                   </div>
                 </TableCell>
                 <TableCell>
-                  {movie.release_date !== null && movie.release_date !== ''
+                  {movie.release_date !== undefined &&
+                  movie.release_date !== null &&
+                  movie.release_date !== ''
                     ? format(new Date(movie.release_date), 'PP')
                     : '-'}
                 </TableCell>
@@ -81,8 +83,10 @@ export function MoviesTable({ movies, onDelete }: MoviesTableProps) {
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    <Badge variant="secondary">{movie.rating_average.toFixed(1)}</Badge>
-                    <span className="text-muted-foreground text-xs">({movie.vote_count})</span>
+                    <Badge variant="secondary">
+                      {movie.rating_average !== undefined ? movie.rating_average.toFixed(1) : '0.0'}
+                    </Badge>
+                    <span className="text-muted-foreground text-xs">({movie.vote_count ?? 0})</span>
                   </div>
                 </TableCell>
                 <TableCell className="text-right">

@@ -355,6 +355,21 @@
       "noPeople": "Odamlar topilmadi",
       "deleteConfirm": "Ushbu shaxsni o'chirishga aminmisiz?"
     },
+    "studios": {
+      "title": "Studiyalar",
+      "createStudio": "Studiya yaratish",
+      "editStudio": "Studiyani tahrirlash",
+      "name": "Nomi",
+      "slug": "Slug",
+      "description": "Tavsif",
+      "logoUrl": "Logotip URL",
+      "created": "Studiya muvaffaqiyatli yaratildi",
+      "updated": "Studiya muvaffaqiyatli yangilandi",
+      "deleted": "Studiya muvaffaqiyatli o'chirildi",
+      "noStudios": "Studiyalar topilmadi",
+      "deleteConfirm": "Ushbu studiyani o'chirishga aminmisiz?",
+      "search": "Studiyalarni qidirish..."
+    },
     "credits": {
       "title": "Kreditlar",
       "addCredit": "Kredit qo'shish",

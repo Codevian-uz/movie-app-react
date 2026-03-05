@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate, Link } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { ChevronLeft } from 'lucide-react'
 import { toast } from 'sonner'
 import { RouteErrorBoundary } from '@/components/errors/RouteErrorBoundary'
@@ -20,7 +20,6 @@ export const Route = createFileRoute('/admin/_authenticated/catalog/movies/creat
 
 function CreateMoviePage() {
   const { t } = useTranslation()
-  const navigate = useNavigate()
   const createMovie = useCreateMovie()
 
   async function onSubmit(values: MovieFormValues) {
@@ -38,10 +37,6 @@ function CreateMoviePage() {
         description: values.description !== '' ? values.description : undefined,
       })
       toast.success(t('catalog.movies.created'))
-      void navigate({
-        to: '/admin/catalog/movies',
-        search: { page: undefined, pageSize: undefined },
-      })
     } catch {
       toast.error('Failed to create movie')
     }

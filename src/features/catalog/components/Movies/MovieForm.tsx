@@ -32,7 +32,9 @@ import {
   collectionsQueryOptions,
   genresQueryOptions,
   peopleQueryOptions,
+  studiosQueryOptions,
 } from '../../api/catalog.queries'
+import type { Collection, Studio } from '../../types/catalog.types'
 import { EpisodeManager } from '../Episodes/EpisodeManager'
 
 const movieFormSchema = z.object({
@@ -40,6 +42,7 @@ const movieFormSchema = z.object({
   kind: z.enum(['movie', 'series']),
   collection_id: z.string().optional().or(z.literal('')),
   collection_order: z.coerce.number().optional(),
+  studio_ids: z.array(z.string()).default([]),
   description: z.string().optional(),
   poster_url: z.string().optional(),
   backdrop_url: z.string().optional(),
@@ -78,6 +81,7 @@ export function MovieForm({ movieId, defaultValues, onSubmit, isSubmitting }: Mo
       kind: 'movie',
       collection_id: '',
       collection_order: 0,
+      studio_ids: [],
       description: '',
       poster_url: '',
       backdrop_url: '',
@@ -250,6 +254,25 @@ export function MovieForm({ movieId, defaultValues, onSubmit, isSubmitting }: Mo
                         <FormControl>
                           <Input type="number" {...field} />
                         </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <FormField
+                    control={form.control}
+                    name="studio_ids"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col">
+                        <FormLabel>{t('catalog.studios.title')}</FormLabel>
+                        <StudioSelect
+                          value={field.value}
+                          onChange={(val) => {
+                            field.onChange(val)
+                          }}
+                        />
                         <FormMessage />
                       </FormItem>
                     )}
@@ -463,9 +486,9 @@ export function MovieForm({ movieId, defaultValues, onSubmit, isSubmitting }: Mo
 function CollectionSelect({ value, onChange }: { value: string; onChange: (val: string) => void }) {
   const [search, setSearch] = useState('')
   const { data: collectionsResponse, isLoading } = useQuery(
-    collectionsQueryOptions({ search, limit: 50 }),
+    collectionsQueryOptions({ search, page_size: 50 }),
   )
-  const collections = collectionsResponse?.items ?? []
+  const collections = collectionsResponse?.content ?? []
 
   return (
     <Select
@@ -500,7 +523,7 @@ function CollectionSelect({ value, onChange }: { value: string; onChange: (val: 
           ) : (
             <>
               <SelectItem value="none">None</SelectItem>
-              {collections.map((collection) => (
+              {collections.map((collection: Collection) => (
                 <SelectItem key={collection.id} value={collection.id}>
                   {collection.title}
                 </SelectItem>
@@ -518,6 +541,74 @@ function CollectionSelect({ value, onChange }: { value: string; onChange: (val: 
   )
 }
 
+function StudioSelect({ value, onChange }: { value: string[]; onChange: (val: string[]) => void }) {
+  const [search, setSearch] = useState('')
+  const { data: studiosResponse, isLoading } = useQuery(
+    studiosQueryOptions({ search, page_size: 50 }),
+  )
+  const studios = studiosResponse?.content ?? []
+
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant="outline" className="w-full justify-start font-normal">
+          {value.length > 0 ? `${value.length.toString()} selected` : 'Select studios'}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-var(--radix-popover-trigger-width) p-0" align="start">
+        <div className="p-2">
+          <Input
+            placeholder="Search studios..."
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value)
+            }}
+            onKeyDown={(e) => {
+              e.stopPropagation()
+            }}
+          />
+        </div>
+        <ScrollArea className="h-60 p-4">
+          {isLoading ? (
+            <div className="flex items-center justify-center p-4">
+              <Loader2 className="size-4 animate-spin" />
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {studios.map((studio: Studio) => (
+                <div key={studio.id} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`studio-${studio.id}`}
+                    checked={value.includes(studio.id)}
+                    onCheckedChange={(checked) => {
+                      if (checked === true) {
+                        onChange([...value, studio.id])
+                      } else {
+                        onChange(value.filter((id) => id !== studio.id))
+                      }
+                    }}
+                  />
+                  <label
+                    htmlFor={`studio-${studio.id}`}
+                    className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    {studio.name}
+                  </label>
+                </div>
+              ))}
+              {studios.length === 0 && search !== '' && (
+                <div className="text-muted-foreground p-4 text-center text-xs">
+                  No studios found
+                </div>
+              )}
+            </div>
+          )}
+        </ScrollArea>
+      </PopoverContent>
+    </Popover>
+  )
+}
+
 function GenreSelect({ value, onChange }: { value: string[]; onChange: (val: string[]) => void }) {
   const { data: genresResponse, isLoading } = useQuery(genresQueryOptions({ page_size: 100 }))
   const genres = genresResponse?.content ?? []
@@ -529,7 +620,7 @@ function GenreSelect({ value, onChange }: { value: string[]; onChange: (val: str
           {value.length > 0 ? `${value.length.toString()} selected` : 'Select genres'}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
+      <PopoverContent className="w-var(--radix-popover-trigger-width) p-0" align="start">
         <ScrollArea className="h-60 p-4">
           {isLoading ? (
             <div className="flex items-center justify-center p-4">

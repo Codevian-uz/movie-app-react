@@ -83,7 +83,9 @@ export function HomeSpotlight({ movies }: HomeSpotlightProps) {
             <div className="flex items-center gap-1.5">
               <Calendar className="h-4 w-4 text-orange-500" />
               <span>
-                {movie.release_date !== null && movie.release_date !== ''
+                {movie.release_date !== undefined &&
+                movie.release_date !== null &&
+                movie.release_date !== ''
                   ? new Date(movie.release_date).getFullYear()
                   : 'N/A'}
               </span>
@@ -109,7 +111,11 @@ export function HomeSpotlight({ movies }: HomeSpotlightProps) {
               size="lg"
               className="h-14 cursor-pointer rounded-full bg-orange-500 px-10 text-lg font-bold text-white shadow-lg shadow-orange-500/20 transition-all hover:bg-orange-600 active:scale-95"
             >
-              <Link to="/watch/$movieId" params={{ movieId: movie.id }}>
+              <Link
+                to="/movies/$movieId"
+                params={{ movieId: movie.id }}
+                search={{ autoplay: true }}
+              >
                 <Play className="mr-2 h-6 w-6 fill-current" />
                 Watch Now
               </Link>

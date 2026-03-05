@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { CollectionForm, useCreateCollection, type CollectionFormValues } from '@/features/catalog'
@@ -10,16 +10,11 @@ export const Route = createFileRoute('/admin/_authenticated/catalog/collections/
 
 function CreateCollectionPage() {
   const { t } = useTranslation()
-  const navigate = useNavigate()
   const createMutation = useCreateCollection()
 
   const onSubmit = async (values: CollectionFormValues) => {
     await createMutation.mutateAsync(values).then(() => {
       toast.success(t('catalog.collections.created'))
-      void navigate({
-        to: '/admin/catalog/collections',
-        search: { page: undefined, pageSize: undefined, search: undefined, sort: undefined },
-      })
     })
   }
 

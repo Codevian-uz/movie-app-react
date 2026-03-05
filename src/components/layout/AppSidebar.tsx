@@ -2,6 +2,7 @@ import { Link, useNavigate, useRouterState } from '@tanstack/react-router'
 import {
   Activity,
   AlertTriangle,
+  Building2,
   Calendar,
   Film,
   Inbox,
@@ -90,6 +91,12 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
           url: '/admin/catalog/people',
           icon: Users,
           permission: PERMISSIONS.CATALOG_PERSON_READ,
+        },
+        {
+          title: t('catalog.studios.title'),
+          url: '/admin/catalog/studios',
+          icon: Building2,
+          permission: PERMISSIONS.CATALOG_STUDIO_READ,
         },
       ],
     },

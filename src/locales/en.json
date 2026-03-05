@@ -368,6 +368,21 @@
       "noPeople": "No people found",
       "deleteConfirm": "Are you sure you want to delete this person?"
     },
+    "studios": {
+      "title": "Studios",
+      "createStudio": "Create Studio",
+      "editStudio": "Edit Studio",
+      "name": "Name",
+      "slug": "Slug",
+      "description": "Description",
+      "logoUrl": "Logo URL",
+      "created": "Studio created successfully",
+      "updated": "Studio updated successfully",
+      "deleted": "Studio deleted successfully",
+      "noStudios": "No studios found",
+      "deleteConfirm": "Are you sure you want to delete this studio?",
+      "search": "Search studios..."
+    },
     "credits": {
       "title": "Credits",
       "addCredit": "Add Credit",
@@ -392,6 +407,14 @@
       "deleteConfirm": "Are you sure you want to delete this collection?",
       "uploadPoster": "Upload Poster",
       "uploadBackdrop": "Upload Backdrop"
+    },
+    "watch": {
+      "preparing": "Preparing Episode",
+      "transcoding": "We are transcoding this video for your device.",
+      "error": "Failed to load video",
+      "reportIssue": "Report Issue",
+      "quality": "Quality",
+      "auto": "Auto"
     }
   },
   "notFound": {

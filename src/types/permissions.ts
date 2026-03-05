@@ -17,8 +17,16 @@ export const PERMISSIONS = {
   CATALOG_MOVIE_MANAGE: 'catalog:movie:manage',
   CATALOG_GENRE_READ: 'catalog:genre:read',
   CATALOG_GENRE_MANAGE: 'catalog:genre:manage',
+  CATALOG_GENRE_CREATE: 'catalog:genre:create',
+  CATALOG_GENRE_UPDATE: 'catalog:genre:update',
+  CATALOG_GENRE_DELETE: 'catalog:genre:delete',
   CATALOG_PERSON_READ: 'catalog:person:read',
   CATALOG_PERSON_MANAGE: 'catalog:person:manage',
+  CATALOG_PERSON_CREATE: 'catalog:person:create',
+  CATALOG_PERSON_UPDATE: 'catalog:person:update',
+  CATALOG_PERSON_DELETE: 'catalog:person:delete',
+  CATALOG_STUDIO_READ: 'catalog:studio:read',
+  CATALOG_STUDIO_MANAGE: 'catalog:studio:manage',
 } as const
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS]
@@ -48,7 +56,15 @@ export const PERMISSION_GROUPS: Record<string, Permission[]> = {
     PERMISSIONS.CATALOG_MOVIE_MANAGE,
     PERMISSIONS.CATALOG_GENRE_READ,
     PERMISSIONS.CATALOG_GENRE_MANAGE,
+    PERMISSIONS.CATALOG_GENRE_CREATE,
+    PERMISSIONS.CATALOG_GENRE_UPDATE,
+    PERMISSIONS.CATALOG_GENRE_DELETE,
     PERMISSIONS.CATALOG_PERSON_READ,
     PERMISSIONS.CATALOG_PERSON_MANAGE,
+    PERMISSIONS.CATALOG_PERSON_CREATE,
+    PERMISSIONS.CATALOG_PERSON_UPDATE,
+    PERMISSIONS.CATALOG_PERSON_DELETE,
+    PERMISSIONS.CATALOG_STUDIO_READ,
+    PERMISSIONS.CATALOG_STUDIO_MANAGE,
   ],
 }

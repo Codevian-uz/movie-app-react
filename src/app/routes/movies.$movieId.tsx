@@ -1,5 +1,7 @@
+import { useEffect, useRef, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { z } from 'zod'
 import {
   titleDetailsQueryOptions,
   MovieDetailsHero,
@@ -7,16 +9,57 @@ import {
   SeriesEpisodes,
   MovieRow,
 } from '@/features/catalog'
+import { MovieComments, VideoPlayer, statusQueryOptions } from '@/features/interactions'
+import { cn } from '@/lib/utils'
+import { useAuthStore } from '@/stores/auth.store'
+
+const movieDetailsSearchSchema = z.object({
+  autoplay: z.boolean().optional(),
+  episodeId: z.string().optional(),
+})
 
 export const Route = createFileRoute('/movies/$movieId')({
+  validateSearch: (search) => movieDetailsSearchSchema.parse(search),
   component: MovieDetailsPage,
 })
 
 function MovieDetailsPage() {
   const { movieId } = Route.useParams()
+  const { autoplay, episodeId } = Route.useSearch()
   const navigate = useNavigate()
+  const { isAuthenticated } = useAuthStore()
 
-  const { data, isLoading, error } = useQuery(titleDetailsQueryOptions(movieId))
+  const playerContainerRef = useRef<HTMLDivElement>(null)
+  const [isSticky, setIsSticky] = useState(false)
+
+  const { data, isLoading, error } = useQuery(titleDetailsQueryOptions(movieId, episodeId))
+  const { data: status } = useQuery({
+    ...statusQueryOptions({ target_type: 'movie', target_id: movieId }),
+    enabled: isAuthenticated,
+  })
+
+  // Intersection Observer to handle sticky/mini player transition
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry) {
+          setIsSticky(!entry.isIntersecting)
+        }
+      },
+      { threshold: 0 },
+    )
+
+    const currentRef = playerContainerRef.current
+    if (currentRef) {
+      observer.observe(currentRef)
+    }
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef)
+      }
+    }
+  }, [])
 
   if (isLoading) {
     return (
@@ -64,14 +107,62 @@ function MovieDetailsPage() {
     collection_order: null,
   }))
 
+  const handlePlayNext = () => {
+    if (movie.kind !== 'series' || !seasons) {
+      return
+    }
+
+    const allEpisodes = seasons.flatMap((s) => s.episodes)
+    const currentIndex = allEpisodes.findIndex((e) => e.id === episodeId)
+    const nextEpisode = allEpisodes[currentIndex + 1]
+    if (nextEpisode) {
+      void navigate({
+        to: '/movies/$movieId',
+        params: { movieId },
+        search: { autoplay: true, episodeId: nextEpisode.id },
+      })
+    }
+  }
+
+  const hasNextEpisode = () => {
+    if (movie.kind !== 'series' || !seasons) {
+      return false
+    }
+    const allEpisodes = seasons.flatMap((s) => s.episodes)
+    const currentIndex = allEpisodes.findIndex((e) => e.id === episodeId)
+    return currentIndex !== -1 && currentIndex < allEpisodes.length - 1
+  }
+
   return (
-    <div className="min-h-screen bg-black text-white md:pl-64">
-      {/* 
-        The layout assumes a sidebar which typically adds padding. 
-        If the app shell already gives padding, we adjust. 
-        Wait, observing the aesthetic choices, it seems page contents don't need hardcoded md:pl-64 if the layout provides it.
-        Let's remove md:pl-64 and rely on AppLayout.
-      */}
+    <div className="min-h-screen bg-black text-white">
+      {/* 16:9 Aspect Ratio Container for the player */}
+      <div
+        ref={playerContainerRef}
+        className="relative aspect-video w-full overflow-hidden bg-black shadow-2xl"
+      >
+        <div
+          className={cn(
+            'h-full w-full transition-all duration-500',
+            isSticky
+              ? 'fixed top-0 right-0 left-0 z-50 flex h-auto max-h-[40vh] items-center justify-center bg-black/95 shadow-2xl backdrop-blur-md'
+              : 'relative',
+          )}
+        >
+          <div className={cn('h-full w-full', isSticky && 'container mx-auto aspect-video')}>
+            <VideoPlayer
+              movieId={movieId}
+              episodeId={episodeId}
+              videoUrl={movie.video_url}
+              title={movie.title}
+              autoplay={autoplay}
+              initialProgress={status?.progress?.progress_seconds}
+              hasNextEpisode={hasNextEpisode()}
+              playNextEpisode={handlePlayNext}
+            />
+          </div>
+        </div>
+      </div>
+
       <div className="flex flex-col gap-12 pb-20">
         <MovieDetailsHero movie={movie} genres={genres} />
 
@@ -85,12 +176,13 @@ function MovieDetailsPage() {
           {recommendations.length > 0 && (
             <section className="space-y-6">
               <h2 className="text-2xl font-bold tracking-tight">More Like This</h2>
-              {/* Using the existing MovieRow which expects Movie[] array */}
               <div className="-mx-6 md:-mx-12">
                 <MovieRow title="" movies={recommendationMovies} />
               </div>
             </section>
           )}
+
+          <MovieComments movieId={movie.id} />
         </div>
       </div>
     </div>

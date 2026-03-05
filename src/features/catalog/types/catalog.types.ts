@@ -1,24 +1,65 @@
+import type { PaginatedResponse } from '@/types/api.types'
+
 export type MovieKind = 'movie' | 'series'
+export type ProcessingStatus = 'ready' | 'processing' | 'failed'
+
+export interface VideoStream {
+  status: ProcessingStatus
+  url?: string
+  progress?: number
+  message?: string
+}
+
+export interface VideoSourceItem {
+  id: string
+  resolution: string
+  url: string
+  type: string
+  language: string
+  processing_status: ProcessingStatus
+}
+
+export interface StreamManifest {
+  primary_source_id: string | null
+  sources: VideoSourceItem[] | null
+}
 
 export interface Movie {
   id: string
-  collection_id: string | null
-  collection_order: number | null
+  collection_id?: string | null
+  collection_order?: number | null
+  studio_id?: string | null
   title: string
   slug: string
-  kind: MovieKind
+  kind: string
+  description?: string | null
+  poster_url?: string | null
+  backdrop_url?: string | null
+  trailer_url?: string | null
+  video_url?: string | null
+  release_date?: string | null
+  duration_minutes?: number | null
+  rating_average?: number
+  vote_count?: number
+  created_at?: string
+  updated_at?: string
+  deleted_at?: string | null
+}
+
+export interface AlternativeTitle {
+  movie_id: string
+  title: string
+  type: 'romaji' | 'kanji' | 'english' | 'synonym'
+}
+
+export interface Studio {
+  id: string
+  name: string
+  slug: string
   description: string | null
-  poster_url: string | null
-  backdrop_url: string | null
-  trailer_url: string | null
-  video_url: string | null
-  release_date: string | null
-  duration_minutes: number | null
-  rating_average: number
-  vote_count: number
+  logo_url: string | null
   created_at: string
   updated_at: string
-  deleted_at: string | null
 }
 
 export interface Genre {
@@ -98,6 +139,7 @@ export interface TitleDetailsResponse {
 
 export interface MovieWithDetails extends Movie {
   genres: Genre[]
+  studios: Studio[]
   credits: Credit[]
   collection: {
     id: string
@@ -119,6 +161,7 @@ export interface CreateMovieRequest {
   kind: MovieKind
   collection_id?: string | undefined
   collection_order?: number | undefined
+  studio_id?: string | undefined
   description?: string | undefined
   poster_url?: string | undefined
   backdrop_url?: string | undefined
@@ -146,20 +189,53 @@ export interface ListMoviesParams {
   genre_id?: string | undefined
   person_id?: string | undefined
   role?: string | undefined
-  limit?: number | undefined
-  offset?: number | undefined
-  sort_by?: string | undefined
-  sort_order?: string | undefined
+  page_number?: number | undefined
+  page_size?: number | undefined
+  sort?: string | undefined
 }
 
 export interface Episode {
   id: string
-  movie_id: string
-  season_number: number
+  season_id: string
   episode_number: number
   title: string
+  description?: string | null
   video_url: string | null
   duration_minutes: number | null
+}
+
+export interface Season {
+  id: string
+  movie_id: string
+  season_number: number
+  title: string | null
+  description: string | null
+  poster_url: string | null
+  air_date: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface ListSeasonsParams {
+  movie_id: string
+}
+
+export interface ListSeasonsResponse {
+  content: Season[]
+}
+
+export interface UpsertSeasonRequest {
+  id?: string | undefined
+  movie_id: string
+  season_number: number
+  title?: string | undefined
+  description?: string | undefined
+  poster_url?: string | undefined
+  air_date?: string | undefined
+}
+
+export interface DeleteSeasonRequest {
+  id: string
 }
 
 export interface ListEpisodesParams {
@@ -185,27 +261,6 @@ export interface DeleteEpisodeRequest {
   id: string
 }
 
-export interface UpdateProgressRequest {
-  movie_id: string
-  episode_id?: string | undefined
-  progress_seconds: number
-  is_finished?: boolean | undefined
-}
-
-export interface UserProgress {
-  movie: Movie
-  episode_id?: string | undefined
-  progress_seconds: number
-}
-
-export interface ListContinueWatchingResponse {
-  content: UserProgress[]
-}
-
-export interface ToggleFavoriteRequest {
-  movie_id: string
-}
-
 export interface GetRelatedAnimesParams {
   movie_id: string
 }
@@ -214,17 +269,26 @@ export interface ListRelatedAnimesResponse {
   content: Movie[]
 }
 
-export interface ListMyListResponse {
-  page_number: number
-  page_size: number
-  count: number
-  content: Movie[]
+export type ListMoviesResponse = PaginatedResponse<Movie>
+
+export interface CreateStudioRequest {
+  name: string
+  description?: string | undefined
+  logo_url?: string | undefined
 }
 
-export interface ListMoviesResponse {
-  items: Movie[]
-  total?: number
+export interface UpdateStudioRequest extends Partial<CreateStudioRequest> {
+  id: string
 }
+
+export interface ListStudiosParams {
+  search?: string | undefined
+  page_number?: number | undefined
+  page_size?: number | undefined
+  sort?: string | undefined
+}
+
+export type ListStudiosResponse = PaginatedResponse<Studio>
 
 export interface CreateGenreRequest {
   name: string
@@ -317,30 +381,79 @@ export interface UpdateCollectionRequest {
 
 export interface ListCollectionsParams {
   search?: string | undefined
-  limit?: number | undefined
-  offset?: number | undefined
+  page_number?: number | undefined
+  page_size?: number | undefined
   sort?: string | undefined
 }
 
 export interface HomeData {
-  continue_watching: {
-    movie: {
-      id: string
-      title: string
-      slug: string
-      poster_url: string | null
-      duration_minutes: number | null
-    }
-    progress_seconds: number
-  }[]
-  trending: Movie[]
-  popular: Movie[]
-  new_releases: Movie[]
-  my_list: Movie[]
-  genres: Genre[]
+  continue_watching:
+    | {
+        movie: {
+          id: string
+          title: string
+          slug: string
+          kind: string
+          description: string | null
+          poster_url: string | null
+          backdrop_url: string | null
+          duration_minutes: number | null
+        }
+        progress_seconds: number
+      }[]
+    | null
+  trending:
+    | {
+        id: string
+        title: string
+        slug: string
+        kind: string
+        poster_url: string | null
+        description: string | null
+        backdrop_url: string | null
+        duration_minutes: number | null
+        rating_average: number
+      }[]
+    | null
+  popular:
+    | {
+        id: string
+        title: string
+        slug: string
+        kind: string
+        description: string | null
+        poster_url: string | null
+        backdrop_url: string | null
+        duration_minutes: number | null
+        vote_count: number
+      }[]
+    | null
+  new_releases:
+    | {
+        id: string
+        title: string
+        slug: string
+        kind: string
+        description: string | null
+        poster_url: string | null
+        backdrop_url: string | null
+        duration_minutes: number | null
+        release_date: string | null
+      }[]
+    | null
+  my_list:
+    | {
+        id: string
+        title: string
+        slug: string
+        kind: string
+        description: string | null
+        poster_url: string | null
+        backdrop_url: string | null
+        duration_minutes: number | null
+      }[]
+    | null
+  genres: Genre[] | null
 }
 
-export interface ListCollectionsResponse {
-  items: Collection[]
-  total: number
-}
+export type ListCollectionsResponse = PaginatedResponse<Collection>

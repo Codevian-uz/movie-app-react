@@ -95,5 +95,52 @@ test.describe('Catalog management', () => {
       await adminPage.getByRole('menuitem', { name: /delete/i }).click()
       await expect(adminPage.locator('table')).not.toContainText(editedTitle, { timeout: 5_000 })
     })
+
+    // Series & Episodes
+    await test.step('series and episodes management', async () => {
+      await adminPage.goto('/admin/catalog/movies')
+      const seriesTitle = `e2e-series-${Date.now().toString()}`
+      await adminPage.getByRole('button', { name: /create movie/i }).click()
+
+      await adminPage.getByLabel(/title/i).fill(seriesTitle)
+      await adminPage.getByLabel(/type/i).selectOption('series')
+      await adminPage.getByRole('button', { name: /save/i }).click()
+
+      await expect(adminPage).toHaveURL(/\/admin\/catalog\/movies/)
+      await expect(adminPage.locator('table')).toContainText(seriesTitle, { timeout: 10_000 })
+
+      // Edit series to manage episodes
+      await openActionMenu(adminPage, seriesTitle)
+      await adminPage.getByRole('menuitem', { name: /edit/i }).click()
+
+      // Go to Episodes tab
+      await adminPage.getByRole('tab', { name: /seasons & episodes/i }).click()
+
+      // Add Episode
+      await adminPage.getByRole('button', { name: /add episode/i }).click()
+      const episodeTitle = 'Test Episode 1'
+      await adminPage.getByLabel(/title/i).fill(episodeTitle)
+      await adminPage.getByRole('button', { name: /add episode/i }).click()
+
+      // Verify we are still on the edit page, not redirected to movies list
+      await expect(adminPage).toHaveURL(/\/admin\/catalog\/movies\/[a-z0-9-]+/)
+      await expect(adminPage.getByText(episodeTitle)).toBeVisible()
+      await expect(adminPage.getByText(/episode created/i)).toBeVisible()
+
+      // Bulk Add
+      await adminPage.getByRole('button', { name: /bulk add/i }).click()
+      await adminPage.getByLabel(/number of episodes/i).fill('3')
+      await adminPage.getByRole('button', { name: /generate episodes/i }).click()
+
+      // Verify we are still on the edit page
+      await expect(adminPage).toHaveURL(/\/admin\/catalog\/movies\/[a-z0-9-]+/)
+      await expect(adminPage.getByText(/created 3 episodes/i)).toBeVisible()
+
+      // Delete series
+      await adminPage.goto('/admin/catalog/movies')
+      adminPage.once('dialog', (dialog) => dialog.accept())
+      await openActionMenu(adminPage, seriesTitle)
+      await adminPage.getByRole('menuitem', { name: /delete/i }).click()
+    })
   })
 })

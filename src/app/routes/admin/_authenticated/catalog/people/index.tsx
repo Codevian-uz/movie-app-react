@@ -28,7 +28,10 @@ import {
 } from '@/features/catalog'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useTranslation } from '@/lib/i18n'
+import { useAuthStore } from '@/stores/auth.store'
 import { ApiException } from '@/types/api.types'
+import { PERMISSIONS } from '@/types/permissions'
+import { requirePermission } from '../../-route-guards'
 
 const peopleSearchSchema = z.object({
   page: z.number().catch(1),
@@ -38,6 +41,9 @@ const peopleSearchSchema = z.object({
 })
 
 export const Route = createFileRoute('/admin/_authenticated/catalog/people/')({
+  beforeLoad: () => {
+    requirePermission(PERMISSIONS.CATALOG_PERSON_READ)
+  },
   validateSearch: (search: Record<string, unknown>): PeopleSearch =>
     peopleSearchSchema.parse(search),
   component: PeoplePage,
@@ -52,6 +58,7 @@ interface PeopleSearch {
 
 function PeoplePage() {
   const { t } = useTranslation()
+  const hasPermission = useAuthStore((s) => s.hasPermission)
   const { page = 1, pageSize = DEFAULT_PAGE_SIZE, search, sort } = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
   const [editingPerson, setEditingPerson] = useState<Person | null>(null)
@@ -84,8 +91,13 @@ function PeoplePage() {
   const createPerson = useCreatePerson()
   const updatePerson = useUpdatePerson()
   const deletePerson = useDeletePerson()
+  const canManage = hasPermission(PERMISSIONS.CATALOG_PERSON_MANAGE)
+  const canCreate = canManage || hasPermission(PERMISSIONS.CATALOG_PERSON_CREATE)
 
   async function handleCreate(values: PersonFormValues) {
+    if (!canCreate) {
+      return
+    }
     try {
       await createPerson.mutateAsync(values)
       toast.success(t('catalog.people.created'))
@@ -97,7 +109,7 @@ function PeoplePage() {
   }
 
   async function handleUpdate(values: PersonFormValues) {
-    if (editingPerson === null) {
+    if (!canManage || editingPerson === null) {
       return
     }
     try {
@@ -111,6 +123,9 @@ function PeoplePage() {
   }
 
   async function handleDelete(id: string) {
+    if (!canManage) {
+      return
+    }
     // eslint-disable-next-line no-alert
     if (!confirm(t('catalog.people.deleteConfirm'))) {
       return
@@ -140,14 +155,16 @@ function PeoplePage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold tracking-tight">{t('catalog.people.title')}</h1>
-        <Button
-          onClick={() => {
-            setIsCreateDialogOpen(true)
-          }}
-        >
-          <Plus className="mr-2 size-4" />
-          {t('catalog.people.createPerson')}
-        </Button>
+        {canCreate && (
+          <Button
+            onClick={() => {
+              setIsCreateDialogOpen(true)
+            }}
+          >
+            <Plus className="mr-2 size-4" />
+            {t('catalog.people.createPerson')}
+          </Button>
+        )}
       </div>
 
       <div className="flex flex-wrap items-center gap-4">

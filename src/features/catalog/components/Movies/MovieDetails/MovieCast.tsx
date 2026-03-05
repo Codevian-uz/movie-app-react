@@ -15,7 +15,7 @@ export function MovieCast({ credits }: Props) {
       <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
         {credits.map((credit) => (
           <div key={credit.id} className="group cursor-pointer space-y-3">
-            <div className="relative aspect-[2/3] overflow-hidden rounded-lg border border-white/10 bg-white/5 transition-colors group-hover:border-white/20">
+            <div className="relative aspect-2/3 overflow-hidden rounded-lg border border-white/10 bg-white/5 transition-colors group-hover:border-white/20">
               {credit.person_photo_url !== null ? (
                 <img
                   src={credit.person_photo_url}

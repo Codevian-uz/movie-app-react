@@ -26,15 +26,17 @@ vi.mock('@/lib/api-client', () => ({
 
 describe('catalog api', () => {
   it('listMovies calls correct endpoint', async () => {
-    const spy = vi.spyOn(apiClient, 'get').mockResolvedValueOnce({ data: { items: [], total: 0 } })
-    await listMovies({ limit: 10 })
-    expect(spy).toHaveBeenCalledWith('v1/catalog/movies', { params: { limit: 10 } })
+    const spy = vi
+      .spyOn(apiClient, 'get')
+      .mockResolvedValueOnce({ data: { content: [], count: 0 } })
+    await listMovies({ page_size: 10 })
+    expect(spy).toHaveBeenCalledWith('v1/catalog/movies', { params: { page_size: 10 } })
   })
 
   it('getMovie calls correct endpoint', async () => {
     const spy = vi.spyOn(apiClient, 'get').mockResolvedValueOnce({ data: { id: '1' } })
     await getMovie('1')
-    expect(spy).toHaveBeenCalledWith('v1/catalog/movies/1')
+    expect(spy).toHaveBeenCalledWith('v1/catalog/movies/get', { params: { id: '1' } })
   })
 
   it('createMovie calls correct endpoint', async () => {
