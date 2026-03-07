@@ -394,6 +394,14 @@
       "deleteConfirm": "Ushbu to'plamni o'chirishga aminmisiz?",
       "uploadPoster": "Posterni yuklash",
       "uploadBackdrop": "Fonni yuklash"
+    },
+    "watch": {
+      "preparing": "Video tayyorlanmoqda",
+      "transcoding": "Biz ushbu videoni qurilmangiz uchun transkod qilmoqdamiz.",
+      "error": "Videoni yuklab bo'lmadi",
+      "reportIssue": "Muammo haqida xabar bering",
+      "quality": "Sifat",
+      "auto": "Avto"
     }
   },
   "notFound": {
