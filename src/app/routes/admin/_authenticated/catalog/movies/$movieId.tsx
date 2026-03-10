@@ -82,6 +82,7 @@ function EditMoviePage() {
             defaultValues={{
               title: movie.title,
               kind: movie.kind as 'movie' | 'series',
+              status: movie.status as 'airing' | 'finished' | 'upcoming',
               collection_id: movie.collection_id ?? '',
               collection_order: movie.collection_order ?? 0,
               description: movie.description ?? '',

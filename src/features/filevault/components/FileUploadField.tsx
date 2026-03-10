@@ -4,6 +4,7 @@ import type { FieldValues, Path, PathValue, UseFormReturn } from 'react-hook-for
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
+import { Progress } from '@/components/ui/progress'
 import { cn } from '@/lib/utils'
 import { getFileUrl, getStreamUrl, uploadFile, useAuthenticatedFile } from '../api/filevault.api'
 
@@ -25,6 +26,7 @@ export function FileUploadField<T extends FieldValues>({
   className,
 }: FileUploadFieldProps<T>) {
   const [isUploading, setIsUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
   const [localPreview, setLocalPreview] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const value = form.watch(name) as string | undefined | null
@@ -34,10 +36,11 @@ export function FileUploadField<T extends FieldValues>({
     value !== undefined &&
     value !== null &&
     localPreview === null &&
+    type !== 'video' &&
     !value.startsWith('blob:')
   const { objectUrl, isLoading: isFetching } = useAuthenticatedFile(shouldFetch ? value : null)
 
-  const displayUrl = localPreview ?? objectUrl
+  const displayUrl = localPreview ?? (type === 'video' ? value : objectUrl)
 
   const aspectClasses = {
     video: 'aspect-video',
@@ -55,8 +58,11 @@ export function FileUploadField<T extends FieldValues>({
     setLocalPreview(localUrl)
 
     setIsUploading(true)
+    setUploadProgress(0)
     try {
-      const res = await uploadFile(file)
+      const res = await uploadFile(file, (progress) => {
+        setUploadProgress(progress)
+      })
       const url = type === 'video' ? getStreamUrl(res.id) : getFileUrl(res.id)
       form.setValue(name, url as PathValue<T, Path<T>>)
       toast.success('File uploaded')
@@ -66,6 +72,7 @@ export function FileUploadField<T extends FieldValues>({
       URL.revokeObjectURL(localUrl)
     } finally {
       setIsUploading(false)
+      setUploadProgress(0)
     }
   }
 
@@ -93,6 +100,7 @@ export function FileUploadField<T extends FieldValues>({
                   className="h-full w-full object-cover"
                   controls
                   playsInline
+                  crossOrigin="use-credentials"
                 />
               ) : null
             ) : displayUrl !== null && displayUrl !== '' ? (
@@ -115,28 +123,38 @@ export function FileUploadField<T extends FieldValues>({
             </Button>
           </div>
         ) : (
-          <Button
-            type="button"
-            variant="outline"
-            className={cn(
-              'h-24 w-full border-dashed',
-              aspect === 'square' && 'h-32 w-32',
-              aspect === 'poster' && 'h-48 w-32',
-            )}
-            disabled={isUploading}
-            onClick={() => {
-              inputRef.current?.click()
-            }}
-          >
-            {isUploading ? (
-              <Loader2 className="size-6 animate-spin" />
-            ) : (
-              <div className="flex flex-col items-center gap-1">
-                <Upload className="size-6" />
-                <span className="text-xs">Upload</span>
+          <div className="space-y-2">
+            <Button
+              type="button"
+              variant="outline"
+              className={cn(
+                'h-24 w-full border-dashed',
+                aspect === 'square' && 'h-32 w-32',
+                aspect === 'poster' && 'h-48 w-32',
+              )}
+              disabled={isUploading}
+              onClick={() => {
+                inputRef.current?.click()
+              }}
+            >
+              {isUploading ? (
+                <Loader2 className="size-6 animate-spin" />
+              ) : (
+                <div className="flex flex-col items-center gap-1">
+                  <Upload className="size-6" />
+                  <span className="text-xs">Upload</span>
+                </div>
+              )}
+            </Button>
+            {isUploading && (
+              <div className="w-full space-y-1">
+                <Progress value={uploadProgress} className="h-1" />
+                <p className="text-right text-[10px] text-muted-foreground font-medium">
+                  {uploadProgress}%
+                </p>
               </div>
             )}
-          </Button>
+          </div>
         )}
         <input
           type="file"

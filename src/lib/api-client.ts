@@ -8,9 +8,6 @@ import type { ApiErrorResponse } from '@/types/api.types'
 
 export const apiClient = axios.create({
   baseURL: env.apiBaseUrl,
-  headers: {
-    'Content-Type': 'application/json',
-  },
 })
 
 // Request interceptor: attach Authorization and Accept-Language headers

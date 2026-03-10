@@ -10,14 +10,23 @@ export interface UploadResponse {
   size: number
 }
 
-export async function uploadFile(file: File): Promise<UploadResponse> {
+export async function uploadFile(
+  file: File,
+  onProgress?: (progress: number) => void,
+): Promise<UploadResponse> {
   const formData = new FormData()
   formData.append('file', file)
 
   const response = await apiClient.post<UploadResponse>('v1/filevault/upload', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
+    onUploadProgress: (progressEvent) => {
+      const progress =
+        progressEvent.total !== undefined && progressEvent.total !== 0
+          ? Math.round((progressEvent.loaded * 100) / progressEvent.total)
+          : 0
+      onProgress?.(progress)
     },
+    // Set a very high timeout for file uploads (10 minutes)
+    timeout: 600000,
   })
   return response.data
 }

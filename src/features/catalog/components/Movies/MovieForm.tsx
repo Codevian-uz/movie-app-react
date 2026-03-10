@@ -40,6 +40,7 @@ import { EpisodeManager } from '../Episodes/EpisodeManager'
 const movieFormSchema = z.object({
   title: z.string().min(1, 'Title is required').max(255),
   kind: z.enum(['movie', 'series']),
+  status: z.enum(['airing', 'finished', 'upcoming']).default('finished'),
   collection_id: z.string().optional().or(z.literal('')),
   collection_order: z.coerce.number().optional(),
   studio_ids: z.array(z.string()).default([]),
@@ -79,6 +80,7 @@ export function MovieForm({ movieId, defaultValues, onSubmit, isSubmitting }: Mo
     defaultValues: {
       title: '',
       kind: 'movie',
+      status: 'finished',
       collection_id: '',
       collection_order: 0,
       studio_ids: [],
@@ -100,6 +102,7 @@ export function MovieForm({ movieId, defaultValues, onSubmit, isSubmitting }: Mo
       form.reset({
         title: '',
         kind: 'movie',
+        status: 'finished',
         collection_id: '',
         collection_order: 0,
         description: '',
@@ -173,6 +176,29 @@ export function MovieForm({ movieId, defaultValues, onSubmit, isSubmitting }: Mo
                           <SelectContent>
                             <SelectItem value="movie">Standalone Movie</SelectItem>
                             <SelectItem value="series">TV Series / Anime</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="status"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Status</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select status" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="airing">Airing</SelectItem>
+                            <SelectItem value="finished">Finished</SelectItem>
+                            <SelectItem value="upcoming">Upcoming</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />

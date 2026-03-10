@@ -28,10 +28,10 @@ export interface Movie {
   id: string
   collection_id?: string | null
   collection_order?: number | null
-  studio_id?: string | null
   title: string
   slug: string
   kind: string
+  status?: string | null
   description?: string | null
   poster_url?: string | null
   backdrop_url?: string | null
@@ -159,9 +159,10 @@ export interface MovieWithDetails extends Movie {
 export interface CreateMovieRequest {
   title: string
   kind: MovieKind
+  status?: string | undefined
   collection_id?: string | undefined
   collection_order?: number | undefined
-  studio_id?: string | undefined
+  studio_ids?: string[] | undefined
   description?: string | undefined
   poster_url?: string | undefined
   backdrop_url?: string | undefined
@@ -170,6 +171,12 @@ export interface CreateMovieRequest {
   release_date?: string | undefined
   duration_minutes?: number | undefined
   genre_ids?: string[] | undefined
+  alternative_titles?:
+    | {
+        title: string
+        type: string
+      }[]
+    | undefined
   credits?:
     | {
         person_id: string

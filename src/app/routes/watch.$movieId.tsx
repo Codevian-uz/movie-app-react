@@ -48,10 +48,17 @@ function WatchPage() {
   })
 
   const sources = manifest?.sources ?? []
+  const readySources = sources.filter((s) => s.processing_status === 'ready')
+  const processingSources = sources.filter(
+    (s) => s.processing_status === 'processing' || s.processing_status === 'pending',
+  )
+  const failedSources = sources.filter((s) => s.processing_status === 'failed')
+
+  // Prioritize Ready sources, but fallback to any MP4 source if nothing else is ready
   const primarySource =
-    sources.length > 0
-      ? (sources.find((s) => s.id === manifest?.primary_source_id) ?? sources[0])
-      : undefined
+    readySources.length > 0
+      ? (readySources.find((s) => s.id === manifest?.primary_source_id) ?? readySources[0])
+      : sources.find((s) => s.type === 'mp4')
 
   return (
     <div className="relative min-h-svh bg-zinc-950 text-zinc-100">
@@ -81,9 +88,23 @@ function WatchPage() {
         </div>
 
         <div className="relative aspect-video w-full overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/50 shadow-2xl backdrop-blur-xl">
-          {isLoading || !manifest?.sources || manifest.sources.length === 0 ? (
+          {isLoading ? (
             <ProcessingState />
-          ) : primarySource === undefined ? (
+          ) : primarySource !== undefined ? (
+            <VideoPlayer url={primarySource.url} poster={movie?.backdrop_url ?? undefined} />
+          ) : processingSources.length > 0 || sources.length === 0 ? (
+            <ProcessingState />
+          ) : failedSources.length > 0 ? (
+            <ErrorState
+              message="Transcoding failed for this video"
+              onRetry={() => {
+                void refetch()
+              }}
+              onReport={() => {
+                window.open('https://github.com/Jaxongir1006/movie-app-react/issues/new', '_blank')
+              }}
+            />
+          ) : (
             <ErrorState
               message="No streamable sources found"
               onRetry={() => {
@@ -93,8 +114,6 @@ function WatchPage() {
                 window.open('https://github.com/Jaxongir1006/movie-app-react/issues/new', '_blank')
               }}
             />
-          ) : (
-            <VideoPlayer url={primarySource.url} poster={movie?.backdrop_url ?? undefined} />
           )}
         </div>
 

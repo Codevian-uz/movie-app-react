@@ -40,6 +40,11 @@ export function VideoPlayer({ url, poster }: VideoPlayerProps) {
       userActions: {
         hotkeys: true,
       },
+      html5: {
+        vhs: {
+          withCredentials: true,
+        },
+      },
       controlBar: {
         children: [
           'playToggle',
