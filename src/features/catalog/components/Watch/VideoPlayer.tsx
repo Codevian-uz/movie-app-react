@@ -3,6 +3,8 @@ import videojs from 'video.js'
 import 'video.js/dist/video-js.css'
 import 'videojs-contrib-quality-levels'
 import 'videojs-hls-quality-selector'
+import { useUpdateProgress } from '@/features/interactions'
+import { useAuthStore } from '@/stores/auth.store'
 
 // Types for plugins
 interface ExtendedPlayer extends ReturnType<typeof videojs> {
@@ -12,16 +14,33 @@ interface ExtendedPlayer extends ReturnType<typeof videojs> {
 interface VideoPlayerProps {
   url: string
   poster?: string | undefined
+  movieId?: string | undefined
+  episodeId?: string | undefined
+  initialProgress?: number | undefined
+  onEnded?: () => void
 }
 
-export function VideoPlayer({ url, poster }: VideoPlayerProps) {
+export function VideoPlayer({
+  url,
+  poster,
+  movieId,
+  episodeId,
+  initialProgress = 0,
+  onEnded,
+}: VideoPlayerProps) {
+  const { isAuthenticated } = useAuthStore()
   const videoRef = useRef<HTMLDivElement>(null)
   const playerRef = useRef<ExtendedPlayer | null>(null)
+  const updateProgress = useUpdateProgress()
 
   useEffect(() => {
     if (videoRef.current === null) {
       return
     }
+
+    // Determine MIME type
+    const isHls = url.includes('.m3u8') || url.includes('type=hls')
+    const type = isHls ? 'application/x-mpegURL' : 'video/mp4'
 
     // Create video element
     const videoElement = document.createElement('video-js')
@@ -34,7 +53,7 @@ export function VideoPlayer({ url, poster }: VideoPlayerProps) {
       controls: true,
       responsive: true,
       fluid: true,
-      sources: [{ src: url, type: 'application/x-mpegURL' }],
+      sources: [{ src: url, type }],
       poster,
       playbackRates: [0.5, 1, 1.25, 1.5, 2],
       userActions: {
@@ -66,18 +85,31 @@ export function VideoPlayer({ url, poster }: VideoPlayerProps) {
       },
     }) as ExtendedPlayer)
 
-    // Initialize quality selector
-    try {
-      player.hlsQualitySelector({
-        displayCurrentQuality: true,
+    // Handle initial progress
+    if (initialProgress > 0) {
+      player.one('loadedmetadata', () => {
+        player.currentTime(initialProgress)
       })
-    } catch {
-      // Ignore quality selector errors
     }
+
+    // Initialize quality selector if HLS
+    if (isHls) {
+      try {
+        player.hlsQualitySelector({
+          displayCurrentQuality: true,
+        })
+      } catch {
+        // Ignore quality selector errors
+      }
+    }
+
+    // Event listeners
+    player.on('ended', () => {
+      if (onEnded) onEnded()
+    })
 
     // Keyboard shortcuts
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Only prevent default if we're not typing in an input
       const isBody = document.activeElement === document.body
       const isVideo = document.activeElement?.tagName === 'VIDEO'
       const isTech = document.activeElement?.classList.contains('vjs-tech') === true
@@ -86,7 +118,6 @@ export function VideoPlayer({ url, poster }: VideoPlayerProps) {
         return
       }
 
-      // Handle Space (Play/Pause)
       if (e.code === 'Space') {
         e.preventDefault()
         if (player.paused()) {
@@ -96,7 +127,6 @@ export function VideoPlayer({ url, poster }: VideoPlayerProps) {
         }
       }
 
-      // Handle 'F' (Fullscreen)
       if (e.key.toLowerCase() === 'f') {
         e.preventDefault()
         if (player.isFullscreen() === true) {
@@ -114,7 +144,32 @@ export function VideoPlayer({ url, poster }: VideoPlayerProps) {
       player.dispose()
       playerRef.current = null
     }
-  }, [url, poster])
+  }, [url, poster, initialProgress, onEnded])
+
+  // Periodic progress update
+  useEffect(() => {
+    if (!isAuthenticated || movieId === undefined || playerRef.current === null) {
+      return
+    }
+
+    const interval = setInterval(() => {
+      const player = playerRef.current
+      if (player !== null && !player.paused()) {
+        const currentTime = Math.floor(player.currentTime() ?? 0)
+        const duration = player.duration() ?? 0
+        if (currentTime > 0 && duration > 0) {
+          updateProgress.mutate({
+            movie_id: movieId,
+            episode_id: episodeId,
+            progress_seconds: currentTime,
+            is_finished: currentTime / duration > 0.95,
+          })
+        }
+      }
+    }, 15000)
+
+    return () => clearInterval(interval)
+  }, [isAuthenticated, movieId, episodeId, updateProgress])
 
   return (
     <div className="group hover:ring-primary/50 relative aspect-video w-full overflow-hidden rounded-xl bg-black shadow-2xl transition-all duration-300 hover:ring-2">

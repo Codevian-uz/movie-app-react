@@ -12,7 +12,9 @@ import {
   movieQueryOptions,
   PublicHeader,
 } from '@/features/catalog'
+import { statusQueryOptions } from '@/features/interactions'
 import type { StreamManifest } from '@/features/catalog'
+import { useAuthStore } from '@/stores/auth.store'
 
 const watchSearchSchema = z.object({
   episodeId: z.string().optional(),
@@ -26,8 +28,14 @@ export const Route = createFileRoute('/watch/$movieId')({
 function WatchPage() {
   const { movieId } = Route.useParams()
   const { episodeId } = Route.useSearch()
+  const { isAuthenticated } = useAuthStore()
 
   const { data: movie } = useQuery(movieQueryOptions(movieId))
+
+  const { data: status } = useQuery({
+    ...statusQueryOptions({ target_type: 'movie', target_id: movieId }),
+    enabled: isAuthenticated,
+  })
 
   const {
     data: manifest,
@@ -40,8 +48,10 @@ function WatchPage() {
     }),
     refetchInterval: (query: Query<StreamManifest | null>) => {
       const data = query.state.data
-      if (!data?.sources || data.sources.length === 0) {
-        return 10000
+      const sources = data?.sources ?? []
+      const isReady = sources.some((s) => s.processing_status === 'ready')
+      if (sources.length > 0 && !isReady) {
+        return 5000 // Poll every 5s if transcoding
       }
       return false
     },
@@ -91,7 +101,13 @@ function WatchPage() {
           {isLoading ? (
             <ProcessingState />
           ) : primarySource !== undefined ? (
-            <VideoPlayer url={primarySource.url} poster={movie?.backdrop_url ?? undefined} />
+            <VideoPlayer
+              url={primarySource.url}
+              poster={movie?.backdrop_url ?? undefined}
+              movieId={movieId}
+              episodeId={episodeId}
+              initialProgress={status?.progress?.progress_seconds}
+            />
           ) : processingSources.length > 0 || sources.length === 0 ? (
             <ProcessingState />
           ) : failedSources.length > 0 ? (

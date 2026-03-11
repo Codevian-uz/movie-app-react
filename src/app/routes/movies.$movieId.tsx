@@ -8,8 +8,12 @@ import {
   MovieCast,
   SeriesEpisodes,
   MovieRow,
+  VideoPlayer,
+  streamManifestQueryOptions,
+  ProcessingState,
+  ErrorState,
 } from '@/features/catalog'
-import { MovieComments, VideoPlayer, statusQueryOptions } from '@/features/interactions'
+import { MovieComments, statusQueryOptions } from '@/features/interactions'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/stores/auth.store'
 
@@ -37,6 +41,17 @@ function MovieDetailsPage() {
     ...statusQueryOptions({ target_type: 'movie', target_id: movieId }),
     enabled: isAuthenticated,
   })
+
+  const {
+    data: manifest,
+    isLoading: isManifestLoading,
+    refetch: refetchManifest,
+  } = useQuery(
+    streamManifestQueryOptions({
+      movie_id: movieId,
+      episode_id: episodeId,
+    }),
+  )
 
   // Intersection Observer to handle sticky/mini player transition
   useEffect(() => {
@@ -90,6 +105,18 @@ function MovieDetailsPage() {
 
   const { movie, genres, credits, seasons, recommendations } = data
 
+  const sources = manifest?.sources ?? []
+  const readySources = sources.filter((s) => s.processing_status === 'ready')
+  const processingSources = sources.filter(
+    (s) => s.processing_status === 'processing' || s.processing_status === 'pending',
+  )
+  const failedSources = sources.filter((s) => s.processing_status === 'failed')
+
+  const primarySource =
+    readySources.length > 0
+      ? (readySources.find((s) => s.id === manifest?.primary_source_id) ?? readySources[0])
+      : sources.find((s) => s.type === 'mp4')
+
   const recommendationMovies = recommendations.map((r) => ({
     ...r,
     kind: 'movie' as const,
@@ -105,6 +132,7 @@ function MovieDetailsPage() {
     deleted_at: null,
     collection_id: null,
     collection_order: null,
+    status: 'finished',
   }))
 
   const handlePlayNext = () => {
@@ -149,16 +177,34 @@ function MovieDetailsPage() {
           )}
         >
           <div className={cn('h-full w-full', isSticky && 'container mx-auto aspect-video')}>
-            <VideoPlayer
-              movieId={movieId}
-              episodeId={episodeId}
-              videoUrl={movie.video_url}
-              title={movie.title}
-              autoplay={autoplay}
-              initialProgress={status?.progress?.progress_seconds}
-              hasNextEpisode={hasNextEpisode()}
-              playNextEpisode={handlePlayNext}
-            />
+            {isManifestLoading ? (
+              <ProcessingState />
+            ) : primarySource !== undefined ? (
+              <VideoPlayer
+                url={primarySource.url}
+                poster={movie.backdrop_url ?? undefined}
+                movieId={movieId}
+                episodeId={episodeId}
+                initialProgress={status?.progress?.progress_seconds}
+                onEnded={handlePlayNext}
+              />
+            ) : processingSources.length > 0 || sources.length === 0 ? (
+              <ProcessingState />
+            ) : failedSources.length > 0 ? (
+              <ErrorState
+                message="Transcoding failed for this video"
+                onRetry={() => {
+                  void refetchManifest()
+                }}
+              />
+            ) : (
+              <ErrorState
+                message="No streamable sources found"
+                onRetry={() => {
+                  void refetchManifest()
+                }}
+              />
+            )}
           </div>
         </div>
       </div>

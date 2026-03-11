@@ -30,7 +30,7 @@ blob-report/
 tests/e2e/.auth/
 
 # E2E backend clone
-*tmp/
+# *tmp/
 
 # Misc
 *.log
