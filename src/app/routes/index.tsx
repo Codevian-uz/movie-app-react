@@ -111,25 +111,33 @@ function HomePage() {
               <h4 className="text-sm font-bold tracking-widest text-zinc-200 uppercase">
                 Platform
               </h4>
-              <Link to="/" className="text-sm transition-colors hover:text-orange-500">
+              <Link to="/movies" className="text-sm transition-colors hover:text-orange-500">
                 Browse
               </Link>
-              <Link to="/" className="text-sm transition-colors hover:text-orange-500">
+              <Link
+                to="/movies"
+                search={{ page: 1 }}
+                className="text-sm transition-colors hover:text-orange-500"
+              >
                 Genres
               </Link>
-              <Link to="/" className="text-sm transition-colors hover:text-orange-500">
+              <Link
+                to="/movies"
+                search={{ sort: '-rating_average' }}
+                className="text-sm transition-colors hover:text-orange-500"
+              >
                 Top Airing
               </Link>
             </div>
             <div className="flex flex-col gap-4">
               <h4 className="text-sm font-bold tracking-widest text-zinc-200 uppercase">Support</h4>
-              <Link to="/" className="text-sm transition-colors hover:text-orange-500">
+              <Link to="/support" className="text-sm transition-colors hover:text-orange-500">
                 Help Center
               </Link>
-              <Link to="/" className="text-sm transition-colors hover:text-orange-500">
+              <Link to="/support" className="text-sm transition-colors hover:text-orange-500">
                 Terms of Use
               </Link>
-              <Link to="/" className="text-sm transition-colors hover:text-orange-500">
+              <Link to="/support" className="text-sm transition-colors hover:text-orange-500">
                 Privacy Policy
               </Link>
             </div>
@@ -141,7 +149,7 @@ function HomePage() {
               <Link to="/register" className="text-sm transition-colors hover:text-orange-500">
                 Register
               </Link>
-              <Link to="/" className="text-sm transition-colors hover:text-orange-500">
+              <Link to="/profile" className="text-sm transition-colors hover:text-orange-500">
                 My Profile
               </Link>
             </div>

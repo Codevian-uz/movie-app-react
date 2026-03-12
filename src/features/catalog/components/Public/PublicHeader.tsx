@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { Search, Bell, User, Menu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -8,6 +8,17 @@ import { useAuthStore } from '@/stores/auth.store'
 export function PublicHeader() {
   const { isAuthenticated } = useAuthStore()
   const [isScrolled, setIsScrolled] = useState(false)
+  const [search, setSearch] = useState('')
+  const navigate = useNavigate()
+
+  const handleSearch = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && search.trim() !== '') {
+      void navigate({
+        to: '/movies',
+        search: { search: search.trim() },
+      })
+    }
+  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -50,19 +61,22 @@ export function PublicHeader() {
             Home
           </Link>
           <Link
-            to="/"
+            to="/movies"
+            search={{ kind: 'movie' }}
             className="text-sm font-bold text-zinc-300 transition-colors hover:text-orange-500"
           >
             Movies
           </Link>
           <Link
-            to="/"
+            to="/movies"
+            search={{ kind: 'series' }}
             className="text-sm font-bold text-zinc-300 transition-colors hover:text-orange-500"
           >
             Series
           </Link>
           <Link
-            to="/"
+            to="/movies"
+            search={{ sort: '-rating_average' }}
             className="text-sm font-bold text-zinc-300 transition-colors hover:text-orange-500"
           >
             Trending
@@ -75,6 +89,11 @@ export function PublicHeader() {
           <Search className="absolute left-3 h-4 w-4 text-zinc-500" />
           <input
             type="text"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value)
+            }}
+            onKeyDown={handleSearch}
             placeholder="Search anime..."
             className="h-10 rounded-full bg-zinc-900 px-10 text-xs font-medium text-white transition-all focus:w-64 focus:ring-1 focus:ring-orange-500 focus:outline-hidden lg:w-48"
           />

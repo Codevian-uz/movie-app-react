@@ -105,7 +105,9 @@ export function VideoPlayer({
 
     // Event listeners
     player.on('ended', () => {
-      if (onEnded) onEnded()
+      if (onEnded) {
+        onEnded()
+      }
     })
 
     // Keyboard shortcuts
@@ -168,7 +170,9 @@ export function VideoPlayer({
       }
     }, 15000)
 
-    return () => clearInterval(interval)
+    return () => {
+      clearInterval(interval)
+    }
   }, [isAuthenticated, movieId, episodeId, updateProgress])
 
   return (

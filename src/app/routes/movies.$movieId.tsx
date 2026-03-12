@@ -29,7 +29,7 @@ export const Route = createFileRoute('/movies/$movieId')({
 
 function MovieDetailsPage() {
   const { movieId } = Route.useParams()
-  const { autoplay, episodeId } = Route.useSearch()
+  const { episodeId } = Route.useSearch()
   const navigate = useNavigate()
   const { isAuthenticated } = useAuthStore()
 
@@ -107,9 +107,7 @@ function MovieDetailsPage() {
 
   const sources = manifest?.sources ?? []
   const readySources = sources.filter((s) => s.processing_status === 'ready')
-  const processingSources = sources.filter(
-    (s) => s.processing_status === 'processing' || s.processing_status === 'pending',
-  )
+  const processingSources = sources.filter((s) => s.processing_status === 'processing')
   const failedSources = sources.filter((s) => s.processing_status === 'failed')
 
   const primarySource =
@@ -150,15 +148,6 @@ function MovieDetailsPage() {
         search: { autoplay: true, episodeId: nextEpisode.id },
       })
     }
-  }
-
-  const hasNextEpisode = () => {
-    if (movie.kind !== 'series' || !seasons) {
-      return false
-    }
-    const allEpisodes = seasons.flatMap((s) => s.episodes)
-    const currentIndex = allEpisodes.findIndex((e) => e.id === episodeId)
-    return currentIndex !== -1 && currentIndex < allEpisodes.length - 1
   }
 
   return (

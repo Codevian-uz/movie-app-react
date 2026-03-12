@@ -12,8 +12,8 @@ import {
   movieQueryOptions,
   PublicHeader,
 } from '@/features/catalog'
-import { statusQueryOptions } from '@/features/interactions'
 import type { StreamManifest } from '@/features/catalog'
+import { statusQueryOptions } from '@/features/interactions'
 import { useAuthStore } from '@/stores/auth.store'
 
 const watchSearchSchema = z.object({
@@ -59,9 +59,7 @@ function WatchPage() {
 
   const sources = manifest?.sources ?? []
   const readySources = sources.filter((s) => s.processing_status === 'ready')
-  const processingSources = sources.filter(
-    (s) => s.processing_status === 'processing' || s.processing_status === 'pending',
-  )
+  const processingSources = sources.filter((s) => s.processing_status === 'processing')
   const failedSources = sources.filter((s) => s.processing_status === 'failed')
 
   // Prioritize Ready sources, but fallback to any MP4 source if nothing else is ready

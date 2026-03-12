@@ -149,7 +149,7 @@ export function FileUploadField<T extends FieldValues>({
             {isUploading && (
               <div className="w-full space-y-1">
                 <Progress value={uploadProgress} className="h-1" />
-                <p className="text-right text-[10px] text-muted-foreground font-medium">
+                <p className="text-muted-foreground text-right text-[10px] font-medium">
                   {uploadProgress}%
                 </p>
               </div>

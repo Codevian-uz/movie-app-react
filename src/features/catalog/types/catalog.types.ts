@@ -196,6 +196,7 @@ export interface ListMoviesParams {
   genre_id?: string | undefined
   person_id?: string | undefined
   role?: string | undefined
+  kind?: MovieKind | undefined
   page_number?: number | undefined
   page_size?: number | undefined
   sort?: string | undefined

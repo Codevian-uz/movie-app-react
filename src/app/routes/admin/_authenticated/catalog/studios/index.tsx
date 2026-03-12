@@ -167,7 +167,7 @@ function StudiosPage() {
       </div>
 
       <div className="flex flex-wrap items-center gap-4">
-        <div className="relative max-w-sm min-w-[200px] flex-1">
+        <div className="min-w-200px relative max-w-sm flex-1">
           <Search className="text-muted-foreground absolute top-2.5 left-2 size-4" />
           <Input
             placeholder={t('common.actions.search')}
@@ -187,7 +187,7 @@ function StudiosPage() {
             })
           }}
         >
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-180px">
             <SelectValue placeholder="Sort By" />
           </SelectTrigger>
           <SelectContent>

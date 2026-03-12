@@ -523,7 +523,7 @@ function ManageRolePermissionsDialog({
           <DialogTitle>{t('auth.roles.managePermissions')}</DialogTitle>
           <DialogDescription>{role?.name}</DialogDescription>
         </DialogHeader>
-        <div className="max-h-[32rem] overflow-y-auto">
+        <div className="max-h-32rem overflow-y-auto">
           <div className="space-y-4 p-1">
             {Object.entries(PERMISSION_GROUPS).map(([group, permissions]) => (
               <div key={group}>

@@ -78,7 +78,8 @@ export function HomeSidebar({ topTen, genres, className }: HomeSidebarProps) {
           {genres.map((genre) => (
             <Link
               key={genre.id}
-              to="/" // TODO: Link to genre page
+              to="/movies"
+              search={{ genreId: genre.id }}
               className="rounded bg-zinc-900 px-3 py-2 text-center text-xs font-semibold text-zinc-400 transition-all hover:bg-orange-500 hover:text-white"
             >
               {genre.name}
