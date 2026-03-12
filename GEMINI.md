@@ -1,4 +1,10 @@
-# GEMINI
+# GEMINI (AnimeWatch)
+
+## Context
+
+This is an enterprise-grade streaming platform. It features two distinct areas:
+1. **Public Portal**: Modern dark aesthetic (Zinc-950/Orange-500) for users to browse and watch content.
+2. **Admin Dashboard**: Liquid glass aesthetic for catalog and system management.
 
 ## Skills
 
