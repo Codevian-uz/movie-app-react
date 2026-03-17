@@ -47,12 +47,14 @@ A professional, enterprise-grade platform for the Anime & Movie industry. This p
 ### Installation
 
 1. Clone the repository:
+
    ```bash
    git clone <repository-url>
    cd movie-app-react
    ```
 
 2. Install dependencies:
+
    ```bash
    pnpm install
    ```

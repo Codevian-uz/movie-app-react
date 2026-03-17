@@ -63,8 +63,11 @@ export const catalogKeys = {
     [...catalogKeys.all, 'collections', params] as const,
   collection: (id: string) => [...catalogKeys.all, 'collection', id] as const,
   episodes: (params: ListEpisodesParams) => [...catalogKeys.all, 'episodes', params] as const,
-  streamManifest: (params: { movie_id?: string | undefined; episode_id?: string | undefined }) =>
-    [...catalogKeys.all, 'stream-manifest', params] as const,
+  streamManifest: (params: {
+    movie_id?: string | undefined
+    episode_id?: string | undefined
+    is_trailer?: boolean | undefined
+  }) => [...catalogKeys.all, 'stream-manifest', params] as const,
   relatedAnimes: (movieId: string) => [...catalogKeys.all, 'related', movieId] as const,
   homeData: () => [...catalogKeys.all, 'home-data'] as const,
 }
@@ -226,6 +229,7 @@ export function episodesQueryOptions(params: ListEpisodesParams) {
 export function streamManifestQueryOptions(params: {
   movie_id?: string | undefined
   episode_id?: string | undefined
+  is_trailer?: boolean | undefined
 }) {
   return queryOptions<StreamManifest | null>({
     queryKey: catalogKeys.streamManifest(params),

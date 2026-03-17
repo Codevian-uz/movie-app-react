@@ -1,5 +1,6 @@
 name: frontend-guidelines
 description: Use when implementing, reviewing, planning, or modifying any frontend code in react-enterprise-blueprint. Load before writing components, routes, API calls, forms, tests, or state management code.
+
 ---
 
 # Frontend Guidelines

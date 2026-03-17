@@ -165,6 +165,7 @@ export async function deleteEpisode(id: string): Promise<void> {
 export async function getStreamManifest(params: {
   movie_id?: string | undefined
   episode_id?: string | undefined
+  is_trailer?: boolean | undefined
 }): Promise<StreamManifest> {
   const response = await apiClient.get<StreamManifest>('v1/catalog/get-stream-manifest', {
     params,

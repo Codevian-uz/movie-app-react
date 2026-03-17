@@ -69,106 +69,152 @@ export function MovieDetailsHero({ movie, genres }: Props) {
   }
 
   return (
-    <div className="relative flex h-[60vh] min-h-125 w-full items-center">
-      {/* Backdrop */}
-      <div className="absolute inset-0 z-0">
+    <div className="relative w-full overflow-hidden">
+      {/* Immersive Backdrop */}
+      <div className="absolute inset-0 z-0 h-[80vh] min-h-[600px]">
         <img
           src={movie.backdrop_url ?? movie.poster_url ?? '/placeholder-backdrop.jpg'}
           alt={movie.title}
-          className="h-full w-full object-cover"
+          className="h-full w-full object-cover object-top opacity-60 transition-transform duration-10000 hover:scale-110"
         />
-        <div className="absolute inset-0 bg-linear-to-r from-black/95 via-black/80 to-transparent" />
-        <div className="absolute inset-0 bg-linear-to-t from-black via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-950/80 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/20 to-transparent" />
+        <div className="absolute inset-0 bg-zinc-950/40 backdrop-blur-[2px]" />
       </div>
 
-      {/* Content */}
-      <div className="relative z-10 container mx-auto flex items-center px-6 md:px-12">
-        <div className="max-w-2xl space-y-6">
-          <h1 className="text-4xl font-black tracking-tight text-white md:text-6xl">
-            {movie.title}
-          </h1>
-
-          <div className="flex flex-wrap items-center gap-4 text-sm font-medium text-gray-300">
-            {movie.rating_average > 0 && (
-              <div className="flex items-center gap-1 font-bold text-green-500">
-                <Star className="h-4 w-4 fill-current" />
-                <span>{movie.rating_average.toFixed(1)}</span>
-              </div>
-            )}
-            {movie.release_date !== null && (
-              <div className="flex items-center gap-1">
-                <Calendar className="h-4 w-4" />
-                <span>{movie.release_date.split('-')[0]}</span>
-              </div>
-            )}
-            {movie.duration_minutes !== null && movie.kind === 'movie' && (
-              <div className="flex items-center gap-1">
-                <Clock className="h-4 w-4" />
-                <span>{movie.duration_minutes}m</span>
-              </div>
-            )}
-            <div className="ml-2 flex items-center gap-2 border-l border-white/20 pl-4">
-              {genres.slice(0, 3).map((g) => (
-                <span key={g.id}>{g.name}</span>
-              ))}
-            </div>
+      {/* Hero Content */}
+      <div className="relative z-10 container mx-auto px-6 pt-32 pb-16 md:px-12 lg:pt-48">
+        <div className="flex flex-col gap-10 lg:flex-row lg:items-end">
+          {/* Poster - Hidden on small mobile, visible on larger */}
+          <div className="hidden w-64 shrink-0 overflow-hidden rounded-2xl border border-white/10 shadow-2xl shadow-orange-500/5 lg:block">
+            <img
+              src={movie.poster_url ?? '/placeholder-poster.jpg'}
+              alt={movie.title}
+              className="aspect-2/3 w-full object-cover"
+            />
           </div>
 
-          <p className="line-clamp-4 text-lg leading-relaxed text-gray-200">
-            {movie.description ?? 'No description available.'}
-          </p>
+          <div className="flex-1 space-y-8">
+            <div className="space-y-4">
+              <div className="flex flex-wrap items-center gap-3">
+                {movie.kind === 'series' && (
+                  <span className="rounded-full bg-orange-500 px-3 py-1 text-[10px] font-bold tracking-wider text-white uppercase shadow-lg shadow-orange-500/20">
+                    Series
+                  </span>
+                )}
+                {movie.status === 'airing' && (
+                  <span className="rounded-full bg-emerald-500 px-3 py-1 text-[10px] font-bold tracking-wider text-white uppercase shadow-lg shadow-emerald-500/20">
+                    Airing
+                  </span>
+                )}
+                <div className="flex items-center gap-1.5 rounded-full bg-zinc-900/80 px-3 py-1 text-sm font-bold text-orange-500 ring-1 ring-white/10 backdrop-blur-md">
+                  <Star className="h-4 w-4 fill-current" />
+                  <span>{movie.rating_average > 0 ? movie.rating_average.toFixed(1) : 'NR'}</span>
+                </div>
+              </div>
 
-          <div className="flex flex-wrap items-center gap-4 pt-4">
-            <Button size="lg" className="cursor-pointer gap-2 px-8" asChild>
-              <Link to="/watch/$movieId" params={{ movieId: movie.id }}>
-                <Play className="h-5 w-5 fill-current" />
-                Play Now
-              </Link>
-            </Button>
-            {movie.trailer_url !== null && (
+              <h1 className="text-4xl font-black tracking-tight text-white md:text-6xl lg:text-7xl xl:text-8xl">
+                {movie.title}
+              </h1>
+
+              <div className="flex flex-wrap items-center gap-5 text-sm font-medium text-zinc-400">
+                {movie.release_date !== null && (
+                  <span className="flex items-center gap-1.5 text-zinc-100">
+                    <Calendar className="h-4 w-4 text-orange-500" />
+                    {movie.release_date.split('-')[0]}
+                  </span>
+                )}
+                {movie.duration_minutes !== null && movie.kind === 'movie' && (
+                  <span className="flex items-center gap-1.5 text-zinc-100">
+                    <Clock className="h-4 w-4 text-orange-500" />
+                    {movie.duration_minutes}m
+                  </span>
+                )}
+                <div className="flex items-center gap-2">
+                  {genres.map((g) => (
+                    <span
+                      key={g.id}
+                      className="rounded-md border border-white/5 bg-white/5 px-2 py-0.5 text-xs text-zinc-300 transition-colors hover:bg-white/10"
+                    >
+                      {g.name}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <p className="max-w-3xl text-lg leading-relaxed text-zinc-300 md:text-xl lg:line-clamp-3">
+              {movie.description ??
+                'Prepare for an unforgettable journey through a world of mystery and wonder.'}
+            </p>
+
+            <div className="flex flex-wrap items-center gap-4 pt-4">
               <Button
                 size="lg"
-                variant="outline"
-                className="cursor-pointer gap-2 border-white/20 bg-black/50 text-white hover:bg-white/10"
+                className="group relative h-14 overflow-hidden bg-orange-500 px-10 text-lg font-bold text-white transition-all hover:bg-orange-600 hover:shadow-[0_0_20px_rgba(249,115,22,0.4)] active:scale-95"
                 asChild
               >
-                <a href={movie.trailer_url} target="_blank" rel="noopener noreferrer">
-                  <Info className="h-5 w-5" />
-                  Trailer
-                </a>
+                <Link to="/watch/$movieId" params={{ movieId: movie.id }}>
+                  <Play className="mr-2 h-6 w-6 fill-current transition-transform group-hover:scale-110" />
+                  Play Now
+                  <div className="absolute inset-0 -translate-x-full bg-linear-to-r from-transparent via-white/20 to-transparent transition-transform duration-1000 group-hover:translate-x-full" />
+                </Link>
               </Button>
-            )}
 
-            <Button
-              size="icon"
-              variant="secondary"
-              className={cn(
-                'h-12 w-auto cursor-pointer rounded-full bg-white/10 px-4 text-white backdrop-blur-md hover:bg-white/20',
-                isLiked && 'bg-orange-500/20 text-orange-500 hover:bg-orange-500/30',
-              )}
-              onClick={() => {
-                void handleToggleLike()
-              }}
-              disabled={toggleLike.isPending}
-            >
-              <Heart className={cn('mr-2 h-6 w-6', isLiked && 'fill-current')} />
-              <span className="font-bold">{likesCount > 0 ? likesCount : 'Like'}</span>
-            </Button>
+              <div className="flex items-center gap-3">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className={cn(
+                    'h-14 min-w-[120px] border-white/10 bg-zinc-900/50 text-white backdrop-blur-xl transition-all hover:bg-zinc-800 hover:text-orange-500 active:scale-95',
+                    isLiked && 'border-orange-500/50 bg-orange-500/10 text-orange-500',
+                  )}
+                  onClick={() => {
+                    void handleToggleLike()
+                  }}
+                  disabled={toggleLike.isPending}
+                >
+                  <Heart className={cn('mr-2 h-6 w-6', isLiked && 'fill-current')} />
+                  <span className="font-bold">{likesCount > 0 ? likesCount : 'Like'}</span>
+                </Button>
 
-            <Button
-              size="icon"
-              variant="secondary"
-              className={cn(
-                'h-12 w-12 cursor-pointer rounded-full bg-white/10 text-white backdrop-blur-md hover:bg-white/20',
-                isFavorited && 'bg-orange-500/20 text-orange-500 hover:bg-orange-500/30',
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className={cn(
+                    'h-14 w-14 border-white/10 bg-zinc-900/50 text-white backdrop-blur-xl transition-all hover:bg-zinc-800 hover:text-orange-500 active:scale-95',
+                    isFavorited && 'border-orange-500/50 bg-orange-500/10 text-orange-500',
+                  )}
+                  onClick={() => {
+                    void handleToggleFavorite()
+                  }}
+                  disabled={toggleFavorite.isPending}
+                >
+                  {isFavorited ? (
+                    <Check className="h-7 w-7 stroke-[2.5px]" />
+                  ) : (
+                    <Plus className="h-7 w-7 stroke-[2.5px]" />
+                  )}
+                </Button>
+              </div>
+
+              {movie.trailer_url !== null && (
+                <Button
+                  variant="ghost"
+                  className="h-14 gap-2 text-zinc-400 hover:bg-transparent hover:text-white"
+                  asChild
+                >
+                  <Link
+                    to="/movies/$movieId"
+                    params={{ movieId: movie.id }}
+                    search={(prev) => ({ ...prev, isTrailer: true })}
+                  >
+                    <Info className="h-5 w-5" />
+                    Watch Trailer
+                  </Link>
+                </Button>
               )}
-              onClick={() => {
-                void handleToggleFavorite()
-              }}
-              disabled={toggleFavorite.isPending}
-            >
-              {isFavorited ? <Check className="h-6 w-6" /> : <Plus className="h-6 w-6" />}
-            </Button>
+            </div>
           </div>
         </div>
       </div>
